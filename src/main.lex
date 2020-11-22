@@ -30,6 +30,7 @@ IDENTIFIER [[:alpha:]_][[:alpha:][:digit:]_]*
 ";" return  SEMICOLON;
 
 {INTEGER} {
+    printf("INTEGER\n");
     TreeNode* node = new TreeNode(lineno, NODE_CONST);
     node->type = TYPE_INT;
     node->int_val = atoi(yytext);
@@ -41,6 +42,7 @@ IDENTIFIER [[:alpha:]_][[:alpha:][:digit:]_]*
     TreeNode* node = new TreeNode(lineno, NODE_CONST);
     node->type = TYPE_CHAR;
     node->int_val = yytext[1];
+    node->ch_val = yytext[1];
     yylval = node;
     return CHAR;
 }

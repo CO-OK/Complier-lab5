@@ -9,10 +9,11 @@ enum NodeType
     NODE_CONST, 
     NODE_VAR,
     NODE_EXPR,
-    NODE_TYPE,
+    NODE_TYPE, //声明节点如int,char
 
     NODE_STMT,
     NODE_PROG,
+    NODE_IDENTIFIER,//标识符
 };
 
 enum OperatorType
@@ -31,7 +32,6 @@ public:
     int nodeID;  // 用于作业的序号输出
     int lineno;
     NodeType nodeType;
-
     TreeNode* child = nullptr;
     TreeNode* sibling = nullptr;
 

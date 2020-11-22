@@ -1,33 +1,34 @@
 #include "tree.h"
 void TreeNode::addChild(TreeNode* child) {
 
+    printf("add child\n");
     if(this->child==nullptr)
         this->child=child;
     else
     {
-        TreeNode* tmp=this->child->sibling;
-        while(tmp!=nullptr)
+        TreeNode* tmp=this->child;
+        while(tmp->sibling!=nullptr)
         {
             tmp=tmp->sibling;
         }
-        tmp=child;
+        tmp->sibling=child;
     }
     
 }
 
 void TreeNode::addSibling(TreeNode* sibling){
-    if(this->sibling!=nullptr)
+    printf("add sibling\n");
+    if(this->sibling==nullptr)
         this->sibling=sibling;
     else
     {
-        TreeNode* tmp=this->sibling;
-        while(tmp!=nullptr)
+        TreeNode* tmp=this;
+        while(tmp->sibling!=nullptr)
         {
             tmp=tmp->sibling;
         }
-        tmp=sibling;
-    }
-    
+        tmp->sibling=sibling;
+    }  
 }
 
 TreeNode::TreeNode(int lineno, NodeType type) {
@@ -52,6 +53,7 @@ void TreeNode::genNodeId() {
             node_list.push_back(t);
         }
     }
+    printf("id:%d\n",id);
 }
 
 void TreeNode::printNodeInfo() {
@@ -65,6 +67,10 @@ void TreeNode::printNodeInfo() {
     //printf("lineno:%d\n",this->lineno);
     cout<<"lineno:"<<this->lineno<<"    ";
     cout<<"NodeType:"<<this->nodeType2String(this->nodeType)<<"    ";
+    if(this->nodeType==NODE_TYPE)
+    {
+        cout<<"TYPE_SPEC="<<this->type->getTypeInfo()<<"    ";
+    }
 }
 
 void TreeNode::printChildrenId() {
@@ -89,6 +95,7 @@ void TreeNode::printAST() {
         node_list.pop_front();
         //cout<<tmp->nodeID;
         tmp->printNodeInfo();
+        tmp->printSpecialInfo();
         tmp->printChildrenId();
         cout<<endl;
         for(TreeNode*t=tmp->child;t!=nullptr;t=t->sibling)
@@ -102,10 +109,40 @@ void TreeNode::printAST() {
 // You can output more info...
 void TreeNode::printSpecialInfo() {
     switch(this->nodeType){
-        case NODE_CONST:
+        case NODE_CONST:{
+            /*
+            TreeNode* node = new TreeNode(lineno, NODE_CONST);
+            node->type = TYPE_INT;
+            node->int_val = atoi(yytext);
+            yylval = node;
+            return INTEGER;
+            */
+            string tmp=type->getTypeInfo();
+            cout<<"node->type="<<tmp<<" ";
+            if(tmp=="char")
+            {
+                cout<<"ascii_value="<<this->int_val<<" "<<"character="<<this->ch_val<<" ";
+            }
+            else if(tmp=="int")
+            {
+                cout<<"value="<<this->int_val<<" ";
+            }
+            else if(tmp=="bool")
+            {
+                cout<<"value="<<this->b_val<<" ";
+            }
             break;
-        case NODE_VAR:
-            break;
+        }
+        case NODE_VAR:{
+            /*
+            TreeNode* node = new TreeNode(lineno, NODE_VAR);
+            node->var_name = string(yytext);
+            yylval = node;
+            return IDENTIFIER;
+            */
+           cout<<"var_name="<<this->var_name<<"    ";
+           break;
+        }
         case NODE_EXPR:
             break;
         case NODE_STMT:

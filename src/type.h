@@ -40,5 +40,4 @@ static Type* TYPE_BOOL = new Type(VALUE_BOOL);
 static Type* TYPE_STRING = new Type(VALUE_STRING);
 
 int getSize(Type* type);
-
 #endif
