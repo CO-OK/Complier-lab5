@@ -1,0 +1,3 @@
+nodeID:0    lineno:0    NodeType:NODE_PROG    child: 1     
+nodeID:1    lineno:1    NodeType:NODE_STMT    child: 2     
+nodeID:2    lineno:1    NodeType:NODE_TYPE    child:     
