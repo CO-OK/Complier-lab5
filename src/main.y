@@ -51,7 +51,7 @@ statement
 ;
 
 declaration
-: T IDENTIFIER LOP_ASSIGN expr{  // declare and init
+: T IDENTIFIER LOP_ASSIGN paperConst{  // declare and init
     TreeNode* node = new TreeNode($1->lineno, NODE_STMT);
     node->stype = STMT_DECL;
     node->addChild($1);
@@ -59,7 +59,16 @@ declaration
     node->addChild($4);
     $$ = node;
     printf("T IDENTIFIER LOP_ASSIGN expr\n");   
-} 
+}
+| T IDENTIFIER LOP_ASSIGN Id{  // declare and init
+    TreeNode* node = new TreeNode($1->lineno, NODE_STMT);
+    node->stype = STMT_DECL;
+    node->addChild($1);
+    node->addChild($2);
+    node->addChild($4);
+    $$ = node;
+    printf("T IDENTIFIER LOP_ASSIGN expr\n");   
+}
 | T IDENTIFIER {
     TreeNode* node = new TreeNode($1->lineno, NODE_STMT);
     node->stype = STMT_DECL;
@@ -70,12 +79,15 @@ declaration
 }
 ;
 
-expr
+Id
 : IDENTIFIER {
     $$ = $1;
     printf("IDENTIFIER\n");
 }
-| INTEGER {
+;
+
+paperConst
+: INTEGER {
     $$ = $1;
     printf("INTEGER\n");
 }

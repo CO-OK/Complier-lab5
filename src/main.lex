@@ -14,7 +14,7 @@ INTEGER [0-9]+
 CHAR \'.?\'
 STRING \".+\"
 
-IDENTIFIER [[:alpha:]_][[:alpha:][:digit:]_]*
+IDENTIFIER [[:alpha:]_][[:alpha:][:digit:]_]* 
 %%
 
 {BLOCKCOMMENT}  /* do nothing */

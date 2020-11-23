@@ -1,44 +1,33 @@
 T_INT
-INTEGER
-INTEGER
 add child
 add child
-add child
-T IDENTIFIER LOP_ASSIGN expr
+T IDENTIFIER
 declaration SEMICOLON
 statement
-T_CHAR
-CHAR
+T_INT
 add child
 add child
-add child
-T IDENTIFIER LOP_ASSIGN expr
+T IDENTIFIER
 declaration SEMICOLON
 add sibling
 statements statement
 T_INT
-INTEGER
-INTEGER
 add child
 add child
-add child
-T IDENTIFIER LOP_ASSIGN expr
+T IDENTIFIER
 declaration SEMICOLON
 add sibling
 statements statement
 add child
 program
-id:13
+id:10
 nodeID:0    lineno:0    NodeType:NODE_PROG    child: 1 2 3     
-nodeID:1    lineno:1    NodeType:NODE_STMT    child: 4 5 6     
-nodeID:2    lineno:2    NodeType:NODE_STMT    child: 7 8 9     
-nodeID:3    lineno:3    NodeType:NODE_STMT    child: 10 11 12     
-nodeID:4    lineno:1    NodeType:NODE_TYPE    SPEC_TYPE=int    child:     
-nodeID:5    lineno:1    NodeType:NODE_VAR    var_name=a    child:     
-nodeID:6    lineno:1    NodeType:NODE_CONST    node->type=int value=0 child:     
-nodeID:7    lineno:2    NodeType:NODE_TYPE    SPEC_TYPE=char    child:     
-nodeID:8    lineno:2    NodeType:NODE_VAR    var_name=b    child:     
-nodeID:9    lineno:2    NodeType:NODE_CONST    node->type=char ascii_value=101 character=e child:     
-nodeID:10    lineno:3    NodeType:NODE_TYPE    SPEC_TYPE=int    child:     
-nodeID:11    lineno:3    NodeType:NODE_VAR    var_name=c    child:     
-nodeID:12    lineno:3    NodeType:NODE_CONST    node->type=int value=1 child:     
+nodeID:1    lineno:2    NodeType:NODE_STMT    child: 4 5     
+nodeID:2    lineno:3    NodeType:NODE_STMT    child: 6 7     
+nodeID:3    lineno:4    NodeType:NODE_STMT    child: 8 9     
+nodeID:4    lineno:2    NodeType:NODE_TYPE    TYPE_SPEC=int    child:     
+nodeID:5    lineno:2    NodeType:NODE_VAR    var_name=a    child:     
+nodeID:6    lineno:3    NodeType:NODE_TYPE    TYPE_SPEC=int    child:     
+nodeID:7    lineno:3    NodeType:NODE_VAR    var_name=b    child:     
+nodeID:8    lineno:4    NodeType:NODE_TYPE    TYPE_SPEC=int    child:     
+nodeID:9    lineno:4    NodeType:NODE_VAR    var_name=c    child:     
