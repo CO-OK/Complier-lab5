@@ -116,6 +116,11 @@ T: T_INT {
     $$->type = TYPE_BOOL;
     printf("T_BOOL\n");
 }
+| T_STRING{
+    $$ = new TreeNode(lineno,NODE_TYPE);
+    $$->type = TYPE_STRING;
+    printf("T_STRING\n");
+}
 ;
 
 %%

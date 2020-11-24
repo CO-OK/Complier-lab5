@@ -12,7 +12,7 @@ WHILTESPACE [[:blank:]]
 INTEGER [0-9]+
 
 CHAR \'.?\'
-STRING \".+\"
+STRING \".*\"
 
 IDENTIFIER [[:alpha:]_][[:alpha:][:digit:]_]* 
 %%
@@ -24,6 +24,7 @@ IDENTIFIER [[:alpha:]_][[:alpha:][:digit:]_]*
 "int" return T_INT;
 "bool" return T_BOOL;
 "char" return T_CHAR;
+"string" return T_STRING;
 
 "=" return LOP_ASSIGN;
 

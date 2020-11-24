@@ -1,4 +1,4 @@
 
-int a=1;
-int b;
+string a="ssssss";
+char b='c';
 int c;
