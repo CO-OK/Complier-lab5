@@ -131,6 +131,10 @@ void TreeNode::printSpecialInfo() {
             {
                 cout<<"value="<<this->b_val<<" ";
             }
+            else if(tmp=="string")
+            {
+                cout<<"value="<<this->str_val<<" ";
+            }
             break;
         }
         case NODE_VAR:{
@@ -149,6 +153,9 @@ void TreeNode::printSpecialInfo() {
             break;
         case NODE_TYPE:
             break;
+        case NODE_OPERATOR:{
+            cout<<"operator_type_= "<<this->opType2String(this->optype)<<"     ";
+        }
         default:
             break;
     }
@@ -206,6 +213,21 @@ string TreeNode::nodeType2String (NodeType type){
             //cout<<"NodeType: NODE_PROG"<<endl;
             return "NODE_PROG";
         }
+        case NODE_DECL_STMT:{
+            return "NODE_DECL_STMT";
+        }
+        case NODE_OPERATOR:{
+            return "NODE_OPERATOR";
+        }
+        case NODE_ASSIGN_STMT:{
+            return "NODE_ASSIGN_STMT";
+        }
+        case NODE_additive_Exp:{
+            return "NODE_additive_Exp";
+        }
+        case NODE_BLOCK_FLAG:{
+            return "NODE_BLOCK_FLAG";
+        }
         default:
             return "";
     }
@@ -218,6 +240,33 @@ string TreeNode::opType2String (OperatorType type)
         case OP_EQ:{
             //cout<<"OperatorType: OP_EQ"<<endl;
             return "OP_EQ";
+        }
+        case OP_ASSIGN_EQ:{
+            return "OP_ASSGIN_EQ";
+        }
+        case OP_OR_EQ:{
+            return "OP_OR_EQ";
+        }
+        case OP_AND_EQ:{
+            return "OP_AND_EQ";
+        }
+        case OP_ASSIGN_NOT_EQ:{
+            return "OP_ASSIGN_NOT_EQ";
+        }
+        case OP_ADD:{
+            return "OP_ADD";
+        }
+        case OP_SUB:{
+            return "OP_SUB";
+        }
+        case OP_MULT:{
+            return "OP_MULT";
+        }
+        case OP_DIV:{
+            return "OP_DIV";
+        }
+        case OP_MOD:{
+            return "OP_MOD";
         }
         default:
             return "";

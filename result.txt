@@ -1,39 +1,37 @@
-T_STRING
-IDENTIFIER
-add child
-add child
-add child
-T IDENTIFIER LOP_ASSIGN expr
-declaration SEMICOLON
-statement
-T_CHAR
-CHAR
-add child
-add child
-add child
-T IDENTIFIER LOP_ASSIGN expr
-declaration SEMICOLON
-add sibling
-statements statement
 T_INT
 add child
 add child
 T IDENTIFIER
 declaration SEMICOLON
+statement
+IDENTIFIER
+unaryExp
+assignment_OperatorIDENTIFIER
+unaryExp
+INTEGER
+INTEGER
+add child
+add child
+add child
+add child
+add child
+add child
+unaryExp assignment_Operator additive_Exp
+add child
 add sibling
 statements statement
 add child
 program
 id:12
-nodeID:0    lineno:0    NodeType:NODE_PROG    child: 1 2 3     
-nodeID:1    lineno:2    NodeType:NODE_STMT    child: 4 5 6     
-nodeID:2    lineno:3    NodeType:NODE_STMT    child: 7 8 9     
-nodeID:3    lineno:4    NodeType:NODE_STMT    child: 10 11     
-nodeID:4    lineno:2    NodeType:NODE_TYPE    TYPE_SPEC=string    child:     
-nodeID:5    lineno:2    NodeType:NODE_VAR    var_name=a    child:     
-nodeID:6    lineno:2    NodeType:NODE_VAR    var_name=ssssss    child:     
-nodeID:7    lineno:3    NodeType:NODE_TYPE    TYPE_SPEC=char    child:     
-nodeID:8    lineno:3    NodeType:NODE_VAR    var_name=b    child:     
-nodeID:9    lineno:3    NodeType:NODE_CONST    node->type=char ascii_value=99 character=c child:     
-nodeID:10    lineno:4    NodeType:NODE_TYPE    TYPE_SPEC=int    child:     
-nodeID:11    lineno:4    NodeType:NODE_VAR    var_name=c    child:     
+nodeID:0    lineno:0    NodeType:NODE_PROG    child: 1 2     
+nodeID:1    lineno:2    NodeType:NODE_DECL_STMT    child: 3 4     
+nodeID:2    lineno:3    NodeType:NODE_BLOCK_FLAG    child: 5     
+nodeID:3    lineno:2    NodeType:NODE_TYPE    TYPE_SPEC=int    child:     
+nodeID:4    lineno:2    NodeType:NODE_VAR    var_name=d    child:     
+nodeID:5    lineno:3    NodeType:NODE_ASSIGN_STMT    child: 6 7 8     
+nodeID:6    lineno:3    NodeType:NODE_VAR    var_name=d    child:     
+nodeID:7    lineno:3    NodeType:NODE_OPERATOR    operator_type_= OP_ASSGIN_EQ     child:     
+nodeID:8    lineno:3    NodeType:NODE_additive_Exp    child: 9 10 11     
+nodeID:9    lineno:3    NodeType:NODE_VAR    var_name=c    child:     
+nodeID:10    lineno:3    NodeType:NODE_OPERATOR    operator_type_= OP_ADD     child:     
+nodeID:11    lineno:3    NodeType:NODE_CONST    node->type=int value=1 child:     

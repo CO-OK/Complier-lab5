@@ -1,4 +1,3 @@
 
-string a="ssssss";
-char b='c';
-int c;
+int d;
+{d=c+1;}

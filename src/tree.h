@@ -11,14 +11,28 @@ enum NodeType
     NODE_EXPR,
     NODE_TYPE, //声明节点如int,char
 
+    NODE_ASSIGN_STMT,//赋值语句
     NODE_STMT,
+    NODE_DECL_STMT,//声明语句
     NODE_PROG,
     NODE_IDENTIFIER,//标识符
+    NODE_OPERATOR,//运算符
+    NODE_additive_Exp,//算数表达式
+    NODE_BLOCK_FLAG, //语句块即{.....}的标志
 };
 
 enum OperatorType
 {
     OP_EQ,  // ==
+    OP_OR_EQ, //|=
+    OP_ASSIGN_EQ, //=
+    OP_AND_EQ, //&=
+    OP_ASSIGN_NOT_EQ, //^=
+    OP_ADD, //+
+    OP_SUB, //-
+    OP_MULT, //*
+    OP_DIV, // /
+    OP_MOD, //%
 };
 
 enum StmtType {
@@ -45,6 +59,8 @@ public:
     void printSpecialInfo();
 
     void genNodeId();
+
+
 
 public:
     OperatorType optype;  // 如果是表达式
