@@ -1,12 +1,44 @@
 T_INT
+T_INT
+add child
+add child
+T IDENTIFIER
+declaration SEMICOLON
+statement
+T_INT
+add child
+add child
+T IDENTIFIER
+declaration SEMICOLON
+add sibling
+statements statement
+IDENTIFIER
+unaryExp
 assignment_OperatorINTEGER
 INTEGER
 add child
 add child
 add child
-T IDENTIFIER LOP_ASSIGN expr
+unaryExp assignment_Operator additive_Exp
+add sibling
+statements statement
+IDENTIFIER
+unaryExp
+assignment_OperatorINTEGER
+INTEGER
+add child
+add child
+add child
+unaryExp assignment_Operator additive_Exp
+add sibling
+statements statement
+T_CHAR
+add child
+add child
+T IDENTIFIER
 declaration SEMICOLON
-statement
+add sibling
+statements statement
 IDENTIFIER
 unaryExp
 INTEGER
@@ -14,7 +46,108 @@ INTEGER
 add child
 add child
 add child
-relational_exp OP_GREATER_EQ additive_Exp
+relational_exp OP_GREATER additive_Exp
+IDENTIFIER
+unaryExp
+INTEGER
+INTEGER
+add child
+add child
+add child
+relational_exp OP_GREATER additive_Exp
+add child
+add child
+add child
+logical_and_exp LOP_DOUBLE_AND equality_exp
+IDENTIFIER
+unaryExp
+INTEGER
+INTEGER
+add child
+add child
+add child
+INTEGER
+INTEGER
+add child
+add child
+add child
+equality_exp LOP_EQ relational_exp
+IDENTIFIER
+unaryExp
+INTEGER
+INTEGER
+add child
+add child
+add child
+equality_exp LOP_EQ relational_exp
+add child
+add child
+add child
+logical_and_exp LOP_DOUBLE_AND equality_exp
+add child
+add child
+add child
+logical_or_exp LOP_DOUBLE_OR logical_and_exp
+IDENTIFIER
+unaryExp
+INTEGER
+INTEGER
+add child
+add child
+add child
+unaryExp assignment_Operator additive_Exp
+statement
+T_INT
+add child
+add child
+T IDENTIFIER
+declaration SEMICOLON
+add sibling
+statements statement
+IDENTIFIER
+unaryExp
+assignment_OperatorINTEGER
+INTEGER
+add child
+add child
+add child
+unaryExp assignment_Operator additive_Exp
+add sibling
+statements statement
+IDENTIFIER
+unaryExp
+IDENTIFIER
+unaryExp
+add child
+add child
+add child
+unaryExp assignment_Operator additive_Exp
+add sibling
+statements statement
+IDENTIFIER
+unaryExp
+INTEGER
+INTEGER
+add child
+add child
+add child
+relational_exp OP_LESS additive_Exp
+T_INT
+add child
+add child
+T IDENTIFIER
+declaration SEMICOLON
+statement
+IDENTIFIER
+unaryExp
+assignment_OperatorINTEGER
+INTEGER
+add child
+add child
+add child
+unaryExp assignment_Operator additive_Exp
+add sibling
+statements statement
 T_INT
 assignment_OperatorINTEGER
 INTEGER
@@ -22,59 +155,129 @@ add child
 add child
 add child
 T IDENTIFIER LOP_ASSIGN expr
-declaration SEMICOLON
+IDENTIFIER
+unaryExp
+IDENTIFIER
+unaryExp
+add child
+add child
+add child
+relational_exp OP_LESS additive_Exp
+IDENTIFIER
+unaryExp
+add child
+add child
+SEMICOLON
 statement
 add child
-T_INT
-assignment_OperatorINTEGER
-INTEGER
-add child
-add child
-add child
-T IDENTIFIER LOP_ASSIGN expr
-declaration SEMICOLON
-statement
 add child
 add child
 add child
 add child
-if ( conditional_Exp ) statement else statement
-add sibling
-statements statement
-T_CHAR
-assignment_OperatorINTEGER
-INTEGER
-add child
-add child
-add child
-T IDENTIFIER LOP_ASSIGN expr
-declaration SEMICOLON
+FOR L_Small_Braces Exp SEMICOLON Exp SEMICOLON Exp R_Small_Braces statement
 add sibling
 statements statement
 add child
-program
-id:24
-nodeID: 0    lineno: 0    NodeType: NODE_PROG    stype: null    child: 1 2 3     
-nodeID: 1    lineno: 1    NodeType: NODE_DECL_STMT    stype: STMT_DECL    child: 4 5 6     
-nodeID: 2    lineno: 1    NodeType: NODE_SELECTION_STMT    stype: STMT_SELETION    child: 7 8 9     
-nodeID: 3    lineno: 11    NodeType: NODE_DECL_STMT    stype: STMT_DECL    child: 10 11 12     
-nodeID: 4    lineno: 1    NodeType: NODE_TYPE    stype: null    TYPE_SPEC=int    child:     
-nodeID: 5    lineno: 1    NodeType: NODE_VAR    stype: null    var_name=a    child:     
-nodeID: 6    lineno: 1    NodeType: NODE_CONST    stype: null    node->type=int value=0 child:     
-nodeID: 7    lineno: 2    NodeType: NODE_RELATION_GREATER_EXP    stype: null    child: 13 14 15     
-nodeID: 8    lineno: 4    NodeType: NODE_BLOCK_FLAG    stype: null    child: 16     
-nodeID: 9    lineno: 8    NodeType: NODE_BLOCK_FLAG    stype: null    child: 17     
-nodeID: 10    lineno: 11    NodeType: NODE_TYPE    stype: null    TYPE_SPEC=char    child:     
-nodeID: 11    lineno: 11    NodeType: NODE_VAR    stype: null    var_name=b    child:     
-nodeID: 12    lineno: 11    NodeType: NODE_CONST    stype: null    node->type=int value=21 child:     
-nodeID: 13    lineno: 2    NodeType: NODE_VAR    stype: null    var_name=a    child:     
-nodeID: 14    lineno: 2    NodeType: NODE_OPERATOR    stype: null    operator_type_= OP_GREATER_EQ     child:     
-nodeID: 15    lineno: 2    NodeType: NODE_CONST    stype: null    node->type=int value=1 child:     
-nodeID: 16    lineno: 4    NodeType: NODE_DECL_STMT    stype: STMT_DECL    child: 18 19 20     
-nodeID: 17    lineno: 8    NodeType: NODE_DECL_STMT    stype: STMT_DECL    child: 21 22 23     
-nodeID: 18    lineno: 4    NodeType: NODE_TYPE    stype: null    TYPE_SPEC=int    child:     
-nodeID: 19    lineno: 4    NodeType: NODE_VAR    stype: null    var_name=d    child:     
-nodeID: 20    lineno: 4    NodeType: NODE_CONST    stype: null    node->type=int value=9 child:     
-nodeID: 21    lineno: 8    NodeType: NODE_TYPE    stype: null    TYPE_SPEC=int    child:     
-nodeID: 22    lineno: 8    NodeType: NODE_VAR    stype: null    var_name=f    child:     
-nodeID: 23    lineno: 8    NodeType: NODE_CONST    stype: null    node->type=int value=6 child:     
+add child
+add child
+if ( conditional_Exp ) statement
+add sibling
+statements statement
+add child
+add child
+add child
+WHILE L_Small_Braces conditional_Exp R_Small_Braces statement
+add sibling
+statements statement
+add child
+add child
+main
+id:88
+nodeID: 0    lineno: 0    NodeType: NODE_PROG    stype: null    child: 1 2 3 4 5 6 7     
+nodeID: 1    lineno: 1    NodeType: NODE_TYPE    stype: null    TYPE_SPEC=int    child:     
+nodeID: 2    lineno: 2    NodeType: NODE_DECL_STMT    stype: STMT_DECL    child: 8 9     
+nodeID: 3    lineno: 3    NodeType: NODE_DECL_STMT    stype: STMT_DECL    child: 10 11     
+nodeID: 4    lineno: 4    NodeType: NODE_EXPR    stype: null    expr_type=NODE_ASSIGN_EXP    child: 12 13 14     
+nodeID: 5    lineno: 5    NodeType: NODE_EXPR    stype: null    expr_type=NODE_ASSIGN_EXP    child: 15 16 17     
+nodeID: 6    lineno: 6    NodeType: NODE_DECL_STMT    stype: STMT_DECL    child: 18 19     
+nodeID: 7    lineno: 21    NodeType: NDOE_ITERATION_STMT    stype: null    iteration_type=STMT_ITERATION_WHILE    child: 20 21     
+nodeID: 8    lineno: 2    NodeType: NODE_TYPE    stype: null    TYPE_SPEC=int    child:     
+nodeID: 9    lineno: 2    NodeType: NODE_VAR    stype: null    var_name=a    child:     
+nodeID: 10    lineno: 3    NodeType: NODE_TYPE    stype: null    TYPE_SPEC=int    child:     
+nodeID: 11    lineno: 3    NodeType: NODE_VAR    stype: null    var_name=s    child:     
+nodeID: 12    lineno: 4    NodeType: NODE_VAR    stype: null    var_name=a    child:     
+nodeID: 13    lineno: 4    NodeType: NODE_OPERATOR    stype: null    operator_type_= OP_ASSGIN_EQ     child:     
+nodeID: 14    lineno: 4    NodeType: NODE_CONST    stype: null    node->type=int value=10 child:     
+nodeID: 15    lineno: 5    NodeType: NODE_VAR    stype: null    var_name=s    child:     
+nodeID: 16    lineno: 5    NodeType: NODE_OPERATOR    stype: null    operator_type_= OP_ASSGIN_EQ     child:     
+nodeID: 17    lineno: 5    NodeType: NODE_CONST    stype: null    node->type=int value=0 child:     
+nodeID: 18    lineno: 6    NodeType: NODE_TYPE    stype: null    TYPE_SPEC=char    child:     
+nodeID: 19    lineno: 6    NodeType: NODE_VAR    stype: null    var_name=ch    child:     
+nodeID: 20    lineno: 8    NodeType: NODE_EXPR    stype: null    expr_type=NODE_LOGICAL_OR_EXP    child: 22 23 24     
+nodeID: 21    lineno: 9    NodeType: NODE_BLOCK_FLAG    stype: null    child: 25 26 27 28 29     
+nodeID: 22    lineno: 8    NodeType: NODE_EXPR    stype: null    expr_type=NODE_LOGICAL_AND_EXP    child: 30 31 32     
+nodeID: 23    lineno: 8    NodeType: NODE_OPERATOR    stype: null    operator_type_= OP_DOUBLE_OR     child:     
+nodeID: 24    lineno: 8    NodeType: NODE_EXPR    stype: null    expr_type=NODE_LOGICAL_AND_EXP    child: 33 34 35     
+nodeID: 25    lineno: 9    NodeType: NODE_EXPR    stype: null    expr_type=NODE_ASSIGN_EXP    child: 36 37 38     
+nodeID: 26    lineno: 10    NodeType: NODE_DECL_STMT    stype: STMT_DECL    child: 39 40     
+nodeID: 27    lineno: 11    NodeType: NODE_EXPR    stype: null    expr_type=NODE_ASSIGN_EXP    child: 41 42 43     
+nodeID: 28    lineno: 12    NodeType: NODE_EXPR    stype: null    expr_type=NODE_ASSIGN_EXP    child: 44 45 46     
+nodeID: 29    lineno: 21    NodeType: NODE_SELECTION_STMT    stype: STMT_SELETION    child: 47 48     
+nodeID: 30    lineno: 8    NodeType: NODE_EXPR    stype: null    expr_type=NODE_RELATION_GREATER_EXP    child: 49 50 51     
+nodeID: 31    lineno: 8    NodeType: NODE_OPERATOR    stype: null    operator_type_= OP_DOUBLE_AND     child:     
+nodeID: 32    lineno: 8    NodeType: NODE_EXPR    stype: null    expr_type=NODE_RELATION_LESS_EQ_EXP    child: 52 53 54     
+nodeID: 33    lineno: 8    NodeType: NODE_EXPR    stype: null    expr_type=NODE_EQUALITY_EXP    child: 55 56 57     
+nodeID: 34    lineno: 8    NodeType: NODE_OPERATOR    stype: null    operator_type_= OP_DOUBLE_AND     child:     
+nodeID: 35    lineno: 8    NodeType: NODE_EXPR    stype: null    expr_type=NODE_EQUALITY_EXP    child: 58 59 60     
+nodeID: 36    lineno: 9    NodeType: NODE_VAR    stype: null    var_name=a    child:     
+nodeID: 37    lineno: 9    NodeType: NODE_OPERATOR    stype: null    operator_type_= OP_SUB_EQ     child:     
+nodeID: 38    lineno: 9    NodeType: NODE_CONST    stype: null    node->type=int value=1 child:     
+nodeID: 39    lineno: 10    NodeType: NODE_TYPE    stype: null    TYPE_SPEC=int    child:     
+nodeID: 40    lineno: 10    NodeType: NODE_VAR    stype: null    var_name=a    child:     
+nodeID: 41    lineno: 11    NodeType: NODE_VAR    stype: null    var_name=a    child:     
+nodeID: 42    lineno: 11    NodeType: NODE_OPERATOR    stype: null    operator_type_= OP_ASSGIN_EQ     child:     
+nodeID: 43    lineno: 11    NodeType: NODE_CONST    stype: null    node->type=int value=10 child:     
+nodeID: 44    lineno: 12    NodeType: NODE_VAR    stype: null    var_name=s    child:     
+nodeID: 45    lineno: 12    NodeType: NODE_OPERATOR    stype: null    operator_type_= OP_ADD_EQ     child:     
+nodeID: 46    lineno: 12    NodeType: NODE_VAR    stype: null    var_name=a    child:     
+nodeID: 47    lineno: 13    NodeType: NODE_EXPR    stype: null    expr_type=NODE_RELATION_LESS_EXP    child: 61 62 63     
+nodeID: 48    lineno: 15    NodeType: NODE_BLOCK_FLAG    stype: null    child: 64 65 66     
+nodeID: 49    lineno: 8    NodeType: NODE_VAR    stype: null    var_name=a    child:     
+nodeID: 50    lineno: 8    NodeType: NODE_OPERATOR    stype: null    operator_type_= OP_GREATER     child:     
+nodeID: 51    lineno: 8    NodeType: NODE_CONST    stype: null    node->type=int value=0 child:     
+nodeID: 52    lineno: 8    NodeType: NODE_VAR    stype: null    var_name=a    child:     
+nodeID: 53    lineno: 8    NodeType: NODE_OPERATOR    stype: null    operator_type_= OP_LESS_EQ     child:     
+nodeID: 54    lineno: 8    NodeType: NODE_CONST    stype: null    node->type=int value=10 child:     
+nodeID: 55    lineno: 8    NodeType: NODE_EXPR    stype: null    expr_type=NODE_additive_Exp    child: 67 68 69     
+nodeID: 56    lineno: 8    NodeType: NODE_OPERATOR    stype: null    operator_type_= OP_EQ     child:     
+nodeID: 57    lineno: 8    NodeType: NODE_CONST    stype: null    node->type=int value=10 child:     
+nodeID: 58    lineno: 8    NodeType: NODE_VAR    stype: null    var_name=a    child:     
+nodeID: 59    lineno: 8    NodeType: NODE_OPERATOR    stype: null    operator_type_= OP_EQ     child:     
+nodeID: 60    lineno: 8    NodeType: NODE_CONST    stype: null    node->type=int value=10 child:     
+nodeID: 61    lineno: 13    NodeType: NODE_VAR    stype: null    var_name=s    child:     
+nodeID: 62    lineno: 13    NodeType: NODE_OPERATOR    stype: null    operator_type_= OP_LESS     child:     
+nodeID: 63    lineno: 13    NodeType: NODE_CONST    stype: null    node->type=int value=10 child:     
+nodeID: 64    lineno: 15    NodeType: NODE_DECL_STMT    stype: STMT_DECL    child: 70 71     
+nodeID: 65    lineno: 16    NodeType: NODE_EXPR    stype: null    expr_type=NODE_ASSIGN_EXP    child: 72 73 74     
+nodeID: 66    lineno: 19    NodeType: NDOE_ITERATION_STMT    stype: null    iteration_type=STMT_ITERATION_FOR_EEE    child: 75 76 77 78     
+nodeID: 67    lineno: 8    NodeType: NODE_VAR    stype: null    var_name=a    child:     
+nodeID: 68    lineno: 8    NodeType: NODE_OPERATOR    stype: null    operator_type_= OP_MOD     child:     
+nodeID: 69    lineno: 8    NodeType: NODE_CONST    stype: null    node->type=int value=100 child:     
+nodeID: 70    lineno: 15    NodeType: NODE_TYPE    stype: null    TYPE_SPEC=int    child:     
+nodeID: 71    lineno: 15    NodeType: NODE_VAR    stype: null    var_name=b    child:     
+nodeID: 72    lineno: 16    NodeType: NODE_VAR    stype: null    var_name=b    child:     
+nodeID: 73    lineno: 16    NodeType: NODE_OPERATOR    stype: null    operator_type_= OP_ASSGIN_EQ     child:     
+nodeID: 74    lineno: 16    NodeType: NODE_CONST    stype: null    node->type=int value=10 child:     
+nodeID: 75    lineno: 17    NodeType: NODE_DECL_STMT    stype: STMT_DECL    child: 79 80 81     
+nodeID: 76    lineno: 17    NodeType: NODE_EXPR    stype: null    expr_type=NODE_RELATION_LESS_EXP    child: 82 83 84     
+nodeID: 77    lineno: 17    NodeType: NODE_EXPR    stype: null    expr_type=NODE_POSTFIX_EXP    child: 85 86     
+nodeID: 78    lineno: 18    NodeType: NODE_BLOCK_FLAG    stype: null    child: 87     
+nodeID: 79    lineno: 17    NodeType: NODE_TYPE    stype: null    TYPE_SPEC=int    child:     
+nodeID: 80    lineno: 17    NodeType: NODE_VAR    stype: null    var_name=i    child:     
+nodeID: 81    lineno: 17    NodeType: NODE_CONST    stype: null    node->type=int value=0 child:     
+nodeID: 82    lineno: 17    NodeType: NODE_VAR    stype: null    var_name=i    child:     
+nodeID: 83    lineno: 17    NodeType: NODE_OPERATOR    stype: null    operator_type_= OP_LESS     child:     
+nodeID: 84    lineno: 17    NodeType: NODE_VAR    stype: null    var_name=b    child:     
+nodeID: 85    lineno: 17    NodeType: NODE_VAR    stype: null    var_name=i    child:     
+nodeID: 86    lineno: 17    NodeType: NODE_OPERATOR    stype: null    operator_type_= OP_DOUBLE_ADD     child:     
+nodeID: 87    lineno: 18    NodeType: NODE_STMT    stype: STMT_SKIP    child:     

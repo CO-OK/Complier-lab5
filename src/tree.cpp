@@ -72,6 +72,18 @@ void TreeNode::printNodeInfo() {
     {
         cout<<"TYPE_SPEC="<<this->type->getTypeInfo()<<"    ";
     }
+    if(this->nodeType==NODE_EXPR)
+    {
+        cout<<"expr_type="<<this->exprType2String(this->exprtype)<<"    ";
+    }
+    if(this->nodeType==NDOE_ITERATION_STMT)
+    {
+        cout<<"iteration_type="<<this->IterationType2String(this->iterationtype)<<"    ";
+    }
+    if(this->nodeType==NODE_JUMP_STMT)
+    {
+        cout<<"jumptype="<<this->JumpStmtType2String(this->jumptype)<<"    ";
+    }
 }
 
 void TreeNode::printChildrenId() {
@@ -132,12 +144,6 @@ void TreeNode::printSpecialInfo() {
             break;
         }
         case NODE_VAR:{
-            /*
-            TreeNode* node = new TreeNode(lineno, NODE_VAR);
-            node->var_name = string(yytext);
-            yylval = node;
-            return IDENTIFIER;
-            */
            cout<<"var_name="<<this->var_name<<"    ";
            break;
         }
@@ -172,11 +178,89 @@ string TreeNode::sType2String(StmtType type) {
         case STMT_SELECTION:{
             return "STMT_SELETION";
         }
+        
         default:
             return "null";
     }
 }
 
+
+string TreeNode::IterationType2String(IterationType type)
+{
+    switch(type)
+    {
+        case ITERATION_WHILE:{
+            return "STMT_ITERATION_WHILE";
+        }
+        case ITERATION_FOR_EEE:{
+            return "STMT_ITERATION_FOR_EEE";
+        }
+        case ITERATION_FOR_EE_:{
+            return "ITERATION_FOR_EE_";
+        }
+        case ITERATION_FOR_E_E:{
+            return "ITERATION_FOR_E_E";
+        }
+        case ITERATION_FOR_E__:{
+            return "ITERATION_FOR_E__";
+        }
+        case ITERATION_FOR__EE:{
+            return "ITERATION_FOR__EE";
+        }
+        case ITERATION_FOR__E_:{
+            return "ITERATION_FOR__E_";
+        }
+        case ITERATION_FOR___E:{
+            return "ITERATION_FOR___E";
+        }
+        case ITERATION_FOR____:{
+            return "ITERATION_FOR____";
+        }
+        default:
+            return "null";
+    }
+}
+
+string TreeNode::exprType2String(ExprType type){
+    switch(type)
+    {
+        case NODE_additive_Exp:{
+            return "NODE_additive_Exp";
+        }
+        case NODE_ASSIGN_EXP:{
+            return "NODE_ASSIGN_EXP";
+        }
+        case NODE_LOGICAL_OR_EXP:{
+            return "NODE_LOGICAL_OR_EXP";
+        }
+        case NODE_LOGICAL_AND_EXP:{
+            return "NODE_LOGICAL_AND_EXP";
+        }
+        case NODE_EQUALITY_EXP:{
+            return "NODE_EQUALITY_EXP";
+        }
+        case NODE_NOT_EQUALITY_EXP:{
+            return "NODE_NOT_EQUALITY_EXP";
+        }
+        case NODE_RELATION_LESS_EXP:{
+            return "NODE_RELATION_LESS_EXP";
+        }
+        case NODE_RELATION_GREATER_EXP:{
+            return "NODE_RELATION_GREATER_EXP";
+        }
+        case NODE_RELATION_LESS_EQ_EXP:{
+            return "NODE_RELATION_LESS_EQ_EXP";
+        }
+        case NODE_RELATION_GREATER_EQ_EXP:{
+            return "NODE_RELATION_GREATER_EQ_EXP";
+        }
+        case NODE_POSTFIX_EXP:{
+            return "NODE_POSTFIX_EXP";
+        }
+        default:
+            return "null";
+    }
+}
 
 string TreeNode::nodeType2String (NodeType type){
     switch(type)
@@ -214,44 +298,42 @@ string TreeNode::nodeType2String (NodeType type){
         case NODE_ASSIGN_STMT:{
             return "NODE_ASSIGN_STMT";
         }
-        case NODE_additive_Exp:{
-            return "NODE_additive_Exp";
-        }
         case NODE_BLOCK_FLAG:{
             return "NODE_BLOCK_FLAG";
         }
         case NODE_SELECTION_STMT:{
             return "NODE_SELECTION_STMT";
         }
-        case NODE_LOGICAL_OR_EXP:{
-            return "NODE_LOGICAL_OR_EXP";
+        case NDOE_ITERATION_STMT:{
+            return "NDOE_ITERATION_STMT";
         }
-        case NODE_LOGICAL_AND_EXP:{
-            return "NODE_LOGICAL_AND_EXP";
-        }
-        case NODE_EQUALITY_EXP:{
-            return "NODE_EQUALITY_EXP";
-        }
-        case NODE_NOT_EQUALITY_EXP:{
-            return "NODE_NOT_EQUALITY_EXP";
-        }
-        case NODE_RELATION_LESS_EXP:{
-            return "NODE_RELATION_LESS_EXP";
-        }
-        case NODE_RELATION_GREATER_EXP:{
-            return "NODE_RELATION_GREATER_EXP";
-        }
-        case NODE_RELATION_LESS_EQ_EXP:{
-            return "NODE_RELATION_LESS_EQ_EXP";
-        }
-        case NODE_RELATION_GREATER_EQ_EXP:{
-            return "NODE_RELATION_GREATER_EXP";
+        case NODE_JUMP_STMT:{
+            return "NODE_JUMP_STMT";
         }
         default:
             return "null";
     }
 }
-
+string TreeNode::JumpStmtType2String(JumpStmtType type)
+{
+    switch(type)
+    {
+        case JUMP_CONTINUE:{
+            return "JUMP_CONTINUE";
+        }
+        case JUMP_BREAK:{
+            return "JUMP_BREAK";
+        }
+        case JUMP_RETURN_EXP:{
+            return "JUMP_RETURN_EXP";
+        }
+        case JUMP_RETURN:{
+            return "JUMP_RETURN";
+        }
+        default:
+            return "null";
+    }
+}
 string TreeNode::opType2String (OperatorType type)
 {
     switch(type)
@@ -307,6 +389,27 @@ string TreeNode::opType2String (OperatorType type)
         }
         case OP_GREATER_EQ:{
             return "OP_GREATER_EQ";
+        }
+        case OP_ADD_EQ:{
+            return "OP_ADD_EQ";
+        }
+        case OP_SUB_EQ:{
+            return "OP_SUB_EQ";
+        }
+        case OP_MULT_EQ:{
+            return "OP_MULT_EQ";
+        }
+        case OP_DIV_EQ:{
+            return "OP_DIV_EQ";
+        }
+        case OP_MOD_EQ:{
+            return "OP_MOD_EQ";
+        }
+        case OP_DOUBLE_ADD:{
+            return "OP_DOUBLE_ADD";
+        }
+        case OP_DOUBLE_SUB:{
+            return "OP_DOUBLE_SUB";
         }
         default:
             return "null";

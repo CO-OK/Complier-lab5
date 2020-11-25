@@ -2,6 +2,7 @@
 %{
 #include "common.h"
 #include "main.tab.h"  // yacc header
+#include <string.h>
 int lineno=1;
 %}
 BLOCKCOMMENT \/\*([^\*^\/]*|[\*^\/*]*|[^\**\/]*)*\*\/
@@ -24,8 +25,11 @@ LOP_GREATER ">"
 LOP_LESS_EQ "<=" 
 LOP_GREATER_EQ ">=" 
 
+DOUBLE_ADD "++"
+DOUBLE_SUB "--"
 CHAR \'.?\'
 STRING \".*\"
+BOOL ("true"|"false")
 
 IDENTIFIER [[:alpha:]_][[:alpha:][:digit:]_]* 
 %%
@@ -44,13 +48,28 @@ IDENTIFIER [[:alpha:]_][[:alpha:][:digit:]_]*
 "|=" return LOP_ASSIGN_OR;
 "&=" return LOP_ASSIGN_AND;
 "^=" return LOP_ASSIGN_NOT;
+"+=" return LOP_ASSIGN_ADD;
+"-=" return LOP_ASSIGN_SUB;
+"*=" return LOP_ASSIGN_MULT;
+"/=" return LOP_ASSIGN_DIV;
+"%=" return LOP_ASSIGN_MOD;
+
 
 "(" return L_Small_Braces;
 ")" return R_Small_Braces;
 "if" return IF;
 "else" return ELSE;
+"while" return WHILE;
+"for" return FOR;
+
+"continue" return CONTINUE;
+"break" return BREAK;
+"return" return RETURN;
+
+"main" return MAIN;
 
 ";" return  SEMICOLON;
+"," return COMMA;
 
 {INTEGER} {
     printf("INTEGER\n");
@@ -76,6 +95,21 @@ IDENTIFIER [[:alpha:]_][[:alpha:][:digit:]_]*
     node->str_val = yytext;
     yylval = node;
     return CHAR;
+}
+
+{BOOL} {
+    TreeNode* node = new TreeNode(lineno, NODE_CONST);
+    node->type = TYPE_BOOL;
+    if(strcmp(yytext,"true")==0||atoi(yytext)==1)
+    {
+        node->b_val=1;
+    }
+    else{
+        node->b_val=0;
+    }
+    //node->str_val = yytext;
+    yylval = node;
+    return BOOL;
 }
 
 {IDENTIFIER} {
@@ -178,6 +212,19 @@ IDENTIFIER [[:alpha:]_][[:alpha:][:digit:]_]*
     return LOP_GREATER_EQ; 
 }
 
+{DOUBLE_ADD} {
+    TreeNode* node = new TreeNode(lineno, NODE_OPERATOR);
+    node->optype=OP_DOUBLE_ADD;
+    yylval = node;
+    return DOUBLE_ADD;
+}
+
+{DOUBLE_SUB} {
+    TreeNode* node = new TreeNode(lineno, NODE_OPERATOR);
+    node->optype=OP_DOUBLE_SUB;
+    yylval = node;
+    return DOUBLE_SUB;
+}
 {WHILTESPACE} /* do nothing */
 
 {EOL} lineno++;

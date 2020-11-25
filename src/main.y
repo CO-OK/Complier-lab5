@@ -8,16 +8,25 @@
 %}
 %token T_CHAR T_INT T_STRING T_BOOL 
 
-%token LOP_ASSIGN LOP_ASSIGN_OR LOP_ASSIGN_AND LOP_ASSIGN_NOT LOP_ADD LOP_SUB LOP_MULT LOP_DIV LOP_MOD 
+%token LOP_ASSIGN LOP_ASSIGN_OR LOP_ASSIGN_AND LOP_ASSIGN_NOT LOP_ASSIGN_ADD LOP_ASSIGN_SUB LOP_ASSIGN_MULT LOP_ASSIGN_DIV LOP_ASSIGN_MOD
+
+%token LOP_ADD LOP_SUB LOP_MULT LOP_DIV LOP_MOD 
 
 %token LOP_DOUBLE_OR LOP_DOUBLE_AND LOP_EQ LOP_NOT_EQ LOP_LESS LOP_GREATER LOP_LESS_EQ LOP_GREATER_EQ
 
-%token SEMICOLON
+%token SEMICOLON COMMA
 
 %token IDENTIFIER INTEGER CHAR BOOL STRING
 
-%token L_Braces R_Braces L_Small_Braces R_Small_Braces IF ELSE
+%token L_Braces R_Braces L_Small_Braces R_Small_Braces 
 
+%token IF ELSE WHILE FOR
+
+%token CONTINUE BREAK RETURN
+
+%token DOUBLE_ADD DOUBLE_SUB
+
+%token MAIN
 
 %%
 
@@ -26,6 +35,12 @@ program
     root = new TreeNode(0, NODE_PROG); 
     root->addChild($1);
     printf("program\n");
+}
+| T MAIN L_Small_Braces R_Small_Braces compound_Stmt{
+    root = new TreeNode(0, NODE_PROG); 
+    root->addChild($1);
+    root->addChild($5);
+    printf("main\n");
 }
 ;
 
@@ -63,8 +78,36 @@ statement
 | selection_Stmt{
     $$=$1;
 }
+| iteration_Stmt{
+    $$=$1;
+}
+| jump_Stmt {
+    $$=$1;
+}
 ;
 
+jump_Stmt
+: CONTINUE SEMICOLON{
+    TreeNode* node = new TreeNode(lineno, NODE_JUMP_STMT);
+    node->jumptype=JUMP_CONTINUE;
+    $$=node;
+}
+| BREAK SEMICOLON{
+    TreeNode* node = new TreeNode(lineno, NODE_JUMP_STMT);
+    node->jumptype=JUMP_BREAK;
+    $$=node;
+}
+| RETURN Exp SEMICOLON{
+    TreeNode* node = new TreeNode(lineno, NODE_JUMP_STMT);
+    node->jumptype=JUMP_RETURN_EXP;
+    $$=node;
+}
+| RETURN SEMICOLON{
+    TreeNode* node = new TreeNode(lineno, NODE_JUMP_STMT);
+    node->jumptype=JUMP_RETURN;
+    $$=node;
+}
+;
 compound_Stmt
 : L_Braces statements R_Braces{
     $$=$2;
@@ -73,17 +116,17 @@ compound_Stmt
 
 
 selection_Stmt
-: IF L_Small_Braces conditional_Exp R_Small_Braces statement{
-    TreeNode* node = new TreeNode($1->lineno, NODE_SELECTION_STMT);
-    node->stype = STMT_SELECTION;
+: IF L_Small_Braces Exp R_Small_Braces statement{
+    TreeNode* node = new TreeNode(lineno, NODE_SELECTION_STMT);
+    node->stype = STMT_SELECTION;//以后可能改为STMT_SELECTION_IF,因为可能加入switch
     node->addChild($3);
     node->addChild($5);
     $$ = node;
     printf("if ( conditional_Exp ) statement\n");
 
 }
-| IF L_Small_Braces conditional_Exp R_Small_Braces statement ELSE statement{
-    TreeNode* node = new TreeNode($1->lineno, NODE_SELECTION_STMT);
+| IF L_Small_Braces Exp R_Small_Braces statement ELSE statement{
+    TreeNode* node = new TreeNode(lineno, NODE_SELECTION_STMT);
     node->stype = STMT_SELECTION;
     node->addChild($3);
     node->addChild($5);
@@ -93,7 +136,88 @@ selection_Stmt
 }
 ;
 
+iteration_Stmt
+: WHILE L_Small_Braces Exp R_Small_Braces statement{
+    TreeNode* node = new TreeNode(lineno, NDOE_ITERATION_STMT);
+    node->iterationtype = ITERATION_WHILE;
+    node->addChild($3);
+    node->addChild($5);
+    $$ = node;
+    printf("WHILE L_Small_Braces conditional_Exp R_Small_Braces statement\n");
+}
+| FOR L_Small_Braces Exp SEMICOLON Exp SEMICOLON Exp R_Small_Braces statement{
+    TreeNode* node = new TreeNode(lineno, NDOE_ITERATION_STMT);
+    node->iterationtype = ITERATION_FOR_EEE;
+    node->addChild($3);
+    node->addChild($5);
+    node->addChild($7);
+    node->addChild($9);
+    $$ = node;
+    printf("FOR L_Small_Braces Exp SEMICOLON Exp SEMICOLON Exp R_Small_Braces statement\n");
+}
+| FOR L_Small_Braces Exp SEMICOLON Exp SEMICOLON  R_Small_Braces statement{
+    TreeNode* node = new TreeNode(lineno, NDOE_ITERATION_STMT);
+    node->iterationtype = ITERATION_FOR_EE_;
+    node->addChild($3);
+    node->addChild($5);
+    node->addChild($8);
+    $$ = node;
+}
+| FOR L_Small_Braces Exp SEMICOLON  SEMICOLON Exp R_Small_Braces statement{
+    TreeNode* node = new TreeNode(lineno, NDOE_ITERATION_STMT);
+    node->iterationtype = ITERATION_FOR_E_E;
+    node->addChild($3);
+    node->addChild($6);
+    node->addChild($8);
+    $$ = node;
+}
+| FOR L_Small_Braces Exp SEMICOLON  SEMICOLON  R_Small_Braces statement{
+    TreeNode* node = new TreeNode(lineno, NDOE_ITERATION_STMT);
+    node->iterationtype = ITERATION_FOR_E__;
+    node->addChild($3);
+    node->addChild($7);
+    $$ = node;
+}
+| FOR L_Small_Braces  SEMICOLON Exp SEMICOLON Exp R_Small_Braces statement{
+    TreeNode* node = new TreeNode(lineno, NDOE_ITERATION_STMT);
+    node->iterationtype = ITERATION_FOR__EE;
+    node->addChild($4);
+    node->addChild($6);
+    node->addChild($8);
+    $$ = node;
+}
+| FOR L_Small_Braces  SEMICOLON Exp SEMICOLON  R_Small_Braces statement{
+    TreeNode* node = new TreeNode(lineno, NDOE_ITERATION_STMT);
+    node->iterationtype = ITERATION_FOR__E_;
+    node->addChild($4);
+    node->addChild($7);
+    $$ = node;
+}
+| FOR L_Small_Braces  SEMICOLON  SEMICOLON Exp R_Small_Braces statement{
+    TreeNode* node = new TreeNode(lineno, NDOE_ITERATION_STMT);
+    node->iterationtype = ITERATION_FOR___E;
+    node->addChild($5);
+    node->addChild($7);
+    $$ = node;
+} FOR L_Small_Braces  SEMICOLON  SEMICOLON  R_Small_Braces statement{
+    TreeNode* node = new TreeNode(lineno, NDOE_ITERATION_STMT);
+    node->iterationtype = ITERATION_FOR____;
+    node->addChild($6);
+    $$ = node;
+}
+;
 
+Exp 
+: conditional_Exp{
+    $$=$1;
+}
+| assignment_Stmt{
+    $$=$1;
+}
+| declaration{
+    $$=$1;
+}
+;
 
 conditional_Exp
 : logical_or_Exp{
@@ -106,8 +230,9 @@ logical_or_Exp
     $$=$1;
 }
 | logical_or_Exp LOP_DOUBLE_OR logical_and_Exp{
-    TreeNode* node = new TreeNode($1->lineno, NODE_LOGICAL_OR_EXP);
+    TreeNode* node = new TreeNode(lineno,NODE_EXPR );
     //node->stype = STMT_DECL;
+    node->exprtype=NODE_LOGICAL_OR_EXP;
     node->addChild($1);
     node->addChild($2);
     node->addChild($3);
@@ -121,8 +246,9 @@ logical_and_Exp
     $$=$1;
 }
 | logical_and_Exp LOP_DOUBLE_AND equality_Exp{
-    TreeNode* node = new TreeNode($1->lineno, NODE_LOGICAL_AND_EXP);
+    TreeNode* node = new TreeNode(lineno,NODE_EXPR );
     //node->stype = STMT_DECL;
+    node->exprtype=NODE_LOGICAL_AND_EXP;
     node->addChild($1);
     node->addChild($2);
     node->addChild($3);
@@ -136,8 +262,9 @@ equality_Exp
     $$=$1;
 }
 | equality_Exp LOP_EQ relational_Exp{
-    TreeNode* node = new TreeNode($1->lineno, NODE_EQUALITY_EXP);
+    TreeNode* node = new TreeNode(lineno,NODE_EXPR );
     //node->stype = STMT_DECL;
+    node->exprtype=NODE_EQUALITY_EXP;
     node->addChild($1);
     node->addChild($2);
     node->addChild($3);
@@ -145,8 +272,9 @@ equality_Exp
     printf("equality_exp LOP_EQ relational_exp\n");
 }
 | equality_Exp LOP_NOT_EQ relational_Exp{
-    TreeNode* node = new TreeNode($1->lineno, NODE_NOT_EQUALITY_EXP);
+    TreeNode* node = new TreeNode(lineno,NODE_EXPR );
     //node->stype = STMT_DECL;
+    node->exprtype=NODE_NOT_EQUALITY_EXP;
     node->addChild($1);
     node->addChild($2);
     node->addChild($3);
@@ -160,8 +288,9 @@ relational_Exp
     $$=$1;
 }
 | relational_Exp LOP_LESS additive_Exp{
-    TreeNode* node = new TreeNode($1->lineno, NODE_RELATION_LESS_EXP);
+    TreeNode* node = new TreeNode(lineno,NODE_EXPR );
     //node->stype = STMT_DECL;
+    node->exprtype=NODE_RELATION_LESS_EXP;
     node->addChild($1);
     node->addChild($2);
     node->addChild($3);
@@ -169,7 +298,8 @@ relational_Exp
     printf("relational_exp OP_LESS additive_Exp\n");
 }
 | relational_Exp LOP_GREATER additive_Exp{
-    TreeNode* node = new TreeNode($1->lineno, NODE_RELATION_GREATER_EXP);
+    TreeNode* node = new TreeNode(lineno, NODE_EXPR);
+    node->exprtype=NODE_RELATION_GREATER_EXP;
     //node->stype = STMT_DECL;
     node->addChild($1);
     node->addChild($2);
@@ -178,8 +308,9 @@ relational_Exp
     printf("relational_exp OP_GREATER additive_Exp\n");
 }
 | relational_Exp LOP_LESS_EQ additive_Exp{
-    TreeNode* node = new TreeNode($1->lineno, NODE_RELATION_LESS_EQ_EXP);
+    TreeNode* node = new TreeNode(lineno, NODE_EXPR);
     //node->stype = STMT_DECL;
+    node->exprtype=NODE_RELATION_LESS_EQ_EXP;
     node->addChild($1);
     node->addChild($2);
     node->addChild($3);
@@ -187,8 +318,9 @@ relational_Exp
     printf("relational_exp OP_GREATER additive_Exp\n");
 }
 | relational_Exp LOP_GREATER_EQ additive_Exp{
-    TreeNode* node = new TreeNode($1->lineno, NODE_RELATION_GREATER_EQ_EXP);
+    TreeNode* node = new TreeNode(lineno, NODE_EXPR);
     //node->stype = STMT_DECL;
+    node->exprtype=NODE_RELATION_GREATER_EQ_EXP;
     node->addChild($1);
     node->addChild($2);
     node->addChild($3);
@@ -198,14 +330,32 @@ relational_Exp
 ;
 
 assignment_Stmt
-: unaryExp assignment_Operator additive_Exp{
-    TreeNode* node = new TreeNode($1->lineno, NODE_ASSIGN_STMT);
+: assignment_Exp{
+    $$=$1;
+}
+| assignment_Stmt COMMA assignment_Exp
+{
+    TreeNode* node = new TreeNode(lineno, NODE_ASSIGN_STMT);
     node->stype = STMT_ASSIGN;
+    node->addChild($1);
+    node->addChild($3);
+    $$ = node;
+}
+;
+
+assignment_Exp
+: unary_Exp assignment_Operator additive_Exp{
+    TreeNode* node = new TreeNode(lineno, NODE_EXPR);
+    //node->stype = STMT_ASSIGN;
+    node->exprtype=NODE_ASSIGN_EXP;
     node->addChild($1);
     node->addChild($2);
     node->addChild($3);
     $$ = node;
     printf("unaryExp assignment_Operator additive_Exp\n");
+}
+| additive_Exp{//会产生两项归约/归约冲突
+    $$=$1;
 }
 ;
 
@@ -215,16 +365,18 @@ additive_Exp
     $$=$1;
 }
 | additive_Exp LOP_ADD mult_Exp{
-    TreeNode* node = new TreeNode($1->lineno,NODE_additive_Exp);
+    TreeNode* node = new TreeNode(lineno,NODE_EXPR);
     //有可能加stype?
+    node->exprtype=NODE_additive_Exp;
     node->addChild($1);
     node->addChild($2);
     node->addChild($3);
     $$ = node;
 }
 | additive_Exp LOP_SUB mult_Exp{
-    TreeNode* node = new TreeNode($1->lineno,NODE_additive_Exp);
+    TreeNode* node = new TreeNode(lineno,NODE_EXPR);
     //有可能加stype?
+    node->exprtype=NODE_additive_Exp;
     node->addChild($1);
     node->addChild($2);
     node->addChild($3);
@@ -234,28 +386,31 @@ additive_Exp
 
 
 mult_Exp
-: unaryExp{
+: unary_Exp{
     $$=$1;
 }
-| mult_Exp LOP_MULT unaryExp{
-    TreeNode* node = new TreeNode($1->lineno,NODE_additive_Exp);
+| mult_Exp LOP_MULT unary_Exp{
+    TreeNode* node = new TreeNode(lineno,NODE_EXPR);
     //有可能加stype?
+    node->exprtype=NODE_additive_Exp;
     node->addChild($1);
     node->addChild($2);
     node->addChild($3);
     $$ = node;
 }
-| mult_Exp LOP_DIV unaryExp{
-    TreeNode* node = new TreeNode($1->lineno,NODE_additive_Exp);
+| mult_Exp LOP_DIV unary_Exp{
+    TreeNode* node = new TreeNode(lineno,NODE_EXPR);
     //有可能加stype?
+    node->exprtype=NODE_additive_Exp;
     node->addChild($1);
     node->addChild($2);
     node->addChild($3);
     $$ = node;
 }
-| mult_Exp LOP_MOD unaryExp{
-    TreeNode* node = new TreeNode($1->lineno,NODE_additive_Exp);
+| mult_Exp LOP_MOD unary_Exp{
+    TreeNode* node = new TreeNode(lineno,NODE_EXPR);
     //有可能加stype?
+    node->exprtype=NODE_additive_Exp;
     node->addChild($1);
     node->addChild($2);
     node->addChild($3);
@@ -263,9 +418,36 @@ mult_Exp
 }
 ;
 
-unaryExp
-: 
-Id{
+unary_Exp
+: postfix_Exp{
+    $$=$1;//增加这一层是为了方便以后扩充
+}
+;
+
+postfix_Exp
+: primary_Exp{
+    $$=$1;
+}
+| postfix_Exp DOUBLE_ADD{
+    TreeNode* node = new TreeNode(lineno,NODE_EXPR);
+    node->exprtype=NODE_POSTFIX_EXP;
+    node->addChild($1);
+    node->addChild($2);
+    $$=node;
+}
+| postfix_Exp DOUBLE_SUB{
+    TreeNode* node = new TreeNode(lineno,NODE_EXPR);
+    node->exprtype=NODE_POSTFIX_EXP;
+    node->addChild($1);
+    node->addChild($2);
+    $$=node;
+}
+;
+
+
+
+primary_Exp
+: Id{
     $$ = $1;
     printf("unaryExp\n");
 }
@@ -296,11 +478,31 @@ LOP_ASSIGN{
     $$->optype=OP_ASSIGN_NOT_EQ;
     printf("assignment_Operator");
 }
+| LOP_ASSIGN_ADD{
+    $$ = new TreeNode(lineno, NODE_OPERATOR);
+    $$ -> optype=OP_ADD_EQ;
+}
+| LOP_ASSIGN_SUB{
+    $$ = new TreeNode(lineno, NODE_OPERATOR);
+    $$->optype=OP_SUB_EQ;
+}
+| LOP_ASSIGN_MULT{
+    $$ = new TreeNode(lineno, NODE_OPERATOR);
+    $$->optype=OP_MULT_EQ;
+}
+| LOP_ASSIGN_DIV{
+    $$ = new TreeNode(lineno, NODE_OPERATOR);
+    $$->optype=OP_DIV_EQ;
+}
+| LOP_ASSIGN_MOD{
+    $$ = new TreeNode(lineno, NODE_OPERATOR);
+    $$->optype=OP_MOD_EQ;
+}
 ;
 
 declaration
 : T IDENTIFIER assignment_Operator additive_Exp{  // declare and init
-    TreeNode* node = new TreeNode($1->lineno, NODE_DECL_STMT);
+    TreeNode* node = new TreeNode(lineno, NODE_DECL_STMT);
     node->stype = STMT_DECL;
     node->addChild($1);
     node->addChild($2);
@@ -309,7 +511,7 @@ declaration
     printf("T IDENTIFIER LOP_ASSIGN expr\n");   
 }
 | T IDENTIFIER {
-    TreeNode* node = new TreeNode($1->lineno, NODE_DECL_STMT);
+    TreeNode* node = new TreeNode(lineno, NODE_DECL_STMT);
     node->stype = STMT_DECL;
     node->addChild($1);
     node->addChild($2);
@@ -337,6 +539,10 @@ paperConst
 | STRING {
     $$ = $1;
     printf("STRING\n");
+}
+| BOOL {
+    $$=$1;
+    printf("BOOL\n");
 }
 ;
 
