@@ -53,8 +53,12 @@ enum OperatorType
 };
 
 enum StmtType {
+    STMT_NULL,
     STMT_SKIP,
     STMT_DECL,
+    STMT_ASSIGN,//赋值
+    STMT_SELECTION,//条件语句
+
 }
 ;
 

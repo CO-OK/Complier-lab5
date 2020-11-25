@@ -75,7 +75,7 @@ compound_Stmt
 selection_Stmt
 : IF L_Small_Braces conditional_Exp R_Small_Braces statement{
     TreeNode* node = new TreeNode($1->lineno, NODE_SELECTION_STMT);
-    //node->stype = STMT_DECL;
+    node->stype = STMT_SELECTION;
     node->addChild($3);
     node->addChild($5);
     $$ = node;
@@ -84,7 +84,7 @@ selection_Stmt
 }
 | IF L_Small_Braces conditional_Exp R_Small_Braces statement ELSE statement{
     TreeNode* node = new TreeNode($1->lineno, NODE_SELECTION_STMT);
-    //node->stype = STMT_DECL;
+    node->stype = STMT_SELECTION;
     node->addChild($3);
     node->addChild($5);
     node->addChild($7);
@@ -200,7 +200,7 @@ relational_Exp
 assignment_Stmt
 : unaryExp assignment_Operator additive_Exp{
     TreeNode* node = new TreeNode($1->lineno, NODE_ASSIGN_STMT);
-    node->stype = STMT_DECL;
+    node->stype = STMT_ASSIGN;
     node->addChild($1);
     node->addChild($2);
     node->addChild($3);

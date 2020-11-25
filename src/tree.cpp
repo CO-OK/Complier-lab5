@@ -63,10 +63,11 @@ void TreeNode::printNodeInfo() {
         NodeType nodeType;
     */
     //printf("nodeID:%d\n",this->nodeID);
-    cout<<"nodeID:"<<this->nodeID<<"    ";
+    cout<<"nodeID: "<<this->nodeID<<"    ";
     //printf("lineno:%d\n",this->lineno);
-    cout<<"lineno:"<<this->lineno<<"    ";
-    cout<<"NodeType:"<<this->nodeType2String(this->nodeType)<<"    ";
+    cout<<"lineno: "<<this->lineno<<"    ";
+    cout<<"NodeType: "<<this->nodeType2String(this->nodeType)<<"    ";
+    cout<<"stype: "<<this->sType2String(this->stype)<<"    ";
     if(this->nodeType==NODE_TYPE)
     {
         cout<<"TYPE_SPEC="<<this->type->getTypeInfo()<<"    ";
@@ -110,13 +111,6 @@ void TreeNode::printAST() {
 void TreeNode::printSpecialInfo() {
     switch(this->nodeType){
         case NODE_CONST:{
-            /*
-            TreeNode* node = new TreeNode(lineno, NODE_CONST);
-            node->type = TYPE_INT;
-            node->int_val = atoi(yytext);
-            yylval = node;
-            return INTEGER;
-            */
             string tmp=type->getTypeInfo();
             cout<<"node->type="<<tmp<<" ";
             if(tmp=="char")
@@ -172,8 +166,14 @@ string TreeNode::sType2String(StmtType type) {
             //cout<<"StmtType: STMT_DECL"<<endl;
             return "STMT_DECL";
         }
+        case STMT_ASSIGN:{
+            return "STMT_ASSIGN";
+        }
+        case STMT_SELECTION:{
+            return "STMT_SELETION";
+        }
         default:
-            return "";
+            return "null";
     }
 }
 
@@ -248,7 +248,7 @@ string TreeNode::nodeType2String (NodeType type){
             return "NODE_RELATION_GREATER_EXP";
         }
         default:
-            return "";
+            return "null";
     }
 }
 
@@ -309,6 +309,6 @@ string TreeNode::opType2String (OperatorType type)
             return "OP_GREATER_EQ";
         }
         default:
-            return "";
+            return "null";
     }
 }
