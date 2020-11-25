@@ -179,14 +179,6 @@ string TreeNode::sType2String(StmtType type) {
 
 
 string TreeNode::nodeType2String (NodeType type){
-    /*
-    NODE_CONST, 
-    NODE_VAR,
-    NODE_EXPR,
-    NODE_TYPE,
-    NODE_STMT,
-    NODE_PROG,
-    */
     switch(type)
     {
         case NODE_CONST:{
@@ -228,6 +220,33 @@ string TreeNode::nodeType2String (NodeType type){
         case NODE_BLOCK_FLAG:{
             return "NODE_BLOCK_FLAG";
         }
+        case NODE_SELECTION_STMT:{
+            return "NODE_SELECTION_STMT";
+        }
+        case NODE_LOGICAL_OR_EXP:{
+            return "NODE_LOGICAL_OR_EXP";
+        }
+        case NODE_LOGICAL_AND_EXP:{
+            return "NODE_LOGICAL_AND_EXP";
+        }
+        case NODE_EQUALITY_EXP:{
+            return "NODE_EQUALITY_EXP";
+        }
+        case NODE_NOT_EQUALITY_EXP:{
+            return "NODE_NOT_EQUALITY_EXP";
+        }
+        case NODE_RELATION_LESS_EXP:{
+            return "NODE_RELATION_LESS_EXP";
+        }
+        case NODE_RELATION_GREATER_EXP:{
+            return "NODE_RELATION_GREATER_EXP";
+        }
+        case NODE_RELATION_LESS_EQ_EXP:{
+            return "NODE_RELATION_LESS_EQ_EXP";
+        }
+        case NODE_RELATION_GREATER_EQ_EXP:{
+            return "NODE_RELATION_GREATER_EXP";
+        }
         default:
             return "";
     }
@@ -267,6 +286,27 @@ string TreeNode::opType2String (OperatorType type)
         }
         case OP_MOD:{
             return "OP_MOD";
+        }
+        case OP_DOUBLE_OR:{
+            return "OP_DOUBLE_OR";
+        }
+        case OP_DOUBLE_AND:{
+            return "OP_DOUBLE_AND";
+        }
+        case OP_NOT_EQ:{
+            return "OP_NOT_EQ";
+        }
+        case OP_LESS:{
+            return "OP_LESS";
+        }
+        case OP_GREATER:{
+            return "OP_GREATER";
+        }
+        case OP_LESS_EQ:{
+            return "OP_LESS_EQ";
+        }
+        case OP_GREATER_EQ:{
+            return "OP_GREATER_EQ";
         }
         default:
             return "";

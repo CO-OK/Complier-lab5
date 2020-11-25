@@ -1,37 +1,80 @@
 T_INT
+assignment_OperatorINTEGER
+INTEGER
 add child
 add child
-T IDENTIFIER
+add child
+T IDENTIFIER LOP_ASSIGN expr
 declaration SEMICOLON
 statement
 IDENTIFIER
 unaryExp
-assignment_OperatorIDENTIFIER
-unaryExp
 INTEGER
 INTEGER
 add child
 add child
 add child
+relational_exp OP_GREATER_EQ additive_Exp
+T_INT
+assignment_OperatorINTEGER
+INTEGER
 add child
 add child
 add child
-unaryExp assignment_Operator additive_Exp
+T IDENTIFIER LOP_ASSIGN expr
+declaration SEMICOLON
+statement
 add child
+T_INT
+assignment_OperatorINTEGER
+INTEGER
+add child
+add child
+add child
+T IDENTIFIER LOP_ASSIGN expr
+declaration SEMICOLON
+statement
+add child
+add child
+add child
+add child
+if ( conditional_Exp ) statement else statement
+add sibling
+statements statement
+T_CHAR
+assignment_OperatorINTEGER
+INTEGER
+add child
+add child
+add child
+T IDENTIFIER LOP_ASSIGN expr
+declaration SEMICOLON
 add sibling
 statements statement
 add child
 program
-id:12
-nodeID:0    lineno:0    NodeType:NODE_PROG    child: 1 2     
-nodeID:1    lineno:2    NodeType:NODE_DECL_STMT    child: 3 4     
-nodeID:2    lineno:3    NodeType:NODE_BLOCK_FLAG    child: 5     
-nodeID:3    lineno:2    NodeType:NODE_TYPE    TYPE_SPEC=int    child:     
-nodeID:4    lineno:2    NodeType:NODE_VAR    var_name=d    child:     
-nodeID:5    lineno:3    NodeType:NODE_ASSIGN_STMT    child: 6 7 8     
-nodeID:6    lineno:3    NodeType:NODE_VAR    var_name=d    child:     
-nodeID:7    lineno:3    NodeType:NODE_OPERATOR    operator_type_= OP_ASSGIN_EQ     child:     
-nodeID:8    lineno:3    NodeType:NODE_additive_Exp    child: 9 10 11     
-nodeID:9    lineno:3    NodeType:NODE_VAR    var_name=c    child:     
-nodeID:10    lineno:3    NodeType:NODE_OPERATOR    operator_type_= OP_ADD     child:     
-nodeID:11    lineno:3    NodeType:NODE_CONST    node->type=int value=1 child:     
+id:24
+nodeID:0    lineno:0    NodeType:NODE_PROG    child: 1 2 3     
+nodeID:1    lineno:1    NodeType:NODE_DECL_STMT    child: 4 5 6     
+nodeID:2    lineno:1    NodeType:NODE_SELECTION_STMT    child: 7 8 9     
+nodeID:3    lineno:11    NodeType:NODE_DECL_STMT    child: 10 11 12     
+nodeID:4    lineno:1    NodeType:NODE_TYPE    TYPE_SPEC=int    child:     
+nodeID:5    lineno:1    NodeType:NODE_VAR    var_name=a    child:     
+nodeID:6    lineno:1    NodeType:NODE_CONST    node->type=int value=0 child:     
+nodeID:7    lineno:2    NodeType:NODE_RELATION_GREATER_EXP    child: 13 14 15     
+nodeID:8    lineno:4    NodeType:NODE_BLOCK_FLAG    child: 16     
+nodeID:9    lineno:8    NodeType:NODE_BLOCK_FLAG    child: 17     
+nodeID:10    lineno:11    NodeType:NODE_TYPE    TYPE_SPEC=char    child:     
+nodeID:11    lineno:11    NodeType:NODE_VAR    var_name=b    child:     
+nodeID:12    lineno:11    NodeType:NODE_CONST    node->type=int value=21 child:     
+nodeID:13    lineno:2    NodeType:NODE_VAR    var_name=a    child:     
+nodeID:14    lineno:2    NodeType:NODE_OPERATOR    operator_type_= OP_GREATER_EQ     child:     
+nodeID:15    lineno:2    NodeType:NODE_CONST    node->type=int value=1 child:     
+nodeID:16    lineno:4    NodeType:NODE_DECL_STMT    child: 18 19 20     
+nodeID:17    lineno:8    NodeType:NODE_DECL_STMT    child: 21 22 23     
+nodeID:18    lineno:4    NodeType:NODE_TYPE    TYPE_SPEC=int    child:     
+nodeID:19    lineno:4    NodeType:NODE_VAR    var_name=d    child:     
+nodeID:20    lineno:4    NodeType:NODE_CONST    node->type=int value=9 child:     
+nodeID:21    lineno:8    NodeType:NODE_TYPE    TYPE_SPEC=int    child:     
+nodeID:22    lineno:8    NodeType:NODE_VAR    var_name=f    child:     
+nodeID:23    lineno:8    NodeType:NODE_CONST    node->type=int value=6 child:     

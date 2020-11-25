@@ -14,11 +14,21 @@ enum NodeType
     NODE_ASSIGN_STMT,//赋值语句
     NODE_STMT,
     NODE_DECL_STMT,//声明语句
+    NODE_SELECTION_STMT,//条件语句if
     NODE_PROG,
     NODE_IDENTIFIER,//标识符
     NODE_OPERATOR,//运算符
     NODE_additive_Exp,//算数表达式
     NODE_BLOCK_FLAG, //语句块即{.....}的标志
+    NODE_LOGICAL_OR_EXP,//或运算表达式
+    NODE_LOGICAL_AND_EXP,//与运算表达式
+    NODE_EQUALITY_EXP,//等于号表达式
+    NODE_NOT_EQUALITY_EXP,//不等号表达式
+    NODE_RELATION_LESS_EXP,//小于号表达式
+    NODE_RELATION_GREATER_EXP,//大于号表达式
+    NODE_RELATION_LESS_EQ_EXP,//小于等于表达式
+    NODE_RELATION_GREATER_EQ_EXP,//大于等于表达式
+
 };
 
 enum OperatorType
@@ -33,6 +43,13 @@ enum OperatorType
     OP_MULT, //*
     OP_DIV, // /
     OP_MOD, //%
+    OP_DOUBLE_OR,// ||
+    OP_DOUBLE_AND,// &&
+    OP_NOT_EQ,// !=
+    OP_LESS,// <
+    OP_GREATER,// >
+    OP_LESS_EQ,// <=
+    OP_GREATER_EQ, // >=
 };
 
 enum StmtType {

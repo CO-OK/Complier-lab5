@@ -15,6 +15,14 @@ LOP_SUB "-"
 LOP_MULT "*"
 LOP_DIV "/"
 LOP_MOD "%"
+LOP_DOUBLE_OR "||" 
+LOP_DOUBLE_AND "&&" 
+LOP_EQ "==" 
+LOP_NOT_EQ "!=" 
+LOP_LESS "<" 
+LOP_GREATER ">" 
+LOP_LESS_EQ "<=" 
+LOP_GREATER_EQ ">=" 
 
 CHAR \'.?\'
 STRING \".*\"
@@ -36,6 +44,11 @@ IDENTIFIER [[:alpha:]_][[:alpha:][:digit:]_]*
 "|=" return LOP_ASSIGN_OR;
 "&=" return LOP_ASSIGN_AND;
 "^=" return LOP_ASSIGN_NOT;
+
+"(" return L_Small_Braces;
+")" return R_Small_Braces;
+"if" return IF;
+"else" return ELSE;
 
 ";" return  SEMICOLON;
 
@@ -108,6 +121,62 @@ IDENTIFIER [[:alpha:]_][[:alpha:][:digit:]_]*
 }
 
 
+
+{LOP_DOUBLE_OR} {
+    TreeNode* node = new TreeNode(lineno, NODE_OPERATOR);
+    node->optype=OP_DOUBLE_OR;
+    yylval = node;
+    return LOP_DOUBLE_OR;    
+}
+
+{LOP_DOUBLE_AND} {
+    TreeNode* node = new TreeNode(lineno, NODE_OPERATOR);
+    node->optype=OP_DOUBLE_AND;
+    yylval = node;
+    return LOP_DOUBLE_AND; 
+}
+
+{LOP_EQ} {
+    TreeNode* node = new TreeNode(lineno, NODE_OPERATOR);
+    node->optype=OP_EQ;
+    yylval = node;
+    return LOP_EQ;   
+}
+
+{LOP_NOT_EQ} {
+    TreeNode* node = new TreeNode(lineno, NODE_OPERATOR);
+    node->optype=OP_NOT_EQ;
+    yylval = node;
+    return LOP_NOT_EQ;   
+}
+
+{LOP_LESS} {
+    TreeNode* node = new TreeNode(lineno, NODE_OPERATOR);
+    node->optype=OP_LESS;
+    yylval = node;
+    return LOP_LESS;
+}
+
+{LOP_GREATER} {
+    TreeNode* node = new TreeNode(lineno, NODE_OPERATOR);
+    node->optype=OP_GREATER;
+    yylval = node;
+    return LOP_GREATER;    
+}
+
+{LOP_LESS_EQ} {
+    TreeNode* node = new TreeNode(lineno, NODE_OPERATOR);
+    node->optype=OP_LESS_EQ;
+    yylval = node;
+    return LOP_LESS_EQ;     
+}
+
+{LOP_GREATER_EQ} {
+    TreeNode* node = new TreeNode(lineno, NODE_OPERATOR);
+    node->optype=OP_GREATER_EQ;
+    yylval = node;
+    return LOP_GREATER_EQ; 
+}
 
 {WHILTESPACE} /* do nothing */
 
