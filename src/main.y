@@ -1,7 +1,10 @@
 %{
     #include "common.h"
+    //#include "layerNode.h"
     #define YYSTYPE TreeNode *  
     TreeNode* root;
+    layerNode* currentNode;
+    layerNode* layer_root;
     extern int lineno;
     int yylex();
     int yyerror( char const * );
@@ -36,12 +39,14 @@ program
 : statements {
     root = new TreeNode(0, NODE_PROG); 
     root->addChild($1);
+    root->layer_node=currentNode;
     printf("program\n");
 }
 | T MAIN L_Small_Braces R_Small_Braces compound_Stmt{
     root = new TreeNode(0, NODE_PROG); 
     root->addChild($1);
     root->addChild($5);
+    root->layer_node=currentNode;
     printf("main\n");
 }
 ;
@@ -62,6 +67,7 @@ statement
 : SEMICOLON  {
     $$ = new TreeNode(lineno, NODE_STMT); 
     $$->stype = STMT_SKIP;
+    $$->layer_node=currentNode;
     printf("SEMICOLON\n");
 }
 | declaration SEMICOLON {
@@ -73,6 +79,7 @@ statement
 }
 | compound_Stmt{
     TreeNode* node = new TreeNode($1->lineno, NODE_BLOCK_FLAG); 
+    node->layer_node=currentNode;
     //node->stype
     node->addChild($1);
     $$=node;
@@ -92,21 +99,25 @@ jump_Stmt
 : CONTINUE SEMICOLON{
     TreeNode* node = new TreeNode(lineno, NODE_JUMP_STMT);
     node->jumptype=JUMP_CONTINUE;
+    node->layer_node=currentNode;
     $$=node;
 }
 | BREAK SEMICOLON{
     TreeNode* node = new TreeNode(lineno, NODE_JUMP_STMT);
     node->jumptype=JUMP_BREAK;
+    node->layer_node=currentNode;
     $$=node;
 }
 | RETURN Exp SEMICOLON{
     TreeNode* node = new TreeNode(lineno, NODE_JUMP_STMT);
     node->jumptype=JUMP_RETURN_EXP;
+    node->layer_node=currentNode;
     $$=node;
 }
 | RETURN SEMICOLON{
     TreeNode* node = new TreeNode(lineno, NODE_JUMP_STMT);
     node->jumptype=JUMP_RETURN;
+    node->layer_node=currentNode;
     $$=node;
 }
 ;
@@ -115,7 +126,8 @@ compound_Stmt
     $$=$2;
 }
 | L_Braces R_Braces{
-    $$ = new TreeNode(lineno, NODE_EMPTY); 
+    $$ = new TreeNode(lineno, NODE_EMPTY);
+    $$->layer_node=currentNode; 
     $$->stype = STMT_SKIP;
 }
 ;
@@ -127,6 +139,7 @@ selection_Stmt
     node->stype = STMT_SELECTION;//以后可能改为STMT_SELECTION_IF,因为可能加入switch
     node->addChild($3);
     node->addChild($5);
+    node->layer_node=currentNode;
     $$ = node;
     printf("if ( conditional_Exp ) statement\n");
 
@@ -137,6 +150,7 @@ selection_Stmt
     node->addChild($3);
     node->addChild($5);
     node->addChild($7);
+    node->layer_node=currentNode;
     $$ = node;
     printf("if ( conditional_Exp ) statement else statement\n");
 }
@@ -148,6 +162,7 @@ iteration_Stmt
     node->iterationtype = ITERATION_WHILE;
     node->addChild($3);
     node->addChild($5);
+    node->layer_node=currentNode;
     $$ = node;
     printf("WHILE L_Small_Braces conditional_Exp R_Small_Braces statement\n");
 }
@@ -158,6 +173,7 @@ iteration_Stmt
     node->addChild($5);
     node->addChild($7);
     node->addChild($9);
+    node->layer_node=currentNode;
     $$ = node;
     printf("FOR L_Small_Braces Exp SEMICOLON Exp SEMICOLON Exp R_Small_Braces statement\n");
 }
@@ -167,6 +183,7 @@ iteration_Stmt
     node->addChild($3);
     node->addChild($5);
     node->addChild($8);
+    node->layer_node=currentNode;
     $$ = node;
 }
 | FOR L_Small_Braces Exp SEMICOLON  SEMICOLON Exp R_Small_Braces statement{
@@ -175,6 +192,7 @@ iteration_Stmt
     node->addChild($3);
     node->addChild($6);
     node->addChild($8);
+    node->layer_node=currentNode;
     $$ = node;
 }
 | FOR L_Small_Braces Exp SEMICOLON  SEMICOLON  R_Small_Braces statement{
@@ -182,6 +200,7 @@ iteration_Stmt
     node->iterationtype = ITERATION_FOR_E__;
     node->addChild($3);
     node->addChild($7);
+    node->layer_node=currentNode;
     $$ = node;
 }
 | FOR L_Small_Braces  SEMICOLON Exp SEMICOLON Exp R_Small_Braces statement{
@@ -190,6 +209,7 @@ iteration_Stmt
     node->addChild($4);
     node->addChild($6);
     node->addChild($8);
+    node->layer_node=currentNode;
     $$ = node;
 }
 | FOR L_Small_Braces  SEMICOLON Exp SEMICOLON  R_Small_Braces statement{
@@ -197,6 +217,7 @@ iteration_Stmt
     node->iterationtype = ITERATION_FOR__E_;
     node->addChild($4);
     node->addChild($7);
+    node->layer_node=currentNode;
     $$ = node;
 }
 | FOR L_Small_Braces  SEMICOLON  SEMICOLON Exp R_Small_Braces statement{
@@ -204,11 +225,13 @@ iteration_Stmt
     node->iterationtype = ITERATION_FOR___E;
     node->addChild($5);
     node->addChild($7);
+    node->layer_node=currentNode;
     $$ = node;
 } FOR L_Small_Braces  SEMICOLON  SEMICOLON  R_Small_Braces statement{
     TreeNode* node = new TreeNode(lineno, NDOE_ITERATION_STMT);
     node->iterationtype = ITERATION_FOR____;
     node->addChild($6);
+    node->layer_node=currentNode;
     $$ = node;
 }
 ;
@@ -242,6 +265,7 @@ logical_or_Exp
     node->addChild($1);
     node->addChild($2);
     node->addChild($3);
+    node->layer_node=currentNode;
     $$ = node;
     printf("logical_or_exp LOP_DOUBLE_OR logical_and_exp\n");
 }
@@ -258,6 +282,7 @@ logical_and_Exp
     node->addChild($1);
     node->addChild($2);
     node->addChild($3);
+    node->layer_node=currentNode;
     $$ = node;
     printf("logical_and_exp LOP_DOUBLE_AND equality_exp\n");
 }
@@ -274,6 +299,7 @@ equality_Exp
     node->addChild($1);
     node->addChild($2);
     node->addChild($3);
+    node->layer_node=currentNode;
     $$ = node;
     printf("equality_exp LOP_EQ relational_exp\n");
 }
@@ -284,6 +310,7 @@ equality_Exp
     node->addChild($1);
     node->addChild($2);
     node->addChild($3);
+    node->layer_node=currentNode;
     $$ = node;
     printf("equality_exp LOP_NOT_EQ relational_exp\n");
 }
@@ -300,6 +327,7 @@ relational_Exp
     node->addChild($1);
     node->addChild($2);
     node->addChild($3);
+    node->layer_node=currentNode;
     $$ = node;
     printf("relational_exp OP_LESS additive_Exp\n");
 }
@@ -310,6 +338,7 @@ relational_Exp
     node->addChild($1);
     node->addChild($2);
     node->addChild($3);
+    node->layer_node=currentNode;
     $$ = node;
     printf("relational_exp OP_GREATER additive_Exp\n");
 }
@@ -320,6 +349,7 @@ relational_Exp
     node->addChild($1);
     node->addChild($2);
     node->addChild($3);
+    node->layer_node=currentNode;
     $$ = node;
     printf("relational_exp OP_GREATER additive_Exp\n");
 }
@@ -330,6 +360,7 @@ relational_Exp
     node->addChild($1);
     node->addChild($2);
     node->addChild($3);
+    node->layer_node=currentNode;
     $$ = node;
     printf("relational_exp OP_GREATER_EQ additive_Exp\n");
 }
@@ -345,6 +376,7 @@ assignment_Stmt
     node->stype = STMT_ASSIGN;
     node->addChild($1);
     node->addChild($3);
+    node->layer_node=currentNode;
     $$ = node;
 }
 ;
@@ -357,6 +389,7 @@ assignment_Exp
     node->addChild($1);
     node->addChild($2);
     node->addChild($3);
+    node->layer_node=currentNode;
     $$ = node;
     printf("unaryExp assignment_Operator additive_Exp\n");
 }
@@ -377,6 +410,7 @@ additive_Exp
     node->addChild($1);
     node->addChild($2);
     node->addChild($3);
+    node->layer_node=currentNode;
     $$ = node;
 }
 | additive_Exp LOP_SUB mult_Exp{
@@ -386,6 +420,7 @@ additive_Exp
     node->addChild($1);
     node->addChild($2);
     node->addChild($3);
+    node->layer_node=currentNode;
     $$ = node;
 }
 ;
@@ -402,6 +437,7 @@ mult_Exp
     node->addChild($1);
     node->addChild($2);
     node->addChild($3);
+    node->layer_node=currentNode;
     $$ = node;
 }
 | mult_Exp LOP_DIV cast_Exp{
@@ -411,6 +447,7 @@ mult_Exp
     node->addChild($1);
     node->addChild($2);
     node->addChild($3);
+    node->layer_node=currentNode;
     $$ = node;
 }
 | mult_Exp LOP_MOD cast_Exp{
@@ -420,6 +457,7 @@ mult_Exp
     node->addChild($1);
     node->addChild($2);
     node->addChild($3);
+    node->layer_node=currentNode;
     $$ = node;
 }
 ;
@@ -443,6 +481,7 @@ unary_Exp
     node->exprtype=NODE_UNARY_EXP;
     node->addChild($1);
     node->addChild($2);
+    node->layer_node=currentNode;
     $$=node;
 }
 ;
@@ -469,6 +508,7 @@ postfix_Exp
     node->exprtype=NODE_POSTFIX_EXP;
     node->addChild($1);
     node->addChild($2);
+    node->layer_node=currentNode;
     $$=node;
 }
 | postfix_Exp DOUBLE_SUB{
@@ -476,6 +516,7 @@ postfix_Exp
     node->exprtype=NODE_POSTFIX_EXP;
     node->addChild($1);
     node->addChild($2);
+    node->layer_node=currentNode;
     $$=node;
 }
 ;
@@ -497,42 +538,51 @@ assignment_Operator
 LOP_ASSIGN{
     $$ = new TreeNode(lineno, NODE_OPERATOR); 
     $$->optype=OP_ASSIGN_EQ;
+    $$->layer_node=currentNode;
     printf("assignment_Operator");
 }
 | LOP_ASSIGN_OR{
     $$ = new TreeNode(lineno, NODE_OPERATOR); 
     $$->optype=OP_OR_EQ;
+    $$->layer_node=currentNode;
     printf("assignment_Operator");
 }
 | LOP_ASSIGN_AND{
     $$ = new TreeNode(lineno, NODE_OPERATOR); 
     $$->optype=OP_AND_EQ;
+    $$->layer_node=currentNode;
     printf("assignment_Operator");
 }
 | LOP_ASSIGN_NOT{
     $$ = new TreeNode(lineno, NODE_OPERATOR); 
     $$->optype=OP_ASSIGN_NOT_EQ;
+    $$->layer_node=currentNode;
     printf("assignment_Operator");
 }
 | LOP_ASSIGN_ADD{
     $$ = new TreeNode(lineno, NODE_OPERATOR);
     $$ -> optype=OP_ADD_EQ;
+    $$->layer_node=currentNode;
 }
 | LOP_ASSIGN_SUB{
     $$ = new TreeNode(lineno, NODE_OPERATOR);
     $$->optype=OP_SUB_EQ;
+    $$->layer_node=currentNode;
 }
 | LOP_ASSIGN_MULT{
     $$ = new TreeNode(lineno, NODE_OPERATOR);
     $$->optype=OP_MULT_EQ;
+    $$->layer_node=currentNode;
 }
 | LOP_ASSIGN_DIV{
     $$ = new TreeNode(lineno, NODE_OPERATOR);
     $$->optype=OP_DIV_EQ;
+    $$->layer_node=currentNode;
 }
 | LOP_ASSIGN_MOD{
     $$ = new TreeNode(lineno, NODE_OPERATOR);
     $$->optype=OP_MOD_EQ;
+    $$->layer_node=currentNode;
 }
 ;
 
@@ -543,6 +593,7 @@ declaration
     node->addChild($1);
     node->addChild($2);
     node->addChild($4);
+    node->layer_node=currentNode;
     $$ = node;
     printf("T IDENTIFIER LOP_ASSIGN expr\n");   
 }
@@ -551,6 +602,7 @@ declaration
     node->stype = STMT_DECL;
     node->addChild($1);
     node->addChild($2);
+    node->layer_node=currentNode;
     $$ = node; 
     printf("T IDENTIFIER\n");  
 }
@@ -585,21 +637,25 @@ paperConst
 T: T_INT {
     $$ = new TreeNode(lineno, NODE_TYPE); 
     $$->type = TYPE_INT;
+    $$->layer_node=currentNode;
     printf("T_INT\n");
 } 
 | T_CHAR {
     $$ = new TreeNode(lineno, NODE_TYPE); 
     $$->type = TYPE_CHAR;
+    $$->layer_node=currentNode;
     printf("T_CHAR\n");
 }
 | T_BOOL {
     $$ = new TreeNode(lineno, NODE_TYPE); 
     $$->type = TYPE_BOOL;
+    $$->layer_node=currentNode;
     printf("T_BOOL\n");
 }
 | T_STRING{
     $$ = new TreeNode(lineno,NODE_TYPE);
     $$->type = TYPE_STRING;
+    $$->layer_node=currentNode;
     printf("T_STRING\n");
 }
 ;

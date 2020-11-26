@@ -3,7 +3,11 @@
 #include "common.h"
 #include "main.tab.h"  // yacc header
 #include <string.h>
+//#include "layerNode.h"
 int lineno=1;
+extern layerNode* currentNode;
+extern layerNode* layer_root;
+extern layerNode* makeNode(layerNode* node);
 %}
 BLOCKCOMMENT \/\*([^\*^\/]*|[\*^\/*]*|[^\**\/]*)*\*\/
 LINECOMMENT \/\/[^\n]*
@@ -35,14 +39,16 @@ CHAR \'.?\'
 STRING \".*\"
 BOOL ("true"|"false")
 
+L_Braces "{"
+R_Braces "}"
+
 IDENTIFIER [[:alpha:]_][[:alpha:][:digit:]_]* 
 %%
 
 {BLOCKCOMMENT}  /* do nothing */
 {LINECOMMENT}  /* do nothing */
 
-"{" return L_Braces;
-"}" return R_Braces;
+
 "int" return T_INT;
 "bool" return T_BOOL;
 "char" return T_CHAR;
@@ -80,6 +86,7 @@ IDENTIFIER [[:alpha:]_][[:alpha:][:digit:]_]*
     TreeNode* node = new TreeNode(lineno, NODE_CONST);
     node->type = TYPE_INT;
     node->int_val = atoi(yytext);
+    node->layer_node=currentNode;
     yylval = node;
     return INTEGER;
 }
@@ -89,6 +96,7 @@ IDENTIFIER [[:alpha:]_][[:alpha:][:digit:]_]*
     node->type = TYPE_CHAR;
     node->int_val = yytext[1];
     node->ch_val = yytext[1];
+    node->layer_node=currentNode;
     yylval = node;
     return CHAR;
 }
@@ -97,6 +105,7 @@ IDENTIFIER [[:alpha:]_][[:alpha:][:digit:]_]*
     TreeNode* node = new TreeNode(lineno, NODE_CONST);
     node->type = TYPE_STRING;
     node->str_val = yytext;
+    node->layer_node=currentNode;
     yylval = node;
     return CHAR;
 }
@@ -112,6 +121,7 @@ IDENTIFIER [[:alpha:]_][[:alpha:][:digit:]_]*
         node->b_val=0;
     }
     //node->str_val = yytext;
+    node->layer_node=currentNode;
     yylval = node;
     return BOOL;
 }
@@ -119,6 +129,7 @@ IDENTIFIER [[:alpha:]_][[:alpha:][:digit:]_]*
 {IDENTIFIER} {
     TreeNode* node = new TreeNode(lineno, NODE_VAR);
     node->var_name = string(yytext);
+    node->layer_node=currentNode;
     yylval = node;
     return IDENTIFIER;
 }
@@ -126,6 +137,7 @@ IDENTIFIER [[:alpha:]_][[:alpha:][:digit:]_]*
 {LOP_ADD} {
     TreeNode* node = new TreeNode(lineno, NODE_OPERATOR);
     node->optype=OP_ADD;
+    node->layer_node=currentNode;
     yylval = node;
     return LOP_ADD;
 }
@@ -133,6 +145,7 @@ IDENTIFIER [[:alpha:]_][[:alpha:][:digit:]_]*
 {LOP_SUB} {
     TreeNode* node = new TreeNode(lineno, NODE_OPERATOR);
     node->optype=OP_SUB;
+    node->layer_node=currentNode;
     yylval = node;
     return LOP_SUB;
 }
@@ -140,6 +153,7 @@ IDENTIFIER [[:alpha:]_][[:alpha:][:digit:]_]*
 {LOP_MULT} {
     TreeNode* node = new TreeNode(lineno, NODE_OPERATOR);
     node->optype=OP_MULT;
+    node->layer_node=currentNode;
     yylval = node;
     return LOP_MULT;
 }
@@ -147,6 +161,7 @@ IDENTIFIER [[:alpha:]_][[:alpha:][:digit:]_]*
 {LOP_DIV} {
     TreeNode* node = new TreeNode(lineno, NODE_OPERATOR);
     node->optype=OP_DIV;
+    node->layer_node=currentNode;
     yylval = node;
     return LOP_DIV;
 }
@@ -154,6 +169,7 @@ IDENTIFIER [[:alpha:]_][[:alpha:][:digit:]_]*
 {LOP_MOD} {
     TreeNode* node = new TreeNode(lineno, NODE_OPERATOR);
     node->optype=OP_MOD;
+    node->layer_node=currentNode;
     yylval = node;
     return LOP_MOD;
 }
@@ -163,6 +179,7 @@ IDENTIFIER [[:alpha:]_][[:alpha:][:digit:]_]*
 {LOP_DOUBLE_OR} {
     TreeNode* node = new TreeNode(lineno, NODE_OPERATOR);
     node->optype=OP_DOUBLE_OR;
+    node->layer_node=currentNode;
     yylval = node;
     return LOP_DOUBLE_OR;    
 }
@@ -170,6 +187,7 @@ IDENTIFIER [[:alpha:]_][[:alpha:][:digit:]_]*
 {LOP_DOUBLE_AND} {
     TreeNode* node = new TreeNode(lineno, NODE_OPERATOR);
     node->optype=OP_DOUBLE_AND;
+    node->layer_node=currentNode;
     yylval = node;
     return LOP_DOUBLE_AND; 
 }
@@ -177,6 +195,7 @@ IDENTIFIER [[:alpha:]_][[:alpha:][:digit:]_]*
 {LOP_EQ} {
     TreeNode* node = new TreeNode(lineno, NODE_OPERATOR);
     node->optype=OP_EQ;
+    node->layer_node=currentNode;
     yylval = node;
     return LOP_EQ;   
 }
@@ -184,6 +203,7 @@ IDENTIFIER [[:alpha:]_][[:alpha:][:digit:]_]*
 {LOP_NOT_EQ} {
     TreeNode* node = new TreeNode(lineno, NODE_OPERATOR);
     node->optype=OP_NOT_EQ;
+    node->layer_node=currentNode;
     yylval = node;
     return LOP_NOT_EQ;   
 }
@@ -191,6 +211,7 @@ IDENTIFIER [[:alpha:]_][[:alpha:][:digit:]_]*
 {LOP_LESS} {
     TreeNode* node = new TreeNode(lineno, NODE_OPERATOR);
     node->optype=OP_LESS;
+    node->layer_node=currentNode;
     yylval = node;
     return LOP_LESS;
 }
@@ -198,6 +219,7 @@ IDENTIFIER [[:alpha:]_][[:alpha:][:digit:]_]*
 {LOP_GREATER} {
     TreeNode* node = new TreeNode(lineno, NODE_OPERATOR);
     node->optype=OP_GREATER;
+    node->layer_node=currentNode;
     yylval = node;
     return LOP_GREATER;    
 }
@@ -205,6 +227,7 @@ IDENTIFIER [[:alpha:]_][[:alpha:][:digit:]_]*
 {LOP_LESS_EQ} {
     TreeNode* node = new TreeNode(lineno, NODE_OPERATOR);
     node->optype=OP_LESS_EQ;
+    node->layer_node=currentNode;
     yylval = node;
     return LOP_LESS_EQ;     
 }
@@ -212,6 +235,7 @@ IDENTIFIER [[:alpha:]_][[:alpha:][:digit:]_]*
 {LOP_GREATER_EQ} {
     TreeNode* node = new TreeNode(lineno, NODE_OPERATOR);
     node->optype=OP_GREATER_EQ;
+    node->layer_node=currentNode;
     yylval = node;
     return LOP_GREATER_EQ; 
 }
@@ -219,6 +243,7 @@ IDENTIFIER [[:alpha:]_][[:alpha:][:digit:]_]*
 {DOUBLE_ADD} {
     TreeNode* node = new TreeNode(lineno, NODE_OPERATOR);
     node->optype=OP_DOUBLE_ADD;
+    node->layer_node=currentNode;
     yylval = node;
     return DOUBLE_ADD;
 }
@@ -226,6 +251,7 @@ IDENTIFIER [[:alpha:]_][[:alpha:][:digit:]_]*
 {DOUBLE_SUB} {
     TreeNode* node = new TreeNode(lineno, NODE_OPERATOR);
     node->optype=OP_DOUBLE_SUB;
+    node->layer_node=currentNode;
     yylval = node;
     return DOUBLE_SUB;
 }
@@ -233,6 +259,7 @@ IDENTIFIER [[:alpha:]_][[:alpha:][:digit:]_]*
 {LOP_REFERENCE} {
     TreeNode* node = new TreeNode(lineno, NODE_OPERATOR);
     node->optype=OP_UNARY_REFERENCE;
+    node->layer_node=currentNode;
     yylval = node;
     return LOP_REFERENCE;
 }
@@ -240,8 +267,23 @@ IDENTIFIER [[:alpha:]_][[:alpha:][:digit:]_]*
 {LOP_NOT} {
     TreeNode* node = new TreeNode(lineno, NODE_OPERATOR);
     node->optype=OP_UNARY_NOT;
+    node->layer_node=currentNode;
     yylval = node;
     return LOP_NOT;
+}
+
+
+{L_Braces} {
+    currentNode=makeNode(currentNode);
+    //yylval = currentNode;
+    return L_Braces;
+}
+
+{R_Braces} {
+    currentNode=currentNode->prev;
+    //yylval = currentNode;
+    currentNode->accessTime++;
+    return R_Braces;
 }
 
 {WHILTESPACE} /* do nothing */

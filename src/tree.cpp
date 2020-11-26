@@ -1,4 +1,5 @@
 #include "tree.h"
+void printLayer(layerNode*node);
 void TreeNode::addChild(TreeNode* child) {
 
     printf("add child\n");
@@ -34,6 +35,7 @@ void TreeNode::addSibling(TreeNode* sibling){
 TreeNode::TreeNode(int lineno, NodeType type) {
     this->lineno=lineno;
     this->nodeType=type;
+    this->layer_node=nullptr;
 }
 
 void TreeNode::genNodeId() {
@@ -110,6 +112,8 @@ void TreeNode::printAST() {
         tmp->printNodeInfo();
         tmp->printSpecialInfo();
         tmp->printChildrenId();
+        cout<<"layer:";
+        printLayer(tmp->layer_node);
         cout<<endl;
         for(TreeNode*t=tmp->child;t!=nullptr;t=t->sibling)
         {
@@ -426,4 +430,51 @@ string TreeNode::opType2String (OperatorType type)
         default:
             return "null";
     }
+}
+
+
+layerNode* makeNode(layerNode* node)
+{
+    layerNode* temp = node->list[node->nodeCount]=new layerNode;
+    temp->nodeCount=0;
+    temp->prev=node;
+    temp->accessTime=0;
+    //process layerDesc
+    int flag=0;
+    for(int i=0;i<layerDescNum;i++)
+    {
+        if(node->layerDesc[i]!=-1)
+        {
+            temp->layerDesc[i]=node->layerDesc[i];
+            flag++;
+        }
+        else
+        {
+            temp->layerDesc[i]=-1;
+        }
+        
+    }
+    temp->layerDesc[flag]=node->nodeCount;
+    node->nodeCount++;
+    return temp;
+}
+void printLayer(layerNode*node)
+{
+    if(node==nullptr)
+    {
+        cout<<"null"<<"     ";
+        return ;
+    }
+    for(int i=0;i<layerDescNum&&node->layerDesc[i]!=-1;i++)
+    {
+        if(i+1<layerDescNum&&node->layerDesc[i+1]==-1)
+        {
+            cout<<node->layerDesc[i];
+        }
+        else
+        {   
+            cout<<node->layerDesc[i]<<"-";
+        }
+    }
+    cout<<"    ";
 }

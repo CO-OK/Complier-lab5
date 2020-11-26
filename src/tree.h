@@ -1,9 +1,15 @@
 #ifndef TREE_H
 #define TREE_H
 
+#include<stdlib.h>
+#include<string.h>
+#include<stdio.h>
 #include "pch.h"
 #include "type.h"
-
+//#include "layerNode.h"
+#define layerNum 50
+#define layerDescNum 100
+struct layerNode;
 enum NodeType
 {
     NODE_CONST, 
@@ -137,6 +143,7 @@ public:
     bool b_val;
     string str_val;
     string var_name;
+    layerNode* layer_node;
 public:
     static string nodeType2String (NodeType type);
     static string opType2String (OperatorType type);
@@ -146,6 +153,15 @@ public:
     static string JumpStmtType2String(JumpStmtType type);
 public:
     TreeNode(int lineno, NodeType type);
+};
+
+struct layerNode
+{
+    layerNode* prev;
+    layerNode* list[layerNum];
+    int layerDesc[layerDescNum];
+    int nodeCount;
+    int accessTime;
 };
 
 #endif
