@@ -23,6 +23,7 @@ enum NodeType
    
     NODE_BLOCK_FLAG, //语句块即{.....}的标志
     NODE_JUMP_STMT,//控制语句
+    NODE_EMPTY,//空
 
 };
 
@@ -40,6 +41,7 @@ enum ExprType
     NODE_RELATION_LESS_EQ_EXP,//小于等于表达式
     NODE_RELATION_GREATER_EQ_EXP,//大于等于表达式
     NODE_POSTFIX_EXP, //后缀表达式 如 a++
+    NODE_UNARY_EXP,//前缀如-1
 };
 
 
@@ -69,6 +71,8 @@ enum OperatorType
     OP_GREATER_EQ, // >=
     OP_DOUBLE_ADD, //++
     OP_DOUBLE_SUB, //--
+    OP_UNARY_REFERENCE, //&
+    OP_UNARY_NOT,//!
 };
 
 enum StmtType {

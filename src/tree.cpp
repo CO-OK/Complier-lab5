@@ -257,6 +257,9 @@ string TreeNode::exprType2String(ExprType type){
         case NODE_POSTFIX_EXP:{
             return "NODE_POSTFIX_EXP";
         }
+        case NODE_UNARY_EXP:{
+            return "NODE_UNARY_EXP";
+        }
         default:
             return "null";
     }
@@ -309,6 +312,9 @@ string TreeNode::nodeType2String (NodeType type){
         }
         case NODE_JUMP_STMT:{
             return "NODE_JUMP_STMT";
+        }
+        case NODE_EMPTY:{
+            return "NODE_EMPTY";
         }
         default:
             return "null";
@@ -410,6 +416,12 @@ string TreeNode::opType2String (OperatorType type)
         }
         case OP_DOUBLE_SUB:{
             return "OP_DOUBLE_SUB";
+        }
+        case OP_UNARY_REFERENCE:{
+            return "OP_UNARY_REFERENCE";
+        }
+        case OP_UNARY_NOT:{
+            return "OP_UNARY_NOT";
         }
         default:
             return "null";

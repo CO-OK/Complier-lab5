@@ -10,7 +10,10 @@ LINECOMMENT \/\/[^\n]*
 EOL	(\r\n|\r|\n)
 WHILTESPACE [[:blank:]]
 
+
 INTEGER [0-9]+
+LOP_REFERENCE "&"
+LOP_NOT "!"
 LOP_ADD "+"
 LOP_SUB "-"
 LOP_MULT "*"
@@ -24,6 +27,7 @@ LOP_LESS "<"
 LOP_GREATER ">" 
 LOP_LESS_EQ "<=" 
 LOP_GREATER_EQ ">=" 
+
 
 DOUBLE_ADD "++"
 DOUBLE_SUB "--"
@@ -225,6 +229,21 @@ IDENTIFIER [[:alpha:]_][[:alpha:][:digit:]_]*
     yylval = node;
     return DOUBLE_SUB;
 }
+
+{LOP_REFERENCE} {
+    TreeNode* node = new TreeNode(lineno, NODE_OPERATOR);
+    node->optype=OP_UNARY_REFERENCE;
+    yylval = node;
+    return LOP_REFERENCE;
+}
+
+{LOP_NOT} {
+    TreeNode* node = new TreeNode(lineno, NODE_OPERATOR);
+    node->optype=OP_UNARY_NOT;
+    yylval = node;
+    return LOP_NOT;
+}
+
 {WHILTESPACE} /* do nothing */
 
 {EOL} lineno++;

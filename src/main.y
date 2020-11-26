@@ -10,8 +10,6 @@
 
 %token LOP_ASSIGN LOP_ASSIGN_OR LOP_ASSIGN_AND LOP_ASSIGN_NOT LOP_ASSIGN_ADD LOP_ASSIGN_SUB LOP_ASSIGN_MULT LOP_ASSIGN_DIV LOP_ASSIGN_MOD
 
-%token LOP_ADD LOP_SUB LOP_MULT LOP_DIV LOP_MOD 
-
 %token LOP_DOUBLE_OR LOP_DOUBLE_AND LOP_EQ LOP_NOT_EQ LOP_LESS LOP_GREATER LOP_LESS_EQ LOP_GREATER_EQ
 
 %token SEMICOLON COMMA
@@ -27,6 +25,10 @@
 %token DOUBLE_ADD DOUBLE_SUB
 
 %token MAIN
+
+%left LOP_ADD LOP_SUB LOP_MOD
+
+%left LOP_MULT LOP_DIV LOP_REFERENCE LOP_NOT
 
 %%
 
@@ -111,6 +113,10 @@ jump_Stmt
 compound_Stmt
 : L_Braces statements R_Braces{
     $$=$2;
+}
+| L_Braces R_Braces{
+    $$ = new TreeNode(lineno, NODE_EMPTY); 
+    $$->stype = STMT_SKIP;
 }
 ;
 
@@ -386,10 +392,10 @@ additive_Exp
 
 
 mult_Exp
-: unary_Exp{
+: cast_Exp{
     $$=$1;
 }
-| mult_Exp LOP_MULT unary_Exp{
+| mult_Exp LOP_MULT cast_Exp{
     TreeNode* node = new TreeNode(lineno,NODE_EXPR);
     //有可能加stype?
     node->exprtype=NODE_additive_Exp;
@@ -398,7 +404,7 @@ mult_Exp
     node->addChild($3);
     $$ = node;
 }
-| mult_Exp LOP_DIV unary_Exp{
+| mult_Exp LOP_DIV cast_Exp{
     TreeNode* node = new TreeNode(lineno,NODE_EXPR);
     //有可能加stype?
     node->exprtype=NODE_additive_Exp;
@@ -407,7 +413,7 @@ mult_Exp
     node->addChild($3);
     $$ = node;
 }
-| mult_Exp LOP_MOD unary_Exp{
+| mult_Exp LOP_MOD cast_Exp{
     TreeNode* node = new TreeNode(lineno,NODE_EXPR);
     //有可能加stype?
     node->exprtype=NODE_additive_Exp;
@@ -418,11 +424,41 @@ mult_Exp
 }
 ;
 
+cast_Exp
+: unary_Exp{
+    $$=$1;
+}
+| L_Small_Braces T R_Small_Braces cast_Exp{
+
+}
+;
+
+
 unary_Exp
 : postfix_Exp{
     $$=$1;//增加这一层是为了方便以后扩充
 }
+| unary_Operator cast_Exp{
+    TreeNode* node=new TreeNode(lineno,NODE_EXPR);
+    node->exprtype=NODE_UNARY_EXP;
+    node->addChild($1);
+    node->addChild($2);
+    $$=node;
+}
 ;
+
+unary_Operator
+: LOP_SUB{
+    $$=$1;
+}
+| LOP_REFERENCE{
+    $$=$1;
+}
+| LOP_NOT{
+    $$=$1;
+}
+;
+
 
 postfix_Exp
 : primary_Exp{
