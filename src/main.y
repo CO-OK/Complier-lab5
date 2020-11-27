@@ -42,13 +42,7 @@ program
     root->layer_node=currentNode;
     printf("program\n");
 }
-| T MAIN L_Small_Braces R_Small_Braces compound_Stmt{
-    root = new TreeNode(0, NODE_PROG); 
-    root->addChild($1);
-    root->addChild($5);
-    root->layer_node=currentNode;
-    printf("main\n");
-}
+
 ;
 
 statements
@@ -95,8 +89,82 @@ statement
 | jump_Stmt {
     $$=$1;
 }
+| function_Definition{
+    $$=$1;
+}
+| function_Call{
+    $$=$1;
+}
+| T MAIN L_Small_Braces R_Small_Braces compound_Stmt{
+    TreeNode* node = new TreeNode(0, NODE_MAIN); 
+    node->addChild($1);
+    node->addChild($5);
+    node->layer_node=currentNode;
+    $$=node;
+    printf("main\n");
+}
 ;
 
+function_Call
+: Id L_Small_Braces Id_List R_Small_Braces{
+    TreeNode* node = new TreeNode(lineno, NODE_FUNCTION_CALL); 
+    node->layer_node=currentNode;
+    node->func_info=new funcInfo;
+    node->func_info->func_name=$1;
+    node->func_info->arg_list=$3;
+    node->addChild($1);
+    node->addChild($3);
+    $$=node;
+}
+| Id L_Small_Braces paperConst R_Small_Braces{
+    TreeNode* node = new TreeNode(lineno, NODE_FUNCTION_CALL); 
+    node->layer_node=currentNode;
+    node->func_info=new funcInfo;
+    node->func_info->func_name=$1;
+    node->func_info->arg_list=$3;
+    node->addChild($1);
+    node->addChild($3);
+    $$=node;
+}
+| Id L_Small_Braces R_Small_Braces {
+    TreeNode* node = new TreeNode(lineno, NODE_FUNCTION_CALL); 
+    node->layer_node=currentNode;
+    node->func_info=new funcInfo;
+    node->func_info->func_name=$1;
+    node->addChild($3);
+    $$=node;
+}
+
+function_Definition
+: T Id L_Small_Braces declaration R_Small_Braces compound_Stmt{
+    TreeNode* node = new TreeNode(lineno, NODE_FUNCTION_DEF); 
+    node->layer_node=currentNode;
+    node->func_info=new funcInfo;
+    node->func_info->return_value=$1;
+    node->func_info->func_name=$2;
+    node->func_info->decl_list=$4;
+    node->func_info->func_body=$6;
+    node->addChild($1);
+    node->addChild($2);
+    node->addChild($4);
+    node->addChild($6);
+    $$=node;
+}
+| T Id L_Small_Braces R_Small_Braces compound_Stmt{
+    TreeNode* node = new TreeNode(lineno, NODE_FUNCTION_DEF);
+    node->layer_node=currentNode;
+    node->func_info=new funcInfo;
+    printf("qqqqqqqqqqqqqq\n");
+    node->func_info->return_value=$1;
+    node->func_info->func_name=$2;
+    node->func_info->func_body=$5;
+    node->addChild($1);
+    node->addChild($2);
+    node->addChild($5);
+    $$=node;
+    
+}
+;
 jump_Stmt
 : CONTINUE SEMICOLON{
     TreeNode* node = new TreeNode(lineno, NODE_JUMP_STMT);
@@ -114,6 +182,7 @@ jump_Stmt
     TreeNode* node = new TreeNode(lineno, NODE_JUMP_STMT);
     node->jumptype=JUMP_RETURN_EXP;
     node->layer_node=currentNode;
+    node->addChild($2);
     $$=node;
 }
 | RETURN SEMICOLON{
@@ -400,7 +469,7 @@ assignment_Stmt
 ;
 
 assignment_Exp
-: unary_Exp assignment_Operator additive_Exp{
+: unary_Exp assignment_Operator additive_Exp{//有可能需要函数如 a=func()
     TreeNode* node = new TreeNode(lineno, NODE_EXPR);
     //node->stype = STMT_ASSIGN;
     node->exprtype=NODE_ASSIGN_EXP;
@@ -615,7 +684,17 @@ declaration
     $$ = node;
     printf("T IDENTIFIER LOP_ASSIGN expr\n");   
 }
-| T IDENTIFIER {
+| declaration COMMA IDENTIFIER {
+    TreeNode* node = new TreeNode(lineno, NODE_DECL_STMT_LIST);
+    node->stype = STMT_DECL;
+    node->addChild($1);
+    TreeNode* node1 = new TreeNode(lineno, NODE_DECL_STMT);
+    node1->addChild($3);
+    node->addChild(node1);
+    node->layer_node=currentNode;
+    $$ = node;
+}
+| T IDENTIFIER{
     TreeNode* node = new TreeNode(lineno, NODE_DECL_STMT);
     node->stype = STMT_DECL;
     node->addChild($1);
@@ -623,6 +702,19 @@ declaration
     node->layer_node=currentNode;
     $$ = node; 
     printf("T IDENTIFIER\n");  
+}
+;
+
+Id_List
+: Id_List COMMA Id{
+    TreeNode* node = new TreeNode(lineno, NODE_ID_LIST);
+    node->addChild($1);
+    node->addChild($3);
+    node->layer_node=currentNode;
+    $$ = node; 
+}
+| Id{
+    $$=$1;
 }
 ;
 

@@ -12,6 +12,7 @@
 struct layerNode;
 struct changeField;
 struct TreeNode;
+struct funcInfo;
 struct layerNode
 {
     layerNode* prev;
@@ -26,6 +27,15 @@ struct changeField
     int needChange;
     int accessTime;
 };
+
+struct funcInfo{
+    TreeNode* return_value;
+    TreeNode* func_name;
+    TreeNode* decl_list;
+    TreeNode* func_body;
+    TreeNode* arg_list;
+};
+
 enum NodeType
 {
     NODE_CONST, 
@@ -34,7 +44,7 @@ enum NodeType
     NODE_TYPE, //声明节点如int,char
 
     NODE_ASSIGN_STMT,//赋值语句
-    
+    NODE_MAIN,//main函数
     NODE_STMT,
     NODE_DECL_STMT,//声明语句
     NODE_SELECTION_STMT,//条件语句if
@@ -42,10 +52,13 @@ enum NodeType
     NODE_PROG,
     NODE_IDENTIFIER,//标识符
     NODE_OPERATOR,//运算符
-   
+    NODE_FUNCTION_DEF,//函数定义
     NODE_BLOCK_FLAG, //语句块即{.....}的标志
     NODE_JUMP_STMT,//控制语句
     NODE_EMPTY,//空
+    NODE_DECL_STMT_LIST,//定义列表
+    NODE_ID_LIST,//函数参数列表
+    NODE_FUNCTION_CALL,//函数调用
 
 };
 
@@ -161,6 +174,7 @@ public:
     string var_name;
     layerNode* layer_node;
     changeField change_field;
+    funcInfo* func_info;
 public:
     static string nodeType2String (NodeType type);
     static string opType2String (OperatorType type);

@@ -184,6 +184,27 @@ void TreeNode::printSpecialInfo() {
             break;
         case NODE_OPERATOR:{
             cout<<"operator_type_= "<<this->opType2String(this->optype)<<"     ";
+            break;
+        }
+        case NODE_FUNCTION_DEF:{
+            if(this->func_info->func_name!=nullptr)
+                cout<<"func_name="<<this->func_info->func_name->var_name<<"     ";
+            if(this->func_info->return_value!=nullptr)
+                cout<<"return_value="<<this->func_info->return_value->type->getTypeInfo()<<"    ";
+            if(this->func_info->decl_list!=nullptr)
+                cout<<"func_args_at_node:"<<this->func_info->decl_list->nodeID<<"     ";
+            if(this->func_info->func_body!=nullptr)
+                cout<<"func_body_at_node:"<<this->func_info->func_body->nodeID<<"     ";
+            if(this->func_info->arg_list!=nullptr)
+                cout<<"func_args_at_node:"<<this->func_info->arg_list->nodeID<<"      ";
+            break;
+        }
+        case NODE_FUNCTION_CALL:{
+            if(this->func_info->func_name!=nullptr)
+                cout<<"func_name="<<this->func_info->func_name->var_name<<"     ";
+            if(this->func_info->arg_list!=nullptr)
+                cout<<"func_args_at_node:"<<this->func_info->arg_list->nodeID<<"      ";
+            break;
         }
         default:
             break;
@@ -344,6 +365,21 @@ string TreeNode::nodeType2String (NodeType type){
         }
         case NODE_EMPTY:{
             return "NODE_EMPTY";
+        }
+        case NODE_DECL_STMT_LIST:{
+            return "NODE_DECL_STMT_LIST";
+        }
+        case NODE_FUNCTION_DEF:{
+            return "NODE_FUNCTION_DEF";
+        }
+        case NODE_MAIN:{
+            return "NODE_MAIN";
+        }
+        case NODE_ID_LIST:{
+            return "NODE_ID_LIST";
+        }
+        case NODE_FUNCTION_CALL:{
+            return "NODE_FUNCTION_CALL";
         }
         default:
             return "null";
