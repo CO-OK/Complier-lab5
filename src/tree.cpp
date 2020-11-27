@@ -52,10 +52,7 @@ void TreeNode::genNodeId() {
         node_list.pop_front();
         tmp->nodeID=id;
         id++;
-        if(tmp->change_field.needChange)
-        {
-            tmp->layer_node=tmp->layer_node->list[tmp->change_field.accessTime];
-        }
+        change_Field(tmp);
         for(TreeNode*t=tmp->child;t!=nullptr;t=t->sibling)
         {
             node_list.push_back(t);
@@ -63,7 +60,29 @@ void TreeNode::genNodeId() {
     }
     printf("id:%d\n",id);
 }
-
+void TreeNode::change_Child_Field(TreeNode* node)
+{
+    if(node->child==nullptr)
+        return;
+    TreeNode*tmp=node->child;
+    while(tmp!=nullptr)
+    {
+        if(tmp->nodeType!=NODE_BLOCK_FLAG)
+        {
+            tmp->layer_node=node->layer_node;
+            change_Child_Field(tmp);
+        }    
+        tmp=tmp->sibling;   
+    }
+}
+void TreeNode:: change_Field(TreeNode* node)
+{
+    if(node->change_field.needChange)
+    {
+        node->layer_node=node->layer_node->list[node->change_field.accessTime];
+        change_Child_Field(node);
+    }
+}
 void TreeNode::printNodeInfo() {
     /*
         int nodeID; 

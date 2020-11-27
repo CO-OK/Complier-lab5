@@ -168,6 +168,8 @@ public:
     static string exprType2String(ExprType type);
     static string IterationType2String(IterationType type); 
     static string JumpStmtType2String(JumpStmtType type);
+    void change_Field(TreeNode* node);
+    void change_Child_Field(TreeNode* node);
 public:
     TreeNode(int lineno, NodeType type);
 };

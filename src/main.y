@@ -176,6 +176,8 @@ iteration_Stmt
     node->addChild($7);
     node->addChild($9);
     node->layer_node=currentNode;
+    node->change_field.accessTime=currentNode->accessTime-1;
+    node->change_field.needChange=1;
     $$ = node;
     printf("FOR L_Small_Braces Exp SEMICOLON Exp SEMICOLON Exp R_Small_Braces statement\n");
 }
@@ -186,6 +188,8 @@ iteration_Stmt
     node->addChild($5);
     node->addChild($8);
     node->layer_node=currentNode;
+    node->change_field.accessTime=currentNode->accessTime-1;
+    node->change_field.needChange=1;
     $$ = node;
 }
 | FOR L_Small_Braces Exp SEMICOLON  SEMICOLON Exp R_Small_Braces statement{
@@ -195,6 +199,8 @@ iteration_Stmt
     node->addChild($6);
     node->addChild($8);
     node->layer_node=currentNode;
+    node->change_field.accessTime=currentNode->accessTime-1;
+    node->change_field.needChange=1;
     $$ = node;
 }
 | FOR L_Small_Braces Exp SEMICOLON  SEMICOLON  R_Small_Braces statement{
@@ -203,6 +209,8 @@ iteration_Stmt
     node->addChild($3);
     node->addChild($7);
     node->layer_node=currentNode;
+    node->change_field.accessTime=currentNode->accessTime-1;
+    node->change_field.needChange=1;
     $$ = node;
 }
 | FOR L_Small_Braces  SEMICOLON Exp SEMICOLON Exp R_Small_Braces statement{
@@ -212,6 +220,8 @@ iteration_Stmt
     node->addChild($6);
     node->addChild($8);
     node->layer_node=currentNode;
+    node->change_field.accessTime=currentNode->accessTime-1;
+    node->change_field.needChange=1;
     $$ = node;
 }
 | FOR L_Small_Braces  SEMICOLON Exp SEMICOLON  R_Small_Braces statement{
@@ -220,6 +230,8 @@ iteration_Stmt
     node->addChild($4);
     node->addChild($7);
     node->layer_node=currentNode;
+    node->change_field.accessTime=currentNode->accessTime-1;
+    node->change_field.needChange=1;
     $$ = node;
 }
 | FOR L_Small_Braces  SEMICOLON  SEMICOLON Exp R_Small_Braces statement{
@@ -228,12 +240,16 @@ iteration_Stmt
     node->addChild($5);
     node->addChild($7);
     node->layer_node=currentNode;
+    node->change_field.accessTime=currentNode->accessTime-1;
+    node->change_field.needChange=1;
     $$ = node;
 } FOR L_Small_Braces  SEMICOLON  SEMICOLON  R_Small_Braces statement{
     TreeNode* node = new TreeNode(lineno, NDOE_ITERATION_STMT);
     node->iterationtype = ITERATION_FOR____;
     node->addChild($6);
     node->layer_node=currentNode;
+    node->change_field.accessTime=currentNode->accessTime-1;
+    node->change_field.needChange=1;
     $$ = node;
 }
 ;
