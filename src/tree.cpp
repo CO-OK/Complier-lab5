@@ -36,6 +36,8 @@ TreeNode::TreeNode(int lineno, NodeType type) {
     this->lineno=lineno;
     this->nodeType=type;
     this->layer_node=nullptr;
+    this->change_field.accessTime=0;
+    this->change_field.needChange=0;
 }
 
 void TreeNode::genNodeId() {
@@ -50,6 +52,10 @@ void TreeNode::genNodeId() {
         node_list.pop_front();
         tmp->nodeID=id;
         id++;
+        if(tmp->change_field.needChange)
+        {
+            tmp->layer_node=tmp->layer_node->list[tmp->change_field.accessTime];
+        }
         for(TreeNode*t=tmp->child;t!=nullptr;t=t->sibling)
         {
             node_list.push_back(t);

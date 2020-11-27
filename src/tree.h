@@ -10,6 +10,22 @@
 #define layerNum 50
 #define layerDescNum 100
 struct layerNode;
+struct changeField;
+struct TreeNode;
+struct layerNode
+{
+    layerNode* prev;
+    layerNode* list[layerNum];
+    int layerDesc[layerDescNum];
+    int nodeCount;
+    int accessTime;
+};
+
+struct changeField
+{
+    int needChange;
+    int accessTime;
+};
 enum NodeType
 {
     NODE_CONST, 
@@ -144,6 +160,7 @@ public:
     string str_val;
     string var_name;
     layerNode* layer_node;
+    changeField change_field;
 public:
     static string nodeType2String (NodeType type);
     static string opType2String (OperatorType type);
@@ -155,13 +172,6 @@ public:
     TreeNode(int lineno, NodeType type);
 };
 
-struct layerNode
-{
-    layerNode* prev;
-    layerNode* list[layerNum];
-    int layerDesc[layerDescNum];
-    int nodeCount;
-    int accessTime;
-};
+
 
 #endif

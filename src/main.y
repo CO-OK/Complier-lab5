@@ -80,6 +80,8 @@ statement
 | compound_Stmt{
     TreeNode* node = new TreeNode($1->lineno, NODE_BLOCK_FLAG); 
     node->layer_node=currentNode;
+    node->change_field.accessTime=currentNode->accessTime-1;
+    node->change_field.needChange=1;
     //node->stype
     node->addChild($1);
     $$=node;
