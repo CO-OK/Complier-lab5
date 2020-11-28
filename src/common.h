@@ -13,4 +13,5 @@ using std::unordered_map;
 
 #include "./tree.h"
 #include "./main.tab.h"
+#include "./SymbolTable.h"
 #endif

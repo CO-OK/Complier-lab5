@@ -27,6 +27,7 @@ int main(int argc, char *argv[])
     layer_root->nodeCount=0;
     layer_root->layerDesc[0]=0;
     layer_root->accessTime=0;
+    currentNode->section=new SymbolTableSection;
     for(int i=1;i<layerDescNum;i++)
     {
         layer_root->layerDesc[i]=-1;
@@ -34,7 +35,9 @@ int main(int argc, char *argv[])
     yyparse();
     if(root != NULL) {
         root->genNodeId();
+        correctSymbol(layer_root);
         root->printAST();
+        printSymbolTable(layer_root);
     }
     return 0;
 }

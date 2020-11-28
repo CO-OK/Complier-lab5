@@ -82,12 +82,12 @@ IDENTIFIER [[:alpha:]_][[:alpha:][:digit:]_]*
 "," return COMMA;
 
 {INTEGER} {
-    printf("INTEGER\n");
     TreeNode* node = new TreeNode(lineno, NODE_CONST);
     node->type = TYPE_INT;
     node->int_val = atoi(yytext);
     node->layer_node=currentNode;
     yylval = node;
+    
     return INTEGER;
 }
 
@@ -131,6 +131,12 @@ IDENTIFIER [[:alpha:]_][[:alpha:][:digit:]_]*
     node->var_name = string(yytext);
     node->layer_node=currentNode;
     yylval = node;
+    Item* item=new Item;
+    item->name=node->var_name;
+    item->symbol_type=SYMBOL_VAR;
+    item->symbol_property=PROPERTY_REFE;
+    item->tree_node=node;
+    currentNode->section->section_table.push_back(item);
     return IDENTIFIER;
 }
 

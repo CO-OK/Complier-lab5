@@ -2,7 +2,7 @@
 void printLayer(layerNode*node);
 void TreeNode::addChild(TreeNode* child) {
 
-    printf("add child\n");
+    //printf("add child\n");
     if(this->child==nullptr)
         this->child=child;
     else
@@ -18,7 +18,7 @@ void TreeNode::addChild(TreeNode* child) {
 }
 
 void TreeNode::addSibling(TreeNode* sibling){
-    printf("add sibling\n");
+    //printf("add sibling\n");
     if(this->sibling==nullptr)
         this->sibling=sibling;
     else
@@ -517,6 +517,7 @@ layerNode* makeNode(layerNode* node)
     }
     temp->layerDesc[flag]=node->nodeCount;
     node->nodeCount++;
+    temp->section=new SymbolTableSection;
     return temp;
 }
 void printLayer(layerNode*node)

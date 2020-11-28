@@ -6,6 +6,7 @@
 #include<stdio.h>
 #include "pch.h"
 #include "type.h"
+#include "SymbolTable.h"
 //#include "layerNode.h"
 #define layerNum 50
 #define layerDescNum 100
@@ -20,6 +21,7 @@ struct layerNode
     int layerDesc[layerDescNum];
     int nodeCount;
     int accessTime;
+    SymbolTableSection * section;
 };
 
 struct changeField
@@ -175,6 +177,7 @@ public:
     layerNode* layer_node;
     changeField change_field;
     funcInfo* func_info;
+    int is_def;//是否是定义的变量
 public:
     static string nodeType2String (NodeType type);
     static string opType2String (OperatorType type);

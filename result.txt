@@ -1,70 +1,139 @@
-T_INT
-IDENTIFIER
-T_INT
-add child
-add child
-T IDENTIFIER
-INTEGER
-INTEGER
-add child
-statement
-add child
-add child
-add child
-add child
-statement
-T_INT
-T_INT
-add child
-add child
-T IDENTIFIER
-declaration SEMICOLON
-statement
-IDENTIFIER
-unaryExp
-assignment_OperatorINTEGER
-INTEGER
-add child
-add child
-INTEGER
-INTEGER
-add child
-add child
-add child
-add child
-add child
-add child
-unaryExp assignment_Operator additive_Exp
-add sibling
-statements statement
-add child
-add child
-main
-add sibling
-statements statement
-add child
-program
-id:23
+id:103
 nodeID: 0    lineno: 0    NodeType: NODE_PROG    stype: null    child: 1 2     layer:0    
-nodeID: 1    lineno: 1    NodeType: NODE_FUNCTION_DEF    stype: null    func_name=f     return_value=int    func_args_at_node:5     func_body_at_node:6     child: 3 4 5 6     layer:0    
-nodeID: 2    lineno: 0    NodeType: NODE_MAIN    stype: null    child: 7 8 9     layer:0    
+nodeID: 1    lineno: 1    NodeType: NODE_FUNCTION_DEF    stype: null    func_name=f     return_value=int    func_body_at_node:5     child: 3 4 5     layer:0    
+nodeID: 2    lineno: 0    NodeType: NODE_MAIN    stype: null    child: 6 7 8 9 10 11 12 13 14     layer:0    
 nodeID: 3    lineno: 1    NodeType: NODE_TYPE    stype: null    TYPE_SPEC=int    child:     layer:0    
 nodeID: 4    lineno: 1    NodeType: NODE_VAR    stype: null    var_name=f    child:     layer:0    
-nodeID: 5    lineno: 1    NodeType: NODE_DECL_STMT    stype: STMT_DECL    child: 10 11     layer:0    
-nodeID: 6    lineno: 1    NodeType: NODE_JUMP_STMT    stype: null    jumptype=JUMP_RETURN_EXP    child: 12     layer:0-0    
-nodeID: 7    lineno: 3    NodeType: NODE_TYPE    stype: null    TYPE_SPEC=int    child:     layer:0    
-nodeID: 8    lineno: 5    NodeType: NODE_DECL_STMT    stype: STMT_DECL    child: 13 14     layer:0-1    
-nodeID: 9    lineno: 6    NodeType: NODE_EXPR    stype: null    expr_type=NODE_ASSIGN_EXP    child: 15 16 17     layer:0-1    
-nodeID: 10    lineno: 1    NodeType: NODE_TYPE    stype: null    TYPE_SPEC=int    child:     layer:0    
-nodeID: 11    lineno: 1    NodeType: NODE_VAR    stype: null    var_name=a    child:     layer:0    
-nodeID: 12    lineno: 1    NodeType: NODE_CONST    stype: null    node->type=int value=0 child:     layer:0-0    
-nodeID: 13    lineno: 5    NodeType: NODE_TYPE    stype: null    TYPE_SPEC=int    child:     layer:0-1    
-nodeID: 14    lineno: 5    NodeType: NODE_VAR    stype: null    var_name=a    child:     layer:0-1    
-nodeID: 15    lineno: 6    NodeType: NODE_VAR    stype: null    var_name=a    child:     layer:0-1    
-nodeID: 16    lineno: 6    NodeType: NODE_OPERATOR    stype: null    operator_type_= OP_ASSGIN_EQ     child:     layer:0-1    
-nodeID: 17    lineno: 6    NodeType: NODE_EXPR    stype: null    expr_type=NODE_additive_Exp    child: 18 19 20     layer:0-1    
-nodeID: 18    lineno: 6    NodeType: NODE_EXPR    stype: null    expr_type=NODE_UNARY_EXP    child: 21 22     layer:0-1    
-nodeID: 19    lineno: 6    NodeType: NODE_OPERATOR    stype: null    operator_type_= OP_SUB     child:     layer:0-1    
-nodeID: 20    lineno: 6    NodeType: NODE_CONST    stype: null    node->type=int value=3 child:     layer:0-1    
-nodeID: 21    lineno: 6    NodeType: NODE_OPERATOR    stype: null    operator_type_= OP_SUB     child:     layer:0-1    
-nodeID: 22    lineno: 6    NodeType: NODE_CONST    stype: null    node->type=int value=1 child:     layer:0-1    
+nodeID: 5    lineno: 1    NodeType: NODE_EMPTY    stype: STMT_SKIP    child:     layer:0    
+nodeID: 6    lineno: 2    NodeType: NODE_TYPE    stype: null    TYPE_SPEC=int    child:     layer:0    
+nodeID: 7    lineno: 3    NodeType: NODE_DECL_STMT    stype: STMT_DECL    child: 15 16 17     layer:0-1    
+nodeID: 8    lineno: 4    NodeType: NODE_DECL_STMT    stype: STMT_DECL    child: 18 19     layer:0-1    
+nodeID: 9    lineno: 5    NodeType: NODE_EXPR    stype: null    expr_type=NODE_ASSIGN_EXP    child: 20 21 22     layer:0-1    
+nodeID: 10    lineno: 6    NodeType: NODE_EXPR    stype: null    expr_type=NODE_ASSIGN_EXP    child: 23 24 25     layer:0-1    
+nodeID: 11    lineno: 7    NodeType: NODE_DECL_STMT    stype: STMT_DECL    child: 26 27     layer:0-1    
+nodeID: 12    lineno: 8    NodeType: NODE_FUNCTION_CALL    stype: null    func_name=f     child: 28     layer:0-1    
+nodeID: 13    lineno: 8    NodeType: NODE_STMT    stype: STMT_SKIP    child:     layer:0-1    
+nodeID: 14    lineno: 21    NodeType: NDOE_ITERATION_STMT    stype: null    iteration_type=STMT_ITERATION_WHILE    child: 29 30     layer:0-1    
+nodeID: 15    lineno: 3    NodeType: NODE_TYPE    stype: null    TYPE_SPEC=int    child:     layer:0-1    
+nodeID: 16    lineno: 3    NodeType: NODE_VAR    stype: null    var_name=a    child:     layer:0-1    
+nodeID: 17    lineno: 3    NodeType: NODE_CONST    stype: null    node->type=int value=9 child:     layer:0-1    
+nodeID: 18    lineno: 4    NodeType: NODE_TYPE    stype: null    TYPE_SPEC=int    child:     layer:0-1    
+nodeID: 19    lineno: 4    NodeType: NODE_VAR    stype: null    var_name=s    child:     layer:0-1    
+nodeID: 20    lineno: 5    NodeType: NODE_VAR    stype: null    var_name=a    child:     layer:0-1    
+nodeID: 21    lineno: 5    NodeType: NODE_OPERATOR    stype: null    operator_type_= OP_ASSGIN_EQ     child:     layer:0-1    
+nodeID: 22    lineno: 5    NodeType: NODE_CONST    stype: null    node->type=int value=10 child:     layer:0-1    
+nodeID: 23    lineno: 6    NodeType: NODE_VAR    stype: null    var_name=s    child:     layer:0-1    
+nodeID: 24    lineno: 6    NodeType: NODE_OPERATOR    stype: null    operator_type_= OP_ASSGIN_EQ     child:     layer:0-1    
+nodeID: 25    lineno: 6    NodeType: NODE_CONST    stype: null    node->type=int value=0 child:     layer:0-1    
+nodeID: 26    lineno: 7    NodeType: NODE_TYPE    stype: null    TYPE_SPEC=char    child:     layer:0-1    
+nodeID: 27    lineno: 7    NodeType: NODE_VAR    stype: null    var_name=ch    child:     layer:0-1    
+nodeID: 28    lineno: 8    NodeType: NODE_VAR    stype: null    var_name=f    child:     layer:0-1    
+nodeID: 29    lineno: 9    NodeType: NODE_EXPR    stype: null    expr_type=NODE_LOGICAL_OR_EXP    child: 31 32 33     layer:0-1    
+nodeID: 30    lineno: 10    NodeType: NODE_BLOCK_FLAG    stype: null    child: 34 35 36 37 38     layer:0-1-0    
+nodeID: 31    lineno: 9    NodeType: NODE_EXPR    stype: null    expr_type=NODE_LOGICAL_AND_EXP    child: 39 40 41     layer:0-1    
+nodeID: 32    lineno: 9    NodeType: NODE_OPERATOR    stype: null    operator_type_= OP_DOUBLE_OR     child:     layer:0-1    
+nodeID: 33    lineno: 9    NodeType: NODE_EXPR    stype: null    expr_type=NODE_LOGICAL_AND_EXP    child: 42 43 44     layer:0-1    
+nodeID: 34    lineno: 10    NodeType: NODE_EXPR    stype: null    expr_type=NODE_ASSIGN_EXP    child: 45 46 47     layer:0-1-0    
+nodeID: 35    lineno: 11    NodeType: NODE_DECL_STMT    stype: STMT_DECL    child: 48 49     layer:0-1-0    
+nodeID: 36    lineno: 12    NodeType: NODE_EXPR    stype: null    expr_type=NODE_ASSIGN_EXP    child: 50 51 52     layer:0-1-0    
+nodeID: 37    lineno: 13    NodeType: NODE_EXPR    stype: null    expr_type=NODE_ASSIGN_EXP    child: 53 54 55     layer:0-1-0    
+nodeID: 38    lineno: 21    NodeType: NODE_SELECTION_STMT    stype: STMT_SELETION    child: 56 57     layer:0-1-0    
+nodeID: 39    lineno: 9    NodeType: NODE_EXPR    stype: null    expr_type=NODE_RELATION_GREATER_EXP    child: 58 59 60     layer:0-1    
+nodeID: 40    lineno: 9    NodeType: NODE_OPERATOR    stype: null    operator_type_= OP_DOUBLE_AND     child:     layer:0-1    
+nodeID: 41    lineno: 9    NodeType: NODE_EXPR    stype: null    expr_type=NODE_RELATION_LESS_EQ_EXP    child: 61 62 63     layer:0-1    
+nodeID: 42    lineno: 9    NodeType: NODE_EXPR    stype: null    expr_type=NODE_EQUALITY_EXP    child: 64 65 66     layer:0-1    
+nodeID: 43    lineno: 9    NodeType: NODE_OPERATOR    stype: null    operator_type_= OP_DOUBLE_AND     child:     layer:0-1    
+nodeID: 44    lineno: 9    NodeType: NODE_EXPR    stype: null    expr_type=NODE_EQUALITY_EXP    child: 67 68 69     layer:0-1    
+nodeID: 45    lineno: 10    NodeType: NODE_VAR    stype: null    var_name=a    child:     layer:0-1-0    
+nodeID: 46    lineno: 10    NodeType: NODE_OPERATOR    stype: null    operator_type_= OP_SUB_EQ     child:     layer:0-1-0    
+nodeID: 47    lineno: 10    NodeType: NODE_CONST    stype: null    node->type=int value=1 child:     layer:0-1-0    
+nodeID: 48    lineno: 11    NodeType: NODE_TYPE    stype: null    TYPE_SPEC=int    child:     layer:0-1-0    
+nodeID: 49    lineno: 11    NodeType: NODE_VAR    stype: null    var_name=a    child:     layer:0-1-0    
+nodeID: 50    lineno: 12    NodeType: NODE_VAR    stype: null    var_name=a    child:     layer:0-1-0    
+nodeID: 51    lineno: 12    NodeType: NODE_OPERATOR    stype: null    operator_type_= OP_ASSGIN_EQ     child:     layer:0-1-0    
+nodeID: 52    lineno: 12    NodeType: NODE_CONST    stype: null    node->type=int value=10 child:     layer:0-1-0    
+nodeID: 53    lineno: 13    NodeType: NODE_VAR    stype: null    var_name=s    child:     layer:0-1-0    
+nodeID: 54    lineno: 13    NodeType: NODE_OPERATOR    stype: null    operator_type_= OP_ADD_EQ     child:     layer:0-1-0    
+nodeID: 55    lineno: 13    NodeType: NODE_VAR    stype: null    var_name=a    child:     layer:0-1-0    
+nodeID: 56    lineno: 14    NodeType: NODE_EXPR    stype: null    expr_type=NODE_RELATION_LESS_EXP    child: 70 71 72     layer:0-1-0    
+nodeID: 57    lineno: 15    NodeType: NODE_BLOCK_FLAG    stype: null    child: 73 74 75     layer:0-1-0-0    
+nodeID: 58    lineno: 9    NodeType: NODE_VAR    stype: null    var_name=a    child:     layer:0-1    
+nodeID: 59    lineno: 9    NodeType: NODE_OPERATOR    stype: null    operator_type_= OP_GREATER     child:     layer:0-1    
+nodeID: 60    lineno: 9    NodeType: NODE_CONST    stype: null    node->type=int value=0 child:     layer:0-1    
+nodeID: 61    lineno: 9    NodeType: NODE_VAR    stype: null    var_name=a    child:     layer:0-1    
+nodeID: 62    lineno: 9    NodeType: NODE_OPERATOR    stype: null    operator_type_= OP_LESS_EQ     child:     layer:0-1    
+nodeID: 63    lineno: 9    NodeType: NODE_CONST    stype: null    node->type=int value=10 child:     layer:0-1    
+nodeID: 64    lineno: 9    NodeType: NODE_EXPR    stype: null    expr_type=NODE_additive_Exp    child: 76 77 78     layer:0-1    
+nodeID: 65    lineno: 9    NodeType: NODE_OPERATOR    stype: null    operator_type_= OP_EQ     child:     layer:0-1    
+nodeID: 66    lineno: 9    NodeType: NODE_CONST    stype: null    node->type=int value=10 child:     layer:0-1    
+nodeID: 67    lineno: 9    NodeType: NODE_EXPR    stype: null    expr_type=NODE_UNARY_EXP    child: 79 80     layer:0-1    
+nodeID: 68    lineno: 9    NodeType: NODE_OPERATOR    stype: null    operator_type_= OP_EQ     child:     layer:0-1    
+nodeID: 69    lineno: 9    NodeType: NODE_CONST    stype: null    node->type=int value=10 child:     layer:0-1    
+nodeID: 70    lineno: 14    NodeType: NODE_EXPR    stype: null    expr_type=NODE_UNARY_EXP    child: 81 82     layer:0-1-0    
+nodeID: 71    lineno: 14    NodeType: NODE_OPERATOR    stype: null    operator_type_= OP_LESS     child:     layer:0-1-0    
+nodeID: 72    lineno: 14    NodeType: NODE_EXPR    stype: null    expr_type=NODE_UNARY_EXP    child: 83 84     layer:0-1-0    
+nodeID: 73    lineno: 15    NodeType: NODE_DECL_STMT    stype: STMT_DECL    child: 85 86     layer:0-1-0-0    
+nodeID: 74    lineno: 16    NodeType: NODE_EXPR    stype: null    expr_type=NODE_ASSIGN_EXP    child: 87 88 89     layer:0-1-0-0    
+nodeID: 75    lineno: 19    NodeType: NDOE_ITERATION_STMT    stype: null    iteration_type=STMT_ITERATION_FOR_EEE    child: 90 91 92 93     layer:0-1-0-0-0    
+nodeID: 76    lineno: 9    NodeType: NODE_VAR    stype: null    var_name=a    child:     layer:0-1    
+nodeID: 77    lineno: 9    NodeType: NODE_OPERATOR    stype: null    operator_type_= OP_MOD     child:     layer:0-1    
+nodeID: 78    lineno: 9    NodeType: NODE_CONST    stype: null    node->type=int value=100 child:     layer:0-1    
+nodeID: 79    lineno: 9    NodeType: NODE_OPERATOR    stype: null    operator_type_= OP_UNARY_NOT     child:     layer:0-1    
+nodeID: 80    lineno: 9    NodeType: NODE_VAR    stype: null    var_name=a    child:     layer:0-1    
+nodeID: 81    lineno: 14    NodeType: NODE_OPERATOR    stype: null    operator_type_= OP_SUB     child:     layer:0-1-0    
+nodeID: 82    lineno: 14    NodeType: NODE_VAR    stype: null    var_name=s    child:     layer:0-1-0    
+nodeID: 83    lineno: 14    NodeType: NODE_OPERATOR    stype: null    operator_type_= OP_SUB     child:     layer:0-1-0    
+nodeID: 84    lineno: 14    NodeType: NODE_CONST    stype: null    node->type=int value=10 child:     layer:0-1-0    
+nodeID: 85    lineno: 15    NodeType: NODE_TYPE    stype: null    TYPE_SPEC=int    child:     layer:0-1-0-0    
+nodeID: 86    lineno: 15    NodeType: NODE_VAR    stype: null    var_name=b    child:     layer:0-1-0-0    
+nodeID: 87    lineno: 16    NodeType: NODE_VAR    stype: null    var_name=b    child:     layer:0-1-0-0    
+nodeID: 88    lineno: 16    NodeType: NODE_OPERATOR    stype: null    operator_type_= OP_ASSGIN_EQ     child:     layer:0-1-0-0    
+nodeID: 89    lineno: 16    NodeType: NODE_CONST    stype: null    node->type=int value=10 child:     layer:0-1-0-0    
+nodeID: 90    lineno: 17    NodeType: NODE_DECL_STMT    stype: STMT_DECL    child: 94 95 96     layer:0-1-0-0-0    
+nodeID: 91    lineno: 17    NodeType: NODE_EXPR    stype: null    expr_type=NODE_RELATION_LESS_EXP    child: 97 98 99     layer:0-1-0-0-0    
+nodeID: 92    lineno: 17    NodeType: NODE_EXPR    stype: null    expr_type=NODE_POSTFIX_EXP    child: 100 101     layer:0-1-0-0-0    
+nodeID: 93    lineno: 19    NodeType: NODE_BLOCK_FLAG    stype: null    child: 102     layer:0-1-0-0-0    
+nodeID: 94    lineno: 17    NodeType: NODE_TYPE    stype: null    TYPE_SPEC=int    child:     layer:0-1-0-0-0    
+nodeID: 95    lineno: 17    NodeType: NODE_VAR    stype: null    var_name=i    child:     layer:0-1-0-0-0    
+nodeID: 96    lineno: 17    NodeType: NODE_CONST    stype: null    node->type=int value=0 child:     layer:0-1-0-0-0    
+nodeID: 97    lineno: 17    NodeType: NODE_VAR    stype: null    var_name=i    child:     layer:0-1-0-0-0    
+nodeID: 98    lineno: 17    NodeType: NODE_OPERATOR    stype: null    operator_type_= OP_LESS     child:     layer:0-1-0-0-0    
+nodeID: 99    lineno: 17    NodeType: NODE_VAR    stype: null    var_name=b    child:     layer:0-1-0-0-0    
+nodeID: 100    lineno: 17    NodeType: NODE_VAR    stype: null    var_name=i    child:     layer:0-1-0-0-0    
+nodeID: 101    lineno: 17    NodeType: NODE_OPERATOR    stype: null    operator_type_= OP_DOUBLE_ADD     child:     layer:0-1-0-0-0    
+nodeID: 102    lineno: 19    NodeType: NODE_EMPTY    stype: STMT_SKIP    child:     layer:0-1-0-0-0    
+layer:0    
+symbol:  f    ref_or_def:  PROPERTY_DEF     symbol_type:  SYMBOL_FUNC    
+
+layer:0-0    
+
+layer:0-1    
+symbol:  a    ref_or_def:  PROPERTY_DEF     symbol_type:  SYMBOL_VAR    
+symbol:  s    ref_or_def:  PROPERTY_DEF     symbol_type:  SYMBOL_VAR    
+symbol:  a    ref_or_def:  PROPERTY_REFE     symbol_type:  SYMBOL_VAR    
+symbol:  s    ref_or_def:  PROPERTY_REFE     symbol_type:  SYMBOL_VAR    
+symbol:  ch    ref_or_def:  PROPERTY_DEF     symbol_type:  SYMBOL_VAR    
+symbol:  f    ref_or_def:  PROPERTY_REFE     symbol_type:  SYMBOL_FUNC    
+symbol:  a    ref_or_def:  PROPERTY_REFE     symbol_type:  SYMBOL_VAR    
+symbol:  a    ref_or_def:  PROPERTY_REFE     symbol_type:  SYMBOL_VAR    
+symbol:  a    ref_or_def:  PROPERTY_REFE     symbol_type:  SYMBOL_VAR    
+symbol:  a    ref_or_def:  PROPERTY_REFE     symbol_type:  SYMBOL_VAR    
+
+layer:0-1-0    
+symbol:  a    ref_or_def:  PROPERTY_REFE     symbol_type:  SYMBOL_VAR    
+symbol:  a    ref_or_def:  PROPERTY_DEF     symbol_type:  SYMBOL_VAR    
+symbol:  a    ref_or_def:  PROPERTY_REFE     symbol_type:  SYMBOL_VAR    
+symbol:  s    ref_or_def:  PROPERTY_REFE     symbol_type:  SYMBOL_VAR    
+symbol:  a    ref_or_def:  PROPERTY_REFE     symbol_type:  SYMBOL_VAR    
+symbol:  s    ref_or_def:  PROPERTY_REFE     symbol_type:  SYMBOL_VAR    
+
+layer:0-1-0-0    
+symbol:  b    ref_or_def:  PROPERTY_DEF     symbol_type:  SYMBOL_VAR    
+symbol:  b    ref_or_def:  PROPERTY_REFE     symbol_type:  SYMBOL_VAR    
+
+layer:0-1-0-0-0    
+symbol:  i    ref_or_def:  PROPERTY_DEF     symbol_type:  SYMBOL_VAR    
+symbol:  i    ref_or_def:  PROPERTY_REFE     symbol_type:  SYMBOL_VAR    
+symbol:  b    ref_or_def:  PROPERTY_REFE     symbol_type:  SYMBOL_VAR    
+symbol:  i    ref_or_def:  PROPERTY_REFE     symbol_type:  SYMBOL_VAR    
+
