@@ -114,17 +114,6 @@ function_Call
     setSymbolType(currentNode->section,$1,SYMBOL_FUNC);
     $$=node;
 }
-| Id L_Small_Braces paperConst R_Small_Braces{
-    TreeNode* node = new TreeNode(lineno, NODE_FUNCTION_CALL); 
-    node->layer_node=currentNode;
-    node->func_info=new funcInfo;
-    node->func_info->func_name=$1;
-    node->func_info->arg_list=$3;
-    node->addChild($1);
-    node->addChild($3);
-    setSymbolType(currentNode->section,$1,SYMBOL_FUNC);
-    $$=node;
-}
 | Id L_Small_Braces R_Small_Braces {
     TreeNode* node = new TreeNode(lineno, NODE_FUNCTION_CALL); 
     node->layer_node=currentNode;
@@ -702,14 +691,14 @@ declaration
 ;
 
 Id_List
-: Id_List COMMA Id{
+: Id_List COMMA additive_Exp{
     TreeNode* node = new TreeNode(lineno, NODE_ID_LIST);
     node->addChild($1);
     node->addChild($3);
     node->layer_node=currentNode;
     $$ = node; 
 }
-| Id{
+| additive_Exp{
     $$=$1;
 }
 ;
