@@ -280,14 +280,13 @@ IDENTIFIER [[:alpha:]_][[:alpha:][:digit:]_]*
 
 
 {L_Braces} {
-    currentNode=makeNode(currentNode);
     //yylval = currentNode;
+    currentNode=makeNode(currentNode);
     return L_Braces;
 }
 
 {R_Braces} {
     currentNode=currentNode->prev;
-    //yylval = currentNode;
     currentNode->accessTime++;
     return R_Braces;
 }

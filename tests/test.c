@@ -1,3 +1,9 @@
+int f()
+{
+    int f=0;
+    return 0;
+}
+int gg;
 int main() {
     int a, s;
     a = 10;
@@ -19,4 +25,8 @@ int main() {
         }
     }
 }
-
+int f1()
+{
+    int x=0;
+    return 0;
+}
