@@ -36,8 +36,9 @@ struct funcInfo{
     TreeNode* decl_list;
     TreeNode* func_body;
     TreeNode* arg_list;
+    TreeNode* func_def_loc;//如果是函数定义，则指向自身，如果是函数调用，则指向函数定义的节点
 };
-
+TreeNode* findFuncDef(string func_name,list<TreeNode*> func_list);//通过函数名找到函数定义的相关节点并返回
 enum NodeType
 {
     NODE_CONST, 

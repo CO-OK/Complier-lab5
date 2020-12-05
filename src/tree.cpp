@@ -540,3 +540,13 @@ void printLayer(layerNode*node)
     }
     cout<<"    ";
 }
+
+TreeNode* findFuncDef(string func_name,list<TreeNode*> func_list)
+{
+    for(list<TreeNode*>::iterator i=func_list.begin();i!=func_list.end();i++)
+    {
+        if((*i)->func_info->func_name->var_name==func_name)
+            return *i;
+    }
+    return nullptr;
+}

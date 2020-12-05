@@ -5,6 +5,7 @@
     TreeNode* root;
     layerNode* currentNode;
     layerNode* layer_root;
+    list<TreeNode*> func_def_list;//一个存储了所有函数定义的列表，这样在遇到函数调用时能够不用遍历语法树而找到函数定义节点
     extern int lineno;
     int yylex();
     int yyerror( char const * );
@@ -112,6 +113,7 @@ function_Call
     node->addChild($1);
     node->addChild($3);
     setSymbolType(currentNode->section,$1,SYMBOL_FUNC);
+    node->func_info->func_def_loc=findFuncDef($1->var_name,func_def_list);//将函数调用节点的指向定义的指针指向该函数的定义节点
     $$=node;
 }
 | Id L_Small_Braces R_Small_Braces {
@@ -121,8 +123,10 @@ function_Call
     node->func_info->func_name=$1;
     node->addChild($3);
     setSymbolType(currentNode->section,$1,SYMBOL_FUNC);
+    node->func_info->func_def_loc=findFuncDef($1->var_name,func_def_list);//将函数调用节点的指向定义的指针指向该函数的定义节点
     $$=node;
 }
+;
 
 function_Definition
 : T Id L_Small_Braces declaration R_Small_Braces compound_Stmt{
@@ -133,12 +137,14 @@ function_Definition
     node->func_info->func_name=$2;
     node->func_info->decl_list=$4;
     node->func_info->func_body=$6;
+    node->func_info->func_def_loc=node;
     node->addChild($1);
     node->addChild($2);
     node->addChild($4);
     node->addChild($6);
     setProperty(currentNode->section,$2,PROPERTY_DEF);
     setSymbolType(currentNode->section,$2,SYMBOL_FUNC);
+    func_def_list.push_back(node);//将这个函数定义节点放入func_def_list
     $$=node;
 }
 | T Id L_Small_Braces R_Small_Braces compound_Stmt{
@@ -153,6 +159,7 @@ function_Definition
     node->addChild($5);
     setProperty(currentNode->section,$2,PROPERTY_DEF);
     setSymbolType(currentNode->section,$2,SYMBOL_FUNC);
+    func_def_list.push_back(node);//将这个函数定义节点放入func_def_list
     $$=node;
     
 }
