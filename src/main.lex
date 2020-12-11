@@ -8,6 +8,7 @@ int lineno=1;
 extern layerNode* currentNode;
 extern layerNode* layer_root;
 extern layerNode* makeNode(layerNode* node);
+extern int assignRefSymbolType(list<Item*>*a,Item*);
 %}
 BLOCKCOMMENT \/\*([^\*^\/]*|[\*^\/*]*|[^\**\/]*)*\*\/
 LINECOMMENT \/\/[^\n]*
@@ -130,6 +131,7 @@ IDENTIFIER [[:alpha:]_][[:alpha:][:digit:]_]*
     TreeNode* node = new TreeNode(lineno, NODE_VAR);
     node->var_name = string(yytext);
     node->layer_node=currentNode;
+    node->type=TYPE_VOID;
     yylval = node;
     Item* item=new Item;
     item->name=node->var_name;
@@ -137,6 +139,9 @@ IDENTIFIER [[:alpha:]_][[:alpha:][:digit:]_]*
     item->symbol_property=PROPERTY_REFE;
     item->tree_node=node;
     currentNode->section->section_table.push_back(item);
+    //在符号表中寻找有没有之前定义过的，如果有，则将定义的那个的type赋给此变量
+    /*code*/
+    assignRefSymbolType(&currentNode->section->section_table,item);
     return IDENTIFIER;
 }
 

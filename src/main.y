@@ -295,6 +295,8 @@ iteration_Stmt
     node->layer_node=currentNode;
     node->change_field.accessTime=currentNode->accessTime-1;
     node->change_field.needChange=1;
+    //类型检查
+    node->check_type();
     $$ = node;
 }
 | FOR L_Small_Braces  SEMICOLON  SEMICOLON Exp R_Small_Braces statement{
@@ -305,6 +307,8 @@ iteration_Stmt
     node->layer_node=currentNode;
     node->change_field.accessTime=currentNode->accessTime-1;
     node->change_field.needChange=1;
+    //类型检查
+    node->check_type();
     $$ = node;
 } FOR L_Small_Braces  SEMICOLON  SEMICOLON  R_Small_Braces statement{
     TreeNode* node = new TreeNode(lineno, NDOE_ITERATION_STMT);
@@ -313,6 +317,8 @@ iteration_Stmt
     node->layer_node=currentNode;
     node->change_field.accessTime=currentNode->accessTime-1;
     node->change_field.needChange=1;
+    //类型检查
+    node->type=TYPE_VOID;
     $$ = node;
 }
 ;
@@ -347,6 +353,9 @@ logical_or_Exp
     node->addChild($2);
     node->addChild($3);
     node->layer_node=currentNode;
+    //类型检查
+    node->type=TYPE_BOOL;
+    node->check_type();
     $$ = node;
 }
 ;
@@ -363,6 +372,9 @@ logical_and_Exp
     node->addChild($2);
     node->addChild($3);
     node->layer_node=currentNode;
+    //类型检查
+    node->type=TYPE_BOOL;
+    node->check_type();
     $$ = node;
 }
 ;
@@ -379,6 +391,9 @@ equality_Exp
     node->addChild($2);
     node->addChild($3);
     node->layer_node=currentNode;
+    //类型检查
+    node->type=TYPE_BOOL;
+    node->check_type();
     $$ = node;
 }
 | equality_Exp LOP_NOT_EQ relational_Exp{
@@ -389,6 +404,9 @@ equality_Exp
     node->addChild($2);
     node->addChild($3);
     node->layer_node=currentNode;
+    //类型检查
+    node->type=TYPE_BOOL;
+    node->check_type();
     $$ = node;
 }
 ;
@@ -405,6 +423,9 @@ relational_Exp
     node->addChild($2);
     node->addChild($3);
     node->layer_node=currentNode;
+    //类型检查
+    node->type=TYPE_BOOL;
+    node->check_type();
     $$ = node;
 }
 | relational_Exp LOP_GREATER additive_Exp{
@@ -415,6 +436,9 @@ relational_Exp
     node->addChild($2);
     node->addChild($3);
     node->layer_node=currentNode;
+    //类型检查
+    node->type=TYPE_BOOL;
+    node->check_type();
     $$ = node;
 }
 | relational_Exp LOP_LESS_EQ additive_Exp{
@@ -425,6 +449,9 @@ relational_Exp
     node->addChild($2);
     node->addChild($3);
     node->layer_node=currentNode;
+    //类型检查
+    node->type=TYPE_BOOL;
+    node->check_type();
     $$ = node;
 }
 | relational_Exp LOP_GREATER_EQ additive_Exp{
@@ -435,6 +462,9 @@ relational_Exp
     node->addChild($2);
     node->addChild($3);
     node->layer_node=currentNode;
+    //类型检查
+    node->type=TYPE_BOOL;
+    node->check_type();
     $$ = node;
 }
 ;
@@ -446,10 +476,12 @@ assignment_Stmt
 | assignment_Stmt COMMA assignment_Exp
 {
     TreeNode* node = new TreeNode(lineno, NODE_ASSIGN_STMT);
-    node->stype = STMT_ASSIGN;
+    node->exprtype=NODE_ASSIGN_EXP_WITH_COMMA;
     node->addChild($1);
     node->addChild($3);
     node->layer_node=currentNode;
+    //此处貌似不需要进行类型检查
+    node->type=TYPE_VOID;
     $$ = node;
 }
 ;
@@ -463,6 +495,9 @@ assignment_Exp
     node->addChild($2);
     node->addChild($3);
     node->layer_node=currentNode;
+    //类型检查
+    node->type=TYPE_VOID;
+    node->check_type();
     $$ = node;
 }
 /*| additive_Exp{//会产生两项归约/归约冲突
@@ -483,6 +518,13 @@ additive_Exp
     node->addChild($2);
     node->addChild($3);
     node->layer_node=currentNode;
+    //类型检查 node节点默认以$1的type为准
+    node->type=$1->type;
+    if($1->type==TYPE_STRING)
+        printf("int\n");
+    printf("999999\n");
+    //检查$1 $2是否具有相同类型，目前假设只有整形可以算数运算
+    node->check_type();
     $$ = node;
 }
 | additive_Exp LOP_SUB mult_Exp{
@@ -493,6 +535,10 @@ additive_Exp
     node->addChild($2);
     node->addChild($3);
     node->layer_node=currentNode;
+    //类型检查 node节点默认以$1的type为准
+    node->type=$1->type;
+    //检查$1 $2是否具有相同类型，目前假设只有整形可以算数运算
+    node->check_type();
     $$ = node;
 }
 ;
@@ -505,31 +551,43 @@ mult_Exp
 | mult_Exp LOP_MULT cast_Exp{
     TreeNode* node = new TreeNode(lineno,NODE_EXPR);
     //有可能加stype?
-    node->exprtype=NODE_additive_Exp;
+    node->exprtype=NODE_MULT_EXP;
     node->addChild($1);
     node->addChild($2);
     node->addChild($3);
     node->layer_node=currentNode;
+    //类型检查 node节点默认以$1的type为准
+    node->type=$1->type;
+    //检查$1 $2是否具有相同类型，目前假设只有整形可以算数运算
+    node->check_type();
     $$ = node;
 }
 | mult_Exp LOP_DIV cast_Exp{
     TreeNode* node = new TreeNode(lineno,NODE_EXPR);
     //有可能加stype?
-    node->exprtype=NODE_additive_Exp;
+    node->exprtype=NODE_MULT_EXP;
     node->addChild($1);
     node->addChild($2);
     node->addChild($3);
     node->layer_node=currentNode;
+    //类型检查 node节点默认以$1的type为准
+    node->type=$1->type;
+    //检查$1 $2是否具有相同类型，目前假设只有整形可以算数运算
+    node->check_type();
     $$ = node;
 }
 | mult_Exp LOP_MOD cast_Exp{
     TreeNode* node = new TreeNode(lineno,NODE_EXPR);
     //有可能加stype?
-    node->exprtype=NODE_additive_Exp;
+    node->exprtype=NODE_MULT_EXP;
     node->addChild($1);
     node->addChild($2);
     node->addChild($3);
     node->layer_node=currentNode;
+    //类型检查 node节点默认以$1的type为准
+    node->type=$1->type;
+    //检查$1 $2是否具有相同类型，目前假设只有整形可以算数运算
+    node->check_type();
     $$ = node;
 }
 ;
@@ -554,6 +612,9 @@ unary_Exp
     node->addChild($1);
     node->addChild($2);
     node->layer_node=currentNode;
+    node->type=$2->type;//类型检查
+    //进一步检查unary_Operator是否适用于cast_Exp
+    node->check_type();
     $$=node;
 }
 ;
@@ -581,6 +642,9 @@ postfix_Exp
     node->addChild($1);
     node->addChild($2);
     node->layer_node=currentNode;
+    node->type=$1->type;//类型检查
+    //进一步检查此类型是否适合于此操作符
+    node->check_type();
     $$=node;
 }
 | postfix_Exp DOUBLE_SUB{
@@ -589,6 +653,10 @@ postfix_Exp
     node->addChild($1);
     node->addChild($2);
     node->layer_node=currentNode;
+    node->type=$1->type;//类型检查
+    //进一步检查此类型是否适合于此操作符
+    /*code*/
+    node->check_type();
     $$=node;
 }
 ;
@@ -670,6 +738,10 @@ declaration
     node->layer_node=currentNode;
     setProperty(currentNode->section,$2,PROPERTY_DEF);
     //setSymbolType(currentNode->section,$2,SYMBOL_VAR);
+    $2->type=$1->type;//类型检查
+    node->type=$1->type;//类型检查
+    //进一步检查T与additive_Exp的类型是否相同
+    node->check_type();
     $$ = node;
 }
 | declaration COMMA IDENTIFIER {
@@ -682,6 +754,8 @@ declaration
     node->layer_node=currentNode;
     setProperty(currentNode->section,$3,PROPERTY_DEF);
     //setSymbolType(currentNode->section,$3,SYMBOL_VAR);
+    $2->type=$1->type;//类型检查
+    node->type=$1->type;
     $$ = node;
 }
 | T IDENTIFIER{
@@ -692,6 +766,8 @@ declaration
     node->layer_node=currentNode;
     setProperty(currentNode->section,$2,PROPERTY_DEF);
     //setSymbolType(currentNode->section,$2,SYMBOL_VAR);
+    $2->type=$1->type;//类型检查
+    node->type=$1->type;
     $$ = node; 
 
 }

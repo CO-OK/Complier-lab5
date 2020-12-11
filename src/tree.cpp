@@ -1,4 +1,5 @@
 #include "tree.h"
+#include "type.h"
 void printLayer(layerNode*node);
 void TreeNode::addChild(TreeNode* child) {
 
@@ -310,6 +311,13 @@ string TreeNode::exprType2String(ExprType type){
         case NODE_UNARY_EXP:{
             return "NODE_UNARY_EXP";
         }
+        case NODE_ASSIGN_EXP_WITH_COMMA:
+        {
+            return "NODE_ASSIGN_EXP_WITH_COMMA";
+        }
+        case NODE_MULT_EXP:{
+            return "NODE_MULT_EXP";
+        }
         default:
             return "null";
     }
@@ -549,4 +557,195 @@ TreeNode* findFuncDef(string func_name,list<TreeNode*> func_list)
             return *i;
     }
     return nullptr;
+}
+
+
+int TreeNode:: check_type()
+{
+    if(this->nodeType==NODE_DECL_STMT&&this->child_num()==3)
+    {
+        if((this->get_child(0)->type->type)==(this->get_child(2)->type->type))//出错？
+            return 1;
+        else
+        {
+            printf("NODE_DECL_STMT type error at line %d\n",this->lineno);
+            return 0;
+        }
+    }
+    if(this->nodeType==NODE_EXPR)
+    {
+        switch (this->exprtype)
+        {
+            case NODE_POSTFIX_EXP://后缀表达式必须是整形才可以运算
+            {
+                if(this->get_child(0)->type->type!=TYPE_INT->type)
+                {
+                    printf("NODE_POSTFIX_EXP type error at line %d\n",this->lineno);
+                    return 0;
+                }
+                else
+                    return 1;  
+            }
+            case NODE_UNARY_EXP://前缀表达式
+            {
+                if(this->get_child(0)->optype==OP_UNARY_NOT&&this->get_child(1)->type==TYPE_BOOL)
+                    return 1;//!后面必须跟bool型
+                if(this->get_child(0)->optype==OP_UNARY_REFERENCE&&this->get_child(1)->nodeType==NODE_VAR)
+                    return 1;//引用后面必须跟一个变量
+                if(this->get_child(0)->optype==OP_UNARY_NOT&&this->get_child(1)->type==TYPE_INT)
+                    return 1;//负号后面必须跟一个整形
+                printf("UNARY_EXP type error at line %d\n",this->lineno);
+                return 0;
+            }
+            case NODE_MULT_EXP:
+            {
+                if(this->get_child(0)->type==TYPE_INT&&this->get_child(2)->type==TYPE_INT)
+                    return 1;//两边必须都是整形才可以计算
+                printf("NODE_MULT_EXP type error at line %d\n",this->lineno);
+                return 0;
+            }
+            case NODE_additive_Exp:
+            {
+                //cout<<this->type->getTypeInfo()<<endl;
+                if(this->get_child(0)->type==TYPE_INT&&this->get_child(2)->type==TYPE_INT)
+                    return 1;//两边必须都是整形才可以计算
+                printf("NODE_additive_Exp type error at line %d\n",this->lineno);
+                return 0;
+            }
+            case NODE_ASSIGN_EXP:
+            {
+                if(this->get_child(0)->type->type==this->get_child(2)->type->type)
+                    return 1;//两边类型相同才能赋值
+                printf("NODE_ASSIGN_EXP type error at line %d\n",this->lineno);
+                return 0;
+            }
+            case NODE_RELATION_LESS_EXP:
+            {
+                //两边类型相同且不是string时才可以比较
+                if((this->get_child(0)->type->type==this->get_child(2)->type->type)&&this->get_child(0)->type->type!=TYPE_STRING->type)
+                {
+                    return 1;
+                }
+                printf("NODE_RELATION_LESS_EXP type error at line %d\n",this->lineno);
+                return 0;
+            }
+            case NODE_RELATION_GREATER_EXP:
+            {
+                //两边类型相同且不是string时才可以比较
+                if((this->get_child(0)->type->type==this->get_child(2)->type->type)&&this->get_child(0)->type->type!=TYPE_STRING->type)
+                {
+                    return 1;
+                }
+                printf("NODE_RELATION_GREATER_EXP type error at line %d\n",this->lineno);
+                return 0;
+            }
+            case NODE_RELATION_LESS_EQ_EXP:
+            {
+                //两边类型相同且不是string时才可以比较
+                if((this->get_child(0)->type->type==this->get_child(2)->type->type)&&this->get_child(0)->type->type!=TYPE_STRING->type)
+                {
+                    return 1;
+                }
+                printf("NODE_RELATION_LESS_EQ_EXP type error at line %d\n",this->lineno);
+                return 0;
+            }
+            case NODE_RELATION_GREATER_EQ_EXP:
+            {
+                //两边类型相同且不是string时才可以比较
+                if((this->get_child(0)->type->type==this->get_child(2)->type->type)&&this->get_child(0)->type->type!=TYPE_STRING->type)
+                {
+                    return 1;
+                }
+                printf("NODE_RELATION_GREATER_EQ_EXP type error at line %d\n",this->lineno);
+                return 0;
+            }
+            case NODE_EQUALITY_EXP:
+            {
+                //两边类型相同时才可以比较
+                if(this->get_child(0)->type->type==this->get_child(2)->type->type)
+                {
+                    return 1;
+                }
+                printf("NODE_EQUALITY_EXP type error at line %d\n",this->lineno);
+                return 0;
+            }
+            case NODE_NOT_EQUALITY_EXP:
+            {
+                //两边类型相同时才可以比较
+                if(this->get_child(0)->type->type==this->get_child(2)->type->type)
+                {
+                    return 1;
+                }
+                printf("NODE_NOT_EQUALITY_EXP type error at line %d\n",this->lineno);
+                return 0;
+            }
+            case NODE_LOGICAL_OR_EXP:
+            {
+                //两边都是bool型
+                if(this->get_child(0)->type->type==TYPE_BOOL->type&&this->get_child(2)->type->type==TYPE_BOOL->type)
+                {
+                    return 1;
+                }
+                printf("NODE_LOGICAL_OR_EXP type error at line %d\n",this->lineno);
+                return 0;
+            }
+            case NODE_LOGICAL_AND_EXP:
+            {
+                //两边都是bool型
+                if(this->get_child(0)->type->type==TYPE_BOOL->type&&this->get_child(2)->type->type==TYPE_BOOL->type)
+                {
+                    return 1;
+                }
+                printf("NODE_LOGICAL_AND_EXP type error at line %d\n",this->lineno);
+                return 0;
+            }
+            default:
+                return 1;
+        }
+    }
+    if(this->nodeType==NDOE_ITERATION_STMT)
+    {
+        if(this->iterationtype==ITERATION_FOR___E)
+        {
+            //for的最后一项必须是表达式
+            if(this->get_child(0)->nodeType!=NODE_EXPR&&this->get_child(0)->nodeType!=NODE_ASSIGN_STMT)
+            {
+                printf("NDOE_ITERATION_STMT error at line %d, last pos must be an expr\n",this->lineno);
+                return 0;
+            }
+            return 1;
+        }
+        if(this->iterationtype==ITERATION_FOR__E_)
+        {
+            //中间必须是bool类型表达式
+            if(!(this->get_child(0)->nodeType==NODE_EXPR&&this->get_child(0)->type->type==TYPE_BOOL->type))
+            {
+                printf("NDOE_ITERATION_STMT error at line %d, middle pos must be an bool expr\n",this->lineno);
+                return 0;
+            }
+            return 1;
+        }
+    }
+}
+
+TreeNode* TreeNode:: get_child(int child_num)
+{
+    TreeNode* tmp=this->child;
+    for(int i=0;i<child_num;i++)
+    {
+        tmp=tmp->sibling;
+    }
+    return tmp;
+}
+
+int TreeNode:: child_num()
+{
+    int count=0;
+    TreeNode*tmp=this->child;
+    while(tmp!=nullptr)
+    {
+        tmp=tmp->sibling;
+        count++;
+    }
+    return count;
 }

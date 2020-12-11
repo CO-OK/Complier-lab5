@@ -96,3 +96,19 @@ string SymbolType2String(SymbolType type)
             return "";
     }
 }
+
+int assignRefSymbolType(list<Item*>*a,Item*item)
+{
+    for(list<Item*>::iterator i=a->begin();i!=a->end();i++)
+    {
+        if((*i)->name==item->name&&(*i)->symbol_property==PROPERTY_DEF)
+        {
+            item->tree_node->type=(*i)->tree_node->type;
+            return 1;
+        }
+    }
+    /*
+        在多级符号表中有可能需要向上一级作用域寻找，尚未完成
+    */
+    return 0;
+}

@@ -70,6 +70,7 @@ enum ExprType
 {
     NODE_additive_Exp,//算数表达式
     NODE_ASSIGN_EXP,//赋值表达式
+    NODE_ASSIGN_EXP_WITH_COMMA,
     NODE_LOGICAL_OR_EXP,//或运算表达式
     NODE_LOGICAL_AND_EXP,//与运算表达式
     NODE_EQUALITY_EXP,//等于号表达式
@@ -80,6 +81,7 @@ enum ExprType
     NODE_RELATION_GREATER_EQ_EXP,//大于等于表达式
     NODE_POSTFIX_EXP, //后缀表达式 如 a++
     NODE_UNARY_EXP,//前缀如-1
+    NODE_MULT_EXP,
 };
 
 
@@ -188,6 +190,9 @@ public:
     static string JumpStmtType2String(JumpStmtType type);
     void change_Field(TreeNode* node);
     void change_Child_Field(TreeNode* node);
+    int check_type();//类型检查
+    TreeNode* get_child(int child_num);//返回对应编号孩子的type
+    int child_num();//返回孩子个数
 public:
     TreeNode(int lineno, NodeType type);
 };
