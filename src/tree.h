@@ -21,13 +21,15 @@ struct layerNode
     int layerDesc[layerDescNum];
     int nodeCount;
     int accessTime;
+    int is_func;
     SymbolTableSection * section;
 };
-
+void check_section(layerNode* node);//检查所有符号表的重定义以及定义前引用
 struct changeField
 {
     int needChange;
     int accessTime;
+    int is_func_field;
 };
 
 struct funcInfo{
@@ -47,6 +49,7 @@ enum NodeType
     NODE_TYPE, //声明节点如int,char
 
     NODE_ASSIGN_STMT,//赋值语句
+    NODE_ASSIGN_EXPR,//赋值表达式
     NODE_MAIN,//main函数
     NODE_STMT,
     NODE_DECL_STMT,//声明语句

@@ -40,5 +40,6 @@ static Type* TYPE_CHAR = new Type(VALUE_CHAR);
 static Type* TYPE_BOOL = new Type(VALUE_BOOL);
 static Type* TYPE_STRING = new Type(VALUE_STRING);
 static Type* TYPE_VOID = new Type(VOID);
+static Type* TYPE_FUNC = new Type(COMPOSE_FUNCTION);
 int getSize(Type* type);
 #endif

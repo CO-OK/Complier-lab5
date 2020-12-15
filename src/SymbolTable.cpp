@@ -1,5 +1,6 @@
 #include "tree.h"
 extern void printLayer(layerNode*node);
+
 void copyLayerDesc(int* lay1,int* lay2)
 {
     for(int i=0;i<layerDescNum;i++)
@@ -97,18 +98,63 @@ string SymbolType2String(SymbolType type)
     }
 }
 
-int assignRefSymbolType(list<Item*>*a,Item*item)
+int assignRefSymbolType(layerNode*node,Item*item)
 {
-    for(list<Item*>::iterator i=a->begin();i!=a->end();i++)
+    if(node==nullptr)
+        return 0;
+    for(list<Item*>::iterator i=node->section->section_table.begin();i!=node->section->section_table.end();i++)
     {
-        if((*i)->name==item->name&&(*i)->symbol_property==PROPERTY_DEF)
+        if((*i)->name==item->name&&(*i)->symbol_property==PROPERTY_DEF&&item!=(*i)&&(*i)->symbol_type==SYMBOL_VAR)
         {
-            item->tree_node->type=(*i)->tree_node->type;
+            item->tree_node->type=(*i)->tree_node->type;//先设置类型相同
+            //将引用的符号指向定义的符号
+            item->def_pos=(*i)->def_pos;
             return 1;
         }
     }
+    if(node->is_func)//如果是在函数体中寻找，则不再向上一级寻找
+    {
+        for(list<Item*>::iterator i=node->section->section_table.begin();i!=node->section->section_table.end();i++)
+        {
+            if((*i)->name==item->name&&(*i)->symbol_property==PROPERTY_DEF&&item!=(*i))
+            {
+                item->tree_node->type=(*i)->tree_node->type;//先设置类型相同
+                //将引用的符号指向定义的符号
+                item->def_pos=(*i)->def_pos;
+                return 1;
+            }
+        }
+        return 0;
+    }
     /*
-        在多级符号表中有可能需要向上一级作用域寻找，尚未完成
+        在多级符号表中有可能需要向上一级作用域寻找
     */
-    return 0;
+    return assignRefSymbolType(node->prev,item);
+}
+
+void check_symbol_table(SymbolTableSection* section)
+{
+    //普通符号是否存在定义前引用
+    for(list<Item*>::iterator i=section->section_table.begin();i!=section->section_table.end();i++)
+    {
+        if((*i)->symbol_type!=SYMBOL_FUNC)
+        {
+            if((*i)->def_pos==(*i)->tree_node&&(*i)->symbol_property==PROPERTY_REFE)
+            {
+                printf("var ref before def at line %d\n",(*i)->tree_node->lineno);
+            }
+        }
+        //符号重定义
+        if((*i)->symbol_property==PROPERTY_DEF)
+        {
+            for(list<Item*>::iterator j = i;j!=section->section_table.end();j++)
+            {
+                if((*j)->symbol_property==PROPERTY_DEF&&(*j)->name==(*i)->name&&*j!=*i)
+                {
+                    printf("Symbol Redefining at line %d, symbol is ",(*j)->tree_node->lineno);
+                    cout<<(*j)->name<<endl;
+                }
+            }
+        }
+    }
 }

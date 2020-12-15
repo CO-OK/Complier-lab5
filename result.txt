@@ -1,24 +1,47 @@
-NODE_RELATION_LESS_EXP type error at line 2
-NODE_POSTFIX_EXP type error at line 2
-id:13
-nodeID: 0    lineno: 0    NodeType: NODE_PROG    stype: null    child: 1     layer:0    
-nodeID: 1    lineno: 0    NodeType: NODE_MAIN    stype: null    child: 2 3     layer:0    
-nodeID: 2    lineno: 1    NodeType: NODE_TYPE    stype: null    TYPE_SPEC=int    child:     layer:0    
-nodeID: 3    lineno: 5    NodeType: NDOE_ITERATION_STMT    stype: null    iteration_type=ITERATION_FOR__EE    child: 4 5 6     layer:0-0-0    
-nodeID: 4    lineno: 2    NodeType: NODE_EXPR    stype: null    expr_type=NODE_RELATION_LESS_EXP    child: 7 8 9     layer:0-0-0    
-nodeID: 5    lineno: 2    NodeType: NODE_EXPR    stype: null    expr_type=NODE_POSTFIX_EXP    child: 10 11     layer:0-0-0    
-nodeID: 6    lineno: 4    NodeType: NODE_BLOCK_FLAG    stype: null    child: 12     layer:0-0-0    
-nodeID: 7    lineno: 2    NodeType: NODE_VAR    stype: null    var_name=i    child:     layer:0-0-0    
-nodeID: 8    lineno: 2    NodeType: NODE_OPERATOR    stype: null    operator_type_= OP_LESS     child:     layer:0-0-0    
-nodeID: 9    lineno: 2    NodeType: NODE_CONST    stype: null    node->type=int value=1 child:     layer:0-0-0    
-nodeID: 10    lineno: 2    NodeType: NODE_VAR    stype: null    var_name=i    child:     layer:0-0-0    
-nodeID: 11    lineno: 2    NodeType: NODE_OPERATOR    stype: null    operator_type_= OP_DOUBLE_ADD     child:     layer:0-0-0    
-nodeID: 12    lineno: 4    NodeType: NODE_STMT    stype: STMT_SKIP    child:     layer:0-0-0    
+NDOE_ITERATION_STMT FOR error at line 7, middle pos must be an bool expr
+NODE_POSTFIX_EXP type error at line 11,type = void, should be int
+id:29
+nodeID: 0    lineno: 0    NodeType: NODE_PROG    stype: null    child: 1 2     layer:0    
+nodeID: 1    lineno: 5    NodeType: NODE_FUNCTION_DEF    stype: null    func_name=f     return_value=int    func_body_at_node:5     child: 3 4 5     layer:0    
+nodeID: 2    lineno: 0    NodeType: NODE_MAIN    stype: null    child: 6 7 8 9 10     layer:0    
+nodeID: 3    lineno: 2    NodeType: NODE_TYPE    stype: null    TYPE_SPEC=int    child:     layer:0    
+nodeID: 4    lineno: 2    NodeType: NODE_VAR    stype: null    var_name=f    child:     layer:0    
+nodeID: 5    lineno: 5    NodeType: NODE_EMPTY    stype: STMT_SKIP    child:     layer:0    
+nodeID: 6    lineno: 6    NodeType: NODE_TYPE    stype: null    TYPE_SPEC=int    child:     layer:0    
+nodeID: 7    lineno: 10    NodeType: NDOE_ITERATION_STMT    stype: null    iteration_type=STMT_ITERATION_FOR_EEE    child: 11 12 13 14     layer:0-1-0    
+nodeID: 8    lineno: 11    NodeType: NODE_EXPR    stype: null    expr_type=NODE_POSTFIX_EXP    child: 15 16     layer:0-1    
+nodeID: 9    lineno: 12    NodeType: NODE_FUNCTION_CALL    stype: null    func_name=f     child: 17     layer:0-1    
+nodeID: 10    lineno: 12    NodeType: NODE_STMT    stype: STMT_SKIP    child:     layer:0-1    
+nodeID: 11    lineno: 7    NodeType: NODE_DECL_STMT    stype: STMT_DECL    child: 18 19 20     layer:0-1-0    
+nodeID: 12    lineno: 7    NodeType: NODE_EXPR    stype: null    expr_type=NODE_additive_Exp    child: 21 22 23     layer:0-1-0    
+nodeID: 13    lineno: 7    NodeType: NODE_EXPR    stype: null    expr_type=NODE_POSTFIX_EXP    child: 24 25     layer:0-1-0    
+nodeID: 14    lineno: 9    NodeType: NODE_BLOCK_FLAG    stype: null    child: 26     layer:0-1-0    
+nodeID: 15    lineno: 11    NodeType: NODE_VAR    stype: null    var_name=f    child:     layer:0-1    
+nodeID: 16    lineno: 11    NodeType: NODE_OPERATOR    stype: null    operator_type_= OP_DOUBLE_ADD     child:     layer:0-1    
+nodeID: 17    lineno: 12    NodeType: NODE_VAR    stype: null    var_name=f    child:     layer:0-1    
+nodeID: 18    lineno: 7    NodeType: NODE_TYPE    stype: null    TYPE_SPEC=int    child:     layer:0-1-0    
+nodeID: 19    lineno: 7    NodeType: NODE_VAR    stype: null    var_name=i    child:     layer:0-1-0    
+nodeID: 20    lineno: 7    NodeType: NODE_CONST    stype: null    node->type=int value=0 child:     layer:0-1-0    
+nodeID: 21    lineno: 7    NodeType: NODE_CONST    stype: null    node->type=int value=1 child:     layer:0-1-0    
+nodeID: 22    lineno: 7    NodeType: NODE_OPERATOR    stype: null    operator_type_= OP_ADD     child:     layer:0-1-0    
+nodeID: 23    lineno: 7    NodeType: NODE_CONST    stype: null    node->type=int value=2 child:     layer:0-1-0    
+nodeID: 24    lineno: 7    NodeType: NODE_VAR    stype: null    var_name=i    child:     layer:0-1-0    
+nodeID: 25    lineno: 7    NodeType: NODE_OPERATOR    stype: null    operator_type_= OP_DOUBLE_ADD     child:     layer:0-1-0    
+nodeID: 26    lineno: 9    NodeType: NODE_DECL_STMT    stype: STMT_DECL    child: 27 28     layer:0-1-0    
+nodeID: 27    lineno: 9    NodeType: NODE_TYPE    stype: null    TYPE_SPEC=int    child:     layer:0-1-0    
+nodeID: 28    lineno: 9    NodeType: NODE_VAR    stype: null    var_name=a    child:     layer:0-1-0    
 layer:0    
+symbol:  f    ref_or_def:  PROPERTY_DEF     symbol_type:  SYMBOL_FUNC    
 
 layer:0-0    
 
-layer:0-0-0    
-symbol:  i    ref_or_def:  PROPERTY_REFE     symbol_type:  SYMBOL_VAR    
+layer:0-1    
+symbol:  f    ref_or_def:  PROPERTY_REFE     symbol_type:  SYMBOL_VAR    
+symbol:  f    ref_or_def:  PROPERTY_REFE     symbol_type:  SYMBOL_FUNC    
+
+layer:0-1-0    
+symbol:  a    ref_or_def:  PROPERTY_DEF     symbol_type:  SYMBOL_VAR    
+symbol:  i    ref_or_def:  PROPERTY_DEF     symbol_type:  SYMBOL_VAR    
 symbol:  i    ref_or_def:  PROPERTY_REFE     symbol_type:  SYMBOL_VAR    
 
+var ref before def at line 11

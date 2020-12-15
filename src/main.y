@@ -64,10 +64,7 @@ statement
     $$->layer_node=currentNode;
 
 }
-| declaration SEMICOLON {
-    $$ = $1;
-}
-| assignment_Stmt SEMICOLON{
+| Exp SEMICOLON {
     $$ = $1;
 }
 | compound_Stmt{
@@ -113,7 +110,12 @@ function_Call
     node->addChild($1);
     node->addChild($3);
     setSymbolType(currentNode->section,$1,SYMBOL_FUNC);
+    $1->type=TYPE_FUNC;
     node->func_info->func_def_loc=findFuncDef($1->var_name,func_def_list);//将函数调用节点的指向定义的指针指向该函数的定义节点
+    if(node->func_info->func_def_loc==nullptr)//定义前引用
+    {
+        printf("func call before def at line %d\n",$1->lineno);
+    }
     $$=node;
 }
 | Id L_Small_Braces R_Small_Braces {
@@ -123,7 +125,12 @@ function_Call
     node->func_info->func_name=$1;
     node->addChild($3);
     setSymbolType(currentNode->section,$1,SYMBOL_FUNC);
+    $1->type=TYPE_FUNC;
     node->func_info->func_def_loc=findFuncDef($1->var_name,func_def_list);//将函数调用节点的指向定义的指针指向该函数的定义节点
+    if(node->func_info->func_def_loc==nullptr)//定义前引用
+    {
+        printf("func call before def at line %d\n",$1->lineno);
+    }
     $$=node;
 }
 ;
@@ -144,6 +151,8 @@ function_Definition
     node->addChild($6);
     setProperty(currentNode->section,$2,PROPERTY_DEF);
     setSymbolType(currentNode->section,$2,SYMBOL_FUNC);
+    $2->type=TYPE_FUNC;
+    $6->change_field.is_func_field=1;//用来将对应的layernode标识为函数体
     func_def_list.push_back(node);//将这个函数定义节点放入func_def_list
     $$=node;
 }
@@ -159,6 +168,8 @@ function_Definition
     node->addChild($5);
     setProperty(currentNode->section,$2,PROPERTY_DEF);
     setSymbolType(currentNode->section,$2,SYMBOL_FUNC);
+    $2->type=TYPE_FUNC;
+    $5->change_field.is_func_field=1;//用来将对应的layernode标识为函数体
     func_def_list.push_back(node);//将这个函数定义节点放入func_def_list
     $$=node;
     
@@ -210,6 +221,8 @@ selection_Stmt
     node->addChild($3);
     node->addChild($5);
     node->layer_node=currentNode;
+    //类型检查
+    node->check_type();
     $$ = node;
 }
 | IF L_Small_Braces Exp R_Small_Braces statement ELSE statement{
@@ -219,6 +232,8 @@ selection_Stmt
     node->addChild($5);
     node->addChild($7);
     node->layer_node=currentNode;
+    //类型检查
+    node->check_type();
     $$ = node;
 }
 ;
@@ -230,6 +245,8 @@ iteration_Stmt
     node->addChild($3);
     node->addChild($5);
     node->layer_node=currentNode;
+    //类型检查
+    node->check_type();
     $$ = node;
 }
 | FOR L_Small_Braces Exp SEMICOLON Exp SEMICOLON Exp R_Small_Braces statement{
@@ -242,6 +259,8 @@ iteration_Stmt
     node->layer_node=currentNode;
     node->change_field.accessTime=currentNode->accessTime-1;
     node->change_field.needChange=1;
+    //类型检查
+    node->check_type();
     $$ = node;
 }
 | FOR L_Small_Braces Exp SEMICOLON Exp SEMICOLON  R_Small_Braces statement{
@@ -253,6 +272,8 @@ iteration_Stmt
     node->layer_node=currentNode;
     node->change_field.accessTime=currentNode->accessTime-1;
     node->change_field.needChange=1;
+    //类型检查
+    node->check_type();
     $$ = node;
 }
 | FOR L_Small_Braces Exp SEMICOLON  SEMICOLON Exp R_Small_Braces statement{
@@ -264,6 +285,8 @@ iteration_Stmt
     node->layer_node=currentNode;
     node->change_field.accessTime=currentNode->accessTime-1;
     node->change_field.needChange=1;
+    //类型检查
+    node->check_type();
     $$ = node;
 }
 | FOR L_Small_Braces Exp SEMICOLON  SEMICOLON  R_Small_Braces statement{
@@ -274,6 +297,8 @@ iteration_Stmt
     node->layer_node=currentNode;
     node->change_field.accessTime=currentNode->accessTime-1;
     node->change_field.needChange=1;
+    //类型检查
+    node->check_type();
     $$ = node;
 }
 | FOR L_Small_Braces  SEMICOLON Exp SEMICOLON Exp R_Small_Braces statement{
@@ -285,6 +310,8 @@ iteration_Stmt
     node->layer_node=currentNode;
     node->change_field.accessTime=currentNode->accessTime-1;
     node->change_field.needChange=1;
+    //类型检查
+    node->check_type();
     $$ = node;
 }
 | FOR L_Small_Braces  SEMICOLON Exp SEMICOLON  R_Small_Braces statement{
@@ -488,7 +515,7 @@ assignment_Stmt
 
 assignment_Exp
 : unary_Exp assignment_Operator additive_Exp{//有可能需要函数如 a=func()
-    TreeNode* node = new TreeNode(lineno, NODE_EXPR);
+    TreeNode* node = new TreeNode(lineno, NODE_ASSIGN_EXPR);
     //node->stype = STMT_ASSIGN;
     node->exprtype=NODE_ASSIGN_EXP;
     node->addChild($1);
@@ -520,9 +547,6 @@ additive_Exp
     node->layer_node=currentNode;
     //类型检查 node节点默认以$1的type为准
     node->type=$1->type;
-    if($1->type==TYPE_STRING)
-        printf("int\n");
-    printf("999999\n");
     //检查$1 $2是否具有相同类型，目前假设只有整形可以算数运算
     node->check_type();
     $$ = node;
@@ -748,13 +772,13 @@ declaration
     TreeNode* node = new TreeNode(lineno, NODE_DECL_STMT_LIST);
     node->stype = STMT_DECL;
     node->addChild($1);
-    TreeNode* node1 = new TreeNode(lineno, NODE_DECL_STMT);
-    node1->addChild($3);
-    node->addChild(node1);
+    //TreeNode* node1 = new TreeNode(lineno, NODE_DECL_STMT);
+    node->addChild($3);
+    //node->addChild(node1);
     node->layer_node=currentNode;
     setProperty(currentNode->section,$3,PROPERTY_DEF);
     //setSymbolType(currentNode->section,$3,SYMBOL_VAR);
-    $2->type=$1->type;//类型检查
+    $3->type=$1->type;//类型检查
     node->type=$1->type;
     $$ = node;
 }

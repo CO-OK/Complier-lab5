@@ -38,6 +38,7 @@ int main(int argc, char *argv[])
         correctSymbol(layer_root);
         root->printAST();
         printSymbolTable(layer_root);
+        check_section(layer_root);
     }
     return 0;
 }

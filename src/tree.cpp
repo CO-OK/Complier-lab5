@@ -39,6 +39,7 @@ TreeNode::TreeNode(int lineno, NodeType type) {
     this->layer_node=nullptr;
     this->change_field.accessTime=0;
     this->change_field.needChange=0;
+    this->change_field.is_func_field=0;
 }
 
 void TreeNode::genNodeId() {
@@ -82,6 +83,10 @@ void TreeNode:: change_Field(TreeNode* node)
     {
         node->layer_node=node->layer_node->list[node->change_field.accessTime];
         change_Child_Field(node);
+    }
+    if(node->change_field.is_func_field)
+    {
+        node->layer_node->is_func=1;//表示这个layer_node是一个函数体的layer
     }
 }
 void TreeNode::printNodeInfo() {
@@ -359,6 +364,10 @@ string TreeNode::nodeType2String (NodeType type){
         case NODE_ASSIGN_STMT:{
             return "NODE_ASSIGN_STMT";
         }
+        case NODE_ASSIGN_EXPR:
+        {
+            return "NODE_ASSIGN_EXPR";
+        }
         case NODE_BLOCK_FLAG:{
             return "NODE_BLOCK_FLAG";
         }
@@ -508,6 +517,7 @@ layerNode* makeNode(layerNode* node)
     temp->nodeCount=0;
     temp->prev=node;
     temp->accessTime=0;
+    temp->is_func=0;
     //process layerDesc
     int flag=0;
     for(int i=0;i<layerDescNum;i++)
@@ -564,7 +574,7 @@ int TreeNode:: check_type()
 {
     if(this->nodeType==NODE_DECL_STMT&&this->child_num()==3)
     {
-        if((this->get_child(0)->type->type)==(this->get_child(2)->type->type))//出错？
+        if((this->get_child(0)->type->type)==(this->get_child(2)->type->type))
             return 1;
         else
         {
@@ -580,7 +590,8 @@ int TreeNode:: check_type()
             {
                 if(this->get_child(0)->type->type!=TYPE_INT->type)
                 {
-                    printf("NODE_POSTFIX_EXP type error at line %d\n",this->lineno);
+                    printf("NODE_POSTFIX_EXP type error at line %d,",this->lineno);
+                    cout<<"type = "<<this->get_child(0)->type->getTypeInfo()<<", should be int"<<endl;
                     return 0;
                 }
                 else
@@ -588,18 +599,18 @@ int TreeNode:: check_type()
             }
             case NODE_UNARY_EXP://前缀表达式
             {
-                if(this->get_child(0)->optype==OP_UNARY_NOT&&this->get_child(1)->type==TYPE_BOOL)
+                if(this->get_child(0)->optype==OP_UNARY_NOT&&this->get_child(1)->type->type==TYPE_BOOL->type)
                     return 1;//!后面必须跟bool型
                 if(this->get_child(0)->optype==OP_UNARY_REFERENCE&&this->get_child(1)->nodeType==NODE_VAR)
                     return 1;//引用后面必须跟一个变量
-                if(this->get_child(0)->optype==OP_UNARY_NOT&&this->get_child(1)->type==TYPE_INT)
+                if(this->get_child(0)->optype==OP_UNARY_NOT&&this->get_child(1)->type->type==TYPE_INT->type)
                     return 1;//负号后面必须跟一个整形
                 printf("UNARY_EXP type error at line %d\n",this->lineno);
                 return 0;
             }
             case NODE_MULT_EXP:
             {
-                if(this->get_child(0)->type==TYPE_INT&&this->get_child(2)->type==TYPE_INT)
+                if(this->get_child(0)->type->type==TYPE_INT->type&&this->get_child(2)->type->type==TYPE_INT->type)
                     return 1;//两边必须都是整形才可以计算
                 printf("NODE_MULT_EXP type error at line %d\n",this->lineno);
                 return 0;
@@ -607,7 +618,7 @@ int TreeNode:: check_type()
             case NODE_additive_Exp:
             {
                 //cout<<this->type->getTypeInfo()<<endl;
-                if(this->get_child(0)->type==TYPE_INT&&this->get_child(2)->type==TYPE_INT)
+                if(this->get_child(0)->type->type==TYPE_INT->type&&this->get_child(2)->type->type==TYPE_INT->type)
                     return 1;//两边必须都是整形才可以计算
                 printf("NODE_additive_Exp type error at line %d\n",this->lineno);
                 return 0;
@@ -708,9 +719,10 @@ int TreeNode:: check_type()
         if(this->iterationtype==ITERATION_FOR___E)
         {
             //for的最后一项必须是表达式
-            if(this->get_child(0)->nodeType!=NODE_EXPR&&this->get_child(0)->nodeType!=NODE_ASSIGN_STMT)
+            NodeType type=this->get_child(0)->nodeType;
+            if(type!=NODE_EXPR&&type!=NODE_ASSIGN_STMT&&type!=NODE_ASSIGN_EXPR)
             {
-                printf("NDOE_ITERATION_STMT error at line %d, last pos must be an expr\n",this->lineno);
+                printf("NDOE_ITERATION_STMT FOR error at line %d, last pos must be an expr\n",get_child(0)->lineno);
                 return 0;
             }
             return 1;
@@ -720,12 +732,156 @@ int TreeNode:: check_type()
             //中间必须是bool类型表达式
             if(!(this->get_child(0)->nodeType==NODE_EXPR&&this->get_child(0)->type->type==TYPE_BOOL->type))
             {
-                printf("NDOE_ITERATION_STMT error at line %d, middle pos must be an bool expr\n",this->lineno);
+                printf("NDOE_ITERATION_STMT FOR error at line %d, middle pos must be an bool expr\n",this->lineno);
+                return 0;
+            }
+            return 1;
+        }
+        if(this->iterationtype==ITERATION_FOR__EE)
+        {
+            int flag=1;
+            //for的最后一项必须是表达式
+            NodeType type=this->get_child(1)->nodeType;
+            if(type!=NODE_EXPR&&type!=NODE_ASSIGN_STMT&&type!=NODE_ASSIGN_EXPR)
+            {
+                printf("NDOE_ITERATION_STMT FOR error at line %d, last pos must be an expr\n",get_child(1)->lineno);
+                flag=0;
+            }
+             //中间必须是bool类型表达式
+            if(!(this->get_child(0)->nodeType==NODE_EXPR&&this->get_child(0)->type->type==TYPE_BOOL->type))
+            {
+                printf("NDOE_ITERATION_STMT FOR error at line %d, middle pos must be an bool expr\n",get_child(0)->lineno);
+                flag=0;
+            }
+            return flag;
+        }
+        if(this->iterationtype==ITERATION_FOR_E__)
+        {
+            //目前for的第一个表达式可以是以下类型
+            NodeType type=get_child(0)->nodeType;
+            if(type==NODE_ASSIGN_EXPR||type==NODE_ASSIGN_STMT)//赋值语句
+                return 1;
+            if(type==NODE_EXPR)//表达式算数或bool
+                return 1;
+            if(type==NODE_DECL_STMT||type==NODE_DECL_STMT_LIST)//声明
+                return 1;
+            printf("NDOE_ITERATION_STMT FOR error at line %d, first pos type error\n",get_child(0)->lineno);
+            return 0;
+        }
+        if(this->iterationtype==ITERATION_FOR_E_E)
+        {
+            int flag1=0;
+            //目前for的第一个表达式可以是以下类型
+            NodeType type1=get_child(0)->nodeType;
+            if(type1==NODE_ASSIGN_EXPR||type1==NODE_ASSIGN_STMT)//赋值语句
+            {
+                flag1=1;
+            }
+            if(type1==NODE_EXPR)//表达式算数或bool
+            {
+                flag1=1;
+            }
+            if(type1==NODE_DECL_STMT||type1==NODE_DECL_STMT_LIST)//声明
+            {
+                flag1=1;
+            }
+            if(!flag1)
+                printf("NDOE_ITERATION_STMT FOR error at line %d, first pos type error\n",get_child(0)->lineno);
+            //for的最后一项必须是表达式
+            int flag2=1;
+            NodeType type3=this->get_child(1)->nodeType;
+            if(type3!=NODE_EXPR&&type3!=NODE_ASSIGN_STMT&&type3!=NODE_ASSIGN_EXPR)
+            {
+                printf("NDOE_ITERATION_STMT FOR error at line %d, last pos must be an expr\n",get_child(1)->lineno);
+                flag2=0;
+            }
+            return flag1*flag2;
+        }
+        if(this->iterationtype==ITERATION_FOR_EE_)
+        {
+            int flag1=0;
+            //目前for的第一个表达式可以是以下类型
+            NodeType type1=get_child(0)->nodeType;
+            if(type1==NODE_ASSIGN_EXPR||type1==NODE_ASSIGN_STMT)//赋值语句
+            {
+                flag1=1;
+            }
+            if(type1==NODE_EXPR)//表达式算数或bool
+            {
+                flag1=1;
+            }
+            if(type1==NODE_DECL_STMT||type1==NODE_DECL_STMT_LIST)//声明
+            {
+                flag1=1;
+            }
+            if(!flag1)
+                printf("NDOE_ITERATION_STMT FOR error at line %d, first pos type error\n",get_child(0)->lineno);
+             //中间必须是bool类型表达式
+            int flag2=1;
+            if(!(this->get_child(1)->nodeType==NODE_EXPR&&this->get_child(1)->type->type==TYPE_BOOL->type))
+            {
+                printf("NDOE_ITERATION_STMT FOR error at line %d, middle pos must be an bool expr\n",get_child(1)->lineno);
+                flag2=0;
+            }
+            return flag1*flag2;
+        }
+        if(this->iterationtype==ITERATION_FOR_EEE)
+        {
+            int flag1=0;
+            //目前for的第一个表达式可以是以下类型
+            NodeType type1=get_child(0)->nodeType;
+            if(type1==NODE_ASSIGN_EXPR||type1==NODE_ASSIGN_STMT)//赋值语句
+            {
+                flag1=1;
+            }
+            if(type1==NODE_EXPR)//表达式算数或bool
+            {
+                flag1=1;
+            }
+            if(type1==NODE_DECL_STMT||type1==NODE_DECL_STMT_LIST)//声明
+            {
+                flag1=1;
+            }
+            if(!flag1)
+                printf("NDOE_ITERATION_STMT FOR error at line %d, first pos type error\n",get_child(0)->lineno);
+            //中间必须是bool类型表达式
+            int flag2=1;
+            if(!(this->get_child(1)->nodeType==NODE_EXPR&&this->get_child(1)->type->type==TYPE_BOOL->type))
+            {
+                printf("NDOE_ITERATION_STMT FOR error at line %d, middle pos must be an bool expr\n",get_child(1)->lineno);
+                flag2=0;
+            }
+            //for的最后一项必须是表达式
+            int flag3=1;
+            NodeType type2=this->get_child(2)->nodeType;
+            if(type2!=NODE_EXPR&&type2!=NODE_ASSIGN_STMT&&type2!=NODE_ASSIGN_EXPR)
+            {
+                printf("NDOE_ITERATION_STMT FOR error at line %d, last pos must be an expr\n",get_child(2)->lineno);
+                flag3=0;
+            }
+            return flag1*flag2*flag3;
+        }
+        if(this->iterationtype==ITERATION_WHILE)
+        {
+            //while条件必须是bool表达式
+            if(!(this->get_child(0)->nodeType==NODE_EXPR&&this->get_child(0)->type->type==TYPE_BOOL->type))
+            {
+                printf("NDOE_ITERATION_STMT WHILE error at line %d, middle pos must be an bool expr\n",get_child(0)->lineno);
                 return 0;
             }
             return 1;
         }
     }
+    if(this->nodeType==NODE_SELECTION_STMT)
+    {
+        if(!(this->get_child(0)->nodeType==NODE_EXPR&&this->get_child(0)->type->type==TYPE_BOOL->type))
+            {
+                printf("NODE_SELECTION_STMT IF error at line %d,  must be an bool expr\n",get_child(0)->lineno);
+                return 0;
+            }
+        return 1;
+    }
+    return 1;
 }
 
 TreeNode* TreeNode:: get_child(int child_num)
@@ -748,4 +904,12 @@ int TreeNode:: child_num()
         count++;
     }
     return count;
+}
+void check_section(layerNode* node)
+{
+    check_symbol_table(node->section);
+    for(int i=0;i<node->nodeCount;i++)
+    {
+        check_section(node->list[i]);
+    }
 }

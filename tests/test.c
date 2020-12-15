@@ -1,7 +1,14 @@
+
+int f()
+{
+    
+}
 int main() {
-    for(;i<1;i++)
+    for(int i=0;1+2;i++)
     {
-        ;
+        int a;
     }
+    f++;
+    f();
 }
 

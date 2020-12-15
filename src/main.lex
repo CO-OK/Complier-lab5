@@ -8,7 +8,7 @@ int lineno=1;
 extern layerNode* currentNode;
 extern layerNode* layer_root;
 extern layerNode* makeNode(layerNode* node);
-extern int assignRefSymbolType(list<Item*>*a,Item*);
+extern int assignRefSymbolType(layerNode*node,Item*);
 %}
 BLOCKCOMMENT \/\*([^\*^\/]*|[\*^\/*]*|[^\**\/]*)*\*\/
 LINECOMMENT \/\/[^\n]*
@@ -138,10 +138,11 @@ IDENTIFIER [[:alpha:]_][[:alpha:][:digit:]_]*
     item->symbol_type=SYMBOL_VAR;
     item->symbol_property=PROPERTY_REFE;
     item->tree_node=node;
+    item->def_pos=node;//先假定这是一个定义而非引用，指向自己，后面在检查时如果有指向自己且是一个引用的则报错
     currentNode->section->section_table.push_back(item);
     //在符号表中寻找有没有之前定义过的，如果有，则将定义的那个的type赋给此变量
     /*code*/
-    assignRefSymbolType(&currentNode->section->section_table,item);
+    assignRefSymbolType(currentNode,item);
     return IDENTIFIER;
 }
 
