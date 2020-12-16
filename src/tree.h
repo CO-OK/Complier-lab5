@@ -41,6 +41,13 @@ struct funcInfo{
     TreeNode* func_def_loc;//如果是函数定义，则指向自身，如果是函数调用，则指向函数定义的节点
 };
 TreeNode* findFuncDef(string func_name,list<TreeNode*> func_list);//通过函数名找到函数定义的相关节点并返回
+struct Label{
+    string* begin_label;
+    string* next_label;
+    string* false_label;
+    string* true_label;
+   
+};
 enum NodeType
 {
     NODE_CONST, 
@@ -48,12 +55,12 @@ enum NodeType
     NODE_EXPR,
     NODE_TYPE, //声明节点如int,char
 
-    NODE_ASSIGN_STMT,//赋值语句
-    NODE_ASSIGN_EXPR,//赋值表达式
-    NODE_MAIN,//main函数
+    NODE_ASSIGN_STMT,//赋值语句 done
+    NODE_ASSIGN_EXPR,//赋值表达式 done
+    NODE_MAIN,//main函数  done
     NODE_STMT,
-    NODE_DECL_STMT,//声明语句
-    NODE_SELECTION_STMT,//条件语句if
+    NODE_DECL_STMT,//声明语句 done
+    NODE_SELECTION_STMT,//条件语句if done
     NDOE_ITERATION_STMT, //循环语句
     NODE_PROG,
     NODE_IDENTIFIER,//标识符
@@ -62,7 +69,7 @@ enum NodeType
     NODE_BLOCK_FLAG, //语句块即{.....}的标志
     NODE_JUMP_STMT,//控制语句
     NODE_EMPTY,//空
-    NODE_DECL_STMT_LIST,//定义列表
+    NODE_DECL_STMT_LIST,//定义列表 done
     NODE_ID_LIST,//函数参数列表
     NODE_FUNCTION_CALL,//函数调用
 
@@ -129,7 +136,7 @@ enum StmtType {
 ;
 
 enum IterationType{
-    ITERATION_WHILE,//while循环
+    ITERATION_WHILE,//while循环 done
     ITERATION_FOR_EEE,//for循环里面三个表达式全都有
     ITERATION_FOR_EE_,//最后一个为空
     ITERATION_FOR_E_E,//中间为空
@@ -165,7 +172,8 @@ public:
     void printSpecialInfo();
 
     void genNodeId();
-
+    void gen_label(TreeNode*);
+    void print_label(TreeNode*root,list<string*>*str_list);
 
 
 public:
@@ -178,6 +186,7 @@ public:
     int int_val;
     char ch_val;
     bool b_val;
+    Label label;
     string str_val;
     string var_name;
     layerNode* layer_node;
@@ -199,7 +208,7 @@ public:
 public:
     TreeNode(int lineno, NodeType type);
 };
-
+int find_str(list<string*>*str_list,string*str);
 
 
 #endif

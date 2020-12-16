@@ -1,5 +1,6 @@
 #include "tree.h"
 #include "type.h"
+#include <string>
 void printLayer(layerNode*node);
 void TreeNode::addChild(TreeNode* child) {
 
@@ -40,6 +41,10 @@ TreeNode::TreeNode(int lineno, NodeType type) {
     this->change_field.accessTime=0;
     this->change_field.needChange=0;
     this->change_field.is_func_field=0;
+    this->label.begin_label=nullptr;
+    this->label.next_label=nullptr;
+    this->label.false_label=nullptr;
+    this->label.true_label=nullptr;
 }
 
 void TreeNode::genNodeId() {
@@ -913,3 +918,277 @@ void check_section(layerNode* node)
         check_section(node->list[i]);
     }
 }
+
+void TreeNode:: gen_label(TreeNode*node)//生成label
+{
+    if(node==nullptr)
+        return;
+    int flag=0;
+    if(node->nodeType==NODE_PROG)
+    {
+        flag=1;
+    }
+    else if(node->nodeType==NODE_MAIN)
+    {
+        flag=1;
+        if(node->label.begin_label==nullptr)
+        {
+            node->label.begin_label=new string("label_main_begin");
+            *node->label.begin_label=*node->label.begin_label+to_string(node->nodeID);
+        }
+        if(node->label.next_label==nullptr)
+        {
+            node->label.next_label=new string("label_main_next");
+            *node->label.next_label=*node->label.next_label+to_string(node->nodeID);
+        }
+        node->child->sibling->label.begin_label=node->label.next_label;//main函数入口的话应该是孩子的开始是爹的next
+    }
+    else if(node->nodeType==NODE_SELECTION_STMT)//if
+    {
+        flag=1;
+        if(node->label.begin_label==nullptr)
+        {
+            node->label.begin_label=new string("label_if_begin");
+            *node->label.begin_label=*node->label.begin_label+to_string(node->nodeID);
+        }
+        if(node->label.next_label==nullptr)
+        {
+            node->label.next_label=new string("label_if_next");
+            *node->label.next_label=*node->label.next_label+to_string(node->nodeID);
+        }
+        if(this->child_num()==2)//没有else
+        {
+            //兄弟节点的begin即为node的next
+            if(node->sibling!=nullptr)
+                node->sibling->label.begin_label=node->label.next_label;
+            //if条件的true_label即为if语句块的begin
+            node->get_child(0)->label.true_label=node->get_child(1)->label.begin_label=new string("label_if_true");
+            *node->get_child(0)->label.true_label+=to_string(node->get_child(0)->nodeID);
+            //if为真语句块的next即为if的next
+            node->get_child(1)->label.next_label=node->label.next_label;
+            //if条件的false_label即为if语句块的next
+            node->get_child(0)->label.false_label=node->label.next_label;
+        }
+        else if(this->child_num()==3)//有else
+        {
+            //兄弟节点的begin即为node的next
+            if(node->sibling!=nullptr)
+                node->sibling->label.begin_label=node->label.next_label;
+            //if条件的true_label即为if语句块的begin
+            node->get_child(0)->label.true_label=node->get_child(1)->label.begin_label=new string("label_if_true");
+            *node->get_child(0)->label.true_label+=to_string(node->get_child(0)->nodeID);
+            //if条件的false_label即为else语句块的begin
+            node->get_child(0)->label.false_label=node->get_child(2)->label.begin_label=new string("label_if_false");
+            *node->get_child(0)->label.false_label+=to_string(node->get_child(0)->nodeID);
+            //if为真语句块的next即为if的next
+            node->get_child(1)->label.next_label=node->label.next_label;
+            //if为假语句块的next即为if的next
+            node->get_child(2)->label.next_label=node->label.next_label;
+        }
+    }
+    else if(node->nodeType==NODE_DECL_STMT)//定义语句
+    {
+        flag=1;
+        if(node->label.begin_label==nullptr)
+        {
+            node->label.begin_label=new string("decl_begin");
+            *node->label.begin_label=*node->label.begin_label+to_string(node->nodeID);
+        }
+        if(node->label.next_label==nullptr)
+        {
+            node->label.next_label=new string("decl_next");
+            *node->label.next_label=*node->label.next_label+to_string(node->nodeID);
+        }
+        //兄弟节点的begin即为node的next
+        if(node->sibling!=nullptr)
+            node->sibling->label.begin_label=node->label.next_label;
+    }
+    else if(node->nodeType==NODE_DECL_STMT_LIST)//定义列表
+    {
+        flag=1;
+        if(node->label.begin_label==nullptr)
+        {
+            node->label.begin_label=new string("decl_list_begin");
+            *node->label.begin_label=*node->label.begin_label+to_string(node->nodeID);
+        }
+        if(node->label.next_label==nullptr)
+        {
+            node->label.next_label=new string("decl_list_next");
+            *node->label.next_label=*node->label.next_label+to_string(node->nodeID);
+        }
+        //兄弟节点的begin即为node的next
+        if(node->sibling!=nullptr)
+            node->sibling->label.begin_label=node->label.next_label;
+    }
+    else if(node->nodeType==NODE_ASSIGN_STMT)//赋值语句，带逗号
+    {
+        flag=1;
+        if(node->label.begin_label==nullptr)
+        {
+            node->label.begin_label=new string("assign_stmt_begin");
+            *node->label.begin_label=*node->label.begin_label+to_string(node->nodeID);
+        }
+        if(node->label.next_label==nullptr)
+        {
+            node->label.next_label=new string("assign_stmt_next");
+            *node->label.next_label=*node->label.next_label+to_string(node->nodeID);
+        }
+        //兄弟节点的begin即为node的next
+        if(node->sibling!=nullptr)
+            node->sibling->label.begin_label=node->label.next_label;
+    }
+    else if(node->nodeType==NODE_ASSIGN_EXPR)//赋值语句不带逗号
+    {
+        flag=1;
+        if(node->label.begin_label==nullptr)
+        {
+            node->label.begin_label=new string("assign_expr_begin");
+            *node->label.begin_label=*node->label.begin_label+to_string(node->nodeID);
+        }
+        if(node->label.next_label==nullptr)
+        {
+            node->label.next_label=new string("assign_expr_next");
+            *node->label.next_label=*node->label.next_label+to_string(node->nodeID);
+        }
+        //兄弟节点的begin即为node的next
+        if(node->sibling!=nullptr)
+            node->sibling->label.begin_label=node->label.next_label;
+    }
+    else if(node->nodeType==NDOE_ITERATION_STMT)//循环语句
+    {
+        flag=1;
+        if(node->iterationtype==ITERATION_WHILE)
+        {
+            TreeNode*condition=node->get_child(0);
+            TreeNode*loop_body=node->get_child(1);
+            if(node->label.begin_label==nullptr)
+            {
+                node->label.begin_label=new string("while_begin");
+                *node->label.begin_label=*node->label.begin_label+to_string(node->nodeID);
+            }
+            if(node->label.next_label==nullptr)
+            {
+                node->label.next_label=new string("while_next");
+                *node->label.next_label=*node->label.next_label+to_string(node->nodeID);
+            }
+            //兄弟节点的begin即为node的next
+            if(node->sibling!=nullptr)
+                node->sibling->label.begin_label=node->label.next_label;
+            //循环体的下一条语句————循环的开始(继续循环)
+            loop_body->label.next_label=node->label.begin_label;
+            //循环体的开始标号即为循环条件的真值的标号
+            loop_body->label.begin_label=condition->label.true_label=new string("while_body_begin"+to_string(loop_body->nodeID));
+            //循环条件的假值标号即为循环的下一条语句标号
+            condition->label.false_label=node->label.next_label;
+        }
+        else if(node->iterationtype==ITERATION_FOR_EEE)
+        {
+            TreeNode*condition=node->get_child(1);
+            TreeNode*prev=node->get_child(0);
+            TreeNode*after=node->get_child(2);
+            TreeNode*loop_body=node->get_child(3);
+            if(node->label.begin_label==nullptr)
+            {
+                node->label.begin_label=new string("for_e_e_e_begin");
+                *node->label.begin_label=*node->label.begin_label+to_string(node->nodeID);
+            }
+            if(node->label.next_label==nullptr)
+            {
+                node->label.next_label=new string("for_e_e_e_next");
+                *node->label.next_label=*node->label.next_label+to_string(node->nodeID);
+            }
+            //兄弟节点的begin即为node的next
+            if(node->sibling!=nullptr)
+                node->sibling->label.begin_label=node->label.next_label;
+            //for循环第一个位置的begin即为for节点的begin
+            prev->label.begin_label=node->label.begin_label;
+            //for循环第一个位置的next应该是一个新的next
+            prev->label.next_label=new string("for_first_pos_next"+to_string(prev->nodeID));
+            //循环体的下一条语句应该是for最后一个位置的begin
+            loop_body->label.next_label=after->label.begin_label=new string("for_loop_body_next"+to_string(loop_body->lineno));
+            //循环体的开始语句应该是prev的next
+            loop_body->label.begin_label=prev->label.next_label;
+            //for循环最后一个位置的next应该是循环体的开始语句
+            after->label.next_label=loop_body->label.begin_label;
+            //condition的真值标号应该是循环体的begin
+            condition->label.true_label=loop_body->label.begin_label;
+            //condition的假值标号应该是for的next
+            condition->label.false_label=node->label.next_label;
+        }
+        else if(node->iterationtype==ITERATION_FOR_EE_)
+        {
+            TreeNode*prev=node->get_child(0);
+            TreeNode*condition=node->get_child(1);
+            TreeNode*loop_body=node->get_child(2);
+            if(node->label.begin_label==nullptr)
+            {
+                node->label.begin_label=new string("for_e_e__begin");
+                *node->label.begin_label=*node->label.begin_label+to_string(node->nodeID);
+            }
+            if(node->label.next_label==nullptr)
+            {
+                node->label.next_label=new string("for_e_e__next");
+                *node->label.next_label=*node->label.next_label+to_string(node->nodeID);
+            }
+            //兄弟节点的begin即为node的next
+            if(node->sibling!=nullptr)
+                node->sibling->label.begin_label=node->label.next_label;
+            //for循环第一个位置的begin即为for节点的begin
+            prev->label.begin_label=node->label.begin_label;
+            //for循环第一个位置的next应该是一个新的next
+            prev->label.next_label=new string("for_first_pos_next"+to_string(prev->nodeID));
+            //循环体的开始应该是第一个位置的next
+            loop_body->label.begin_label=prev->label.next_label;
+            //循环体的next应该是第一个位置的next
+            loop_body->label.next_label=prev->label.next_label;
+            //condition的真值是循环的开始
+            condition->label.true_label=loop_body->label.begin_label;
+            //condition的假值是node的next
+            condition->label.false_label=node->label.next_label;
+        } 
+    }
+    if(flag/*&&node->nodeType!=NODE_MAIN*/)
+    {
+        TreeNode *tmp = node->child;
+        while (tmp != nullptr)
+        {
+            gen_label(tmp);
+            tmp = tmp->sibling;
+        }
+    }
+}
+int find_str(list<string*>*str_list,string*str)
+{
+    if(str_list->empty())
+        return 0;
+    for(list<string*>::iterator i = str_list->begin();i!=str_list->end();i++)
+    {
+        if(**i==*str)
+        {
+            return 1;
+        }
+    }
+    return 0;
+}
+void TreeNode:: print_label(TreeNode*root,list<string*>*str_list)
+{
+    if(root==nullptr)
+        return;
+    if(root->label.begin_label!=nullptr&&!find_str(str_list,root->label.begin_label))
+    {
+        cout<<*root->label.begin_label<<endl<<endl;
+        str_list->push_back(root->label.begin_label);
+    }
+    TreeNode*tmp=root->child;
+    while(tmp!=nullptr)
+    {
+        print_label(tmp,str_list);
+        tmp=tmp->sibling;
+    }
+    if(root->label.next_label!=nullptr&&!find_str(str_list,root->label.next_label))
+    {
+        cout<<*root->label.next_label<<endl<<endl;
+        str_list->push_back(root->label.next_label);
+    }
+}
+

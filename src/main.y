@@ -6,6 +6,7 @@
     layerNode* currentNode;
     layerNode* layer_root;
     list<TreeNode*> func_def_list;//一个存储了所有函数定义的列表，这样在遇到函数调用时能够不用遍历语法树而找到函数定义节点
+    list<string*> *str_list;
     extern int lineno;
     int yylex();
     int yyerror( char const * );
