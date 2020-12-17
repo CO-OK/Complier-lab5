@@ -137,14 +137,14 @@ enum StmtType {
 
 enum IterationType{
     ITERATION_WHILE,//while循环 done
-    ITERATION_FOR_EEE,//for循环里面三个表达式全都有
-    ITERATION_FOR_EE_,//最后一个为空
-    ITERATION_FOR_E_E,//中间为空
-    ITERATION_FOR_E__,//后两个为空
-    ITERATION_FOR__EE,//第一个为空
-    ITERATION_FOR__E_,//左右两个为空
-    ITERATION_FOR___E,//前两个为空
-    ITERATION_FOR____,//全为空
+    ITERATION_FOR_EEE,//for循环里面三个表达式全都有 done
+    ITERATION_FOR_EE_,//最后一个为空 done
+    ITERATION_FOR_E_E,//中间为空 done
+    ITERATION_FOR_E__,//后两个为空 done
+    ITERATION_FOR__EE,//第一个为空 done
+    ITERATION_FOR__E_,//左右两个为空 done
+    ITERATION_FOR___E,//前两个为空 done
+    ITERATION_FOR____,//全为空 done
 };
 
 enum JumpStmtType{

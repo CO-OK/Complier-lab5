@@ -1145,9 +1145,219 @@ void TreeNode:: gen_label(TreeNode*node)//生成label
             condition->label.true_label=loop_body->label.begin_label;
             //condition的假值是node的next
             condition->label.false_label=node->label.next_label;
+        }
+        else if(node->iterationtype==ITERATION_FOR_E_E)
+        {
+            TreeNode*prev=node->get_child(0);
+            TreeNode*after=node->get_child(1);
+            TreeNode*loop_body=node->get_child(2);
+            if(node->label.begin_label==nullptr)
+            {
+                node->label.begin_label=new string("for_e__e_begin");
+                *node->label.begin_label=*node->label.begin_label+to_string(node->nodeID);
+            }
+            if(node->label.next_label==nullptr)
+            {
+                node->label.next_label=new string("for_e__e_next");
+                *node->label.next_label=*node->label.next_label+to_string(node->nodeID);
+            }
+            //兄弟节点的begin即为node的next
+            if(node->sibling!=nullptr)
+                node->sibling->label.begin_label=node->label.next_label;
+            //for循环第一个位置的begin即为for节点的begin
+            prev->label.begin_label=node->label.begin_label;
+            //for循环第一个位置的next应该是一个新的next
+            prev->label.next_label=new string("for_first_pos_next"+to_string(prev->nodeID));
+            //循环体的开始应该是第一个位置的next
+            loop_body->label.begin_label=prev->label.next_label;
+            //循环体的next应该是after的开始
+            loop_body->label.next_label=after->label.begin_label=new string("for_loop_body_next"+to_string(loop_body->lineno));
+            //after的next应该是loop_body的begin
+            after->label.next_label=loop_body->label.begin_label;
+        }
+        else if(node->iterationtype==ITERATION_FOR_E__)
+        {
+            TreeNode*prev=node->get_child(0);
+            TreeNode*loop_body=node->get_child(1);
+            if(node->label.begin_label==nullptr)
+            {
+                node->label.begin_label=new string("for_e___begin");
+                *node->label.begin_label=*node->label.begin_label+to_string(node->nodeID);
+            }
+            if(node->label.next_label==nullptr)
+            {
+                node->label.next_label=new string("for_e___next");
+                *node->label.next_label=*node->label.next_label+to_string(node->nodeID);
+            }
+            //兄弟节点的begin即为node的next
+            if(node->sibling!=nullptr)
+                node->sibling->label.begin_label=node->label.next_label;
+            //prev的begin即为for节点的begin
+            prev->label.begin_label=node->label.begin_label;
+            //prev的next是一个新的next
+            prev->label.next_label=new string("for_first_pos_next"+to_string(prev->nodeID));
+            //loop_body的begin是prev的next
+            loop_body->label.begin_label=prev->label.next_label;
+            //loop_body的next是prev的next
+            loop_body->label.next_label=prev->label.next_label;
         } 
+        else if(node->iterationtype==ITERATION_FOR__EE)
+        {
+            TreeNode*condition=node->get_child(0);
+            TreeNode*after=node->get_child(1);
+            TreeNode*loop_body=node->get_child(2);
+            if(node->label.begin_label==nullptr)
+            {
+                node->label.begin_label=new string("for__e_e_begin");
+                *node->label.begin_label=*node->label.begin_label+to_string(node->nodeID);
+            }
+            if(node->label.next_label==nullptr)
+            {
+                node->label.next_label=new string("for__e_e_next");
+                *node->label.next_label=*node->label.next_label+to_string(node->nodeID);
+            }
+            //兄弟节点的begin即为node的next
+            if(node->sibling!=nullptr)
+                node->sibling->label.begin_label=node->label.next_label;
+            //loop_body的begin是for的begin
+            loop_body->label.begin_label=node->label.begin_label;
+            //loop_body的next是after的begin
+            loop_body->label.next_label=after->label.begin_label=new string("for_loop_body_next"+to_string(loop_body->lineno));
+            //after的next是loop_body的begin
+            after->label.next_label=loop_body->label.begin_label;
+            //condition的true是循环体的开始
+            condition->label.true_label=loop_body->label.begin_label;
+            //condition的false是for的下一条
+            condition->label.false_label=node->label.next_label;
+        }
+        else if(node->iterationtype==ITERATION_FOR__E_)
+        {
+            TreeNode*condition=node->get_child(0);
+            TreeNode*loop_body=node->get_child(1);
+            if(node->label.begin_label==nullptr)
+            {
+                node->label.begin_label=new string("for__e__begin");
+                *node->label.begin_label=*node->label.begin_label+to_string(node->nodeID);
+            }
+            if(node->label.next_label==nullptr)
+            {
+                node->label.next_label=new string("for__e__next");
+                *node->label.next_label=*node->label.next_label+to_string(node->nodeID);
+            }
+            //兄弟节点的begin即为node的next
+            if(node->sibling!=nullptr)
+                node->sibling->label.begin_label=node->label.next_label;
+            //loop_body的begin即为node的begin
+            loop_body->label.begin_label=node->label.begin_label;
+            //loop_body的next即为node的begin
+            loop_body->label.next_label=loop_body->label.begin_label;
+            //condition的true即为node的begin
+            condition->label.true_label=node->label.begin_label;
+            //condition的false即为node的next
+            condition->label.false_label=node->label.next_label;
+        }
+        else if(node->iterationtype==ITERATION_FOR___E)
+        {
+            TreeNode*after=node->get_child(0);
+            TreeNode*loop_body=node->get_child(1);
+            if(node->label.begin_label==nullptr)
+            {
+                node->label.begin_label=new string("for___e_begin");
+                *node->label.begin_label=*node->label.begin_label+to_string(node->nodeID);
+            }
+            if(node->label.next_label==nullptr)
+            {
+                node->label.next_label=new string("for___e_next");
+                *node->label.next_label=*node->label.next_label+to_string(node->nodeID);
+            }
+            //兄弟节点的begin即为node的next
+            if(node->sibling!=nullptr)
+                node->sibling->label.begin_label=node->label.next_label;
+            //loop_body的begin即为node的begin
+            loop_body->label.begin_label=node->label.begin_label;
+            //loop_body的next即为after的begin
+            loop_body->label.next_label=after->label.begin_label=new string("for_loop_body_next"+to_string(loop_body->lineno));
+            //after的next即为for的begin
+            after->label.next_label=node->label.begin_label;
+        }
+        else if(node->iterationtype==ITERATION_FOR____)
+        {
+            TreeNode*loop_body=node->get_child(0);
+            if(node->label.begin_label==nullptr)
+            {
+                node->label.begin_label=new string("for____begin");
+                *node->label.begin_label=*node->label.begin_label+to_string(node->nodeID);
+            }
+            if(node->label.next_label==nullptr)
+            {
+                node->label.next_label=new string("for____next");
+                *node->label.next_label=*node->label.next_label+to_string(node->nodeID);
+            }
+            //兄弟节点的begin即为node的next
+            if(node->sibling!=nullptr)
+                node->sibling->label.begin_label=node->label.next_label;
+            //loop_body的begin即为node的begin
+            loop_body->label.begin_label=node->label.begin_label;
+            //loop_body的next即为node的begin
+            loop_body->label.next_label=node->label.begin_label;
+        }
     }
-    if(flag/*&&node->nodeType!=NODE_MAIN*/)
+    else if(node->nodeType==NODE_EXPR)
+    {
+        if(node->exprtype==NODE_LOGICAL_OR_EXP)
+        {
+            
+            flag=1;
+            TreeNode*first_op=node->get_child(0);
+            TreeNode*seconde_op=node->get_child(2);
+            if(node->label.true_label==nullptr)
+            {
+                node->label.true_label=new string("expr_or_true_label"+to_string(node->nodeID));
+            }
+            if(node->label.false_label==nullptr)
+            {
+                node->label.false_label=new string("expr_or_false_label"+to_string(node->nodeID));
+            }
+            first_op->label.true_label=node->label.true_label;
+            first_op->label.false_label=new string("E1_false_label"+to_string(first_op->nodeID));
+            seconde_op->label.true_label=node->label.true_label;
+            seconde_op->label.false_label=node->label.false_label;
+        }
+        else if(node->exprtype==NODE_LOGICAL_AND_EXP)
+        {
+            flag=1;
+            TreeNode*first_op=node->get_child(0);
+            TreeNode*seconde_op=node->get_child(2);
+            if(node->label.true_label==nullptr)
+            {
+                node->label.true_label=new string("expr_and_true_label"+to_string(node->nodeID));
+            }
+            if(node->label.false_label==nullptr)
+            {
+                node->label.false_label=new string("expr_and_false_label"+to_string(node->nodeID));
+            }
+            first_op->label.true_label=new string("E1_true_label"+to_string(first_op->nodeID));
+            first_op->label.false_label=node->label.false_label;
+            seconde_op->label.true_label=node->label.true_label;
+            seconde_op->label.false_label=node->label.false_label;
+        }
+        else if(node->exprtype==NODE_UNARY_EXP&&node->get_child(0)->optype==OP_UNARY_NOT)
+        {
+            flag=1;
+            TreeNode*E1=node->get_child(1);
+            if(node->label.true_label==nullptr)
+            {
+                node->label.true_label=new string("expr_and_true_label"+to_string(node->nodeID));
+            }
+            if(node->label.false_label==nullptr)
+            {
+                node->label.false_label=new string("expr_and_false_label"+to_string(node->nodeID));
+            }
+            E1->label.true_label=node->label.false_label;
+            E1->label.false_label=node->label.true_label;
+        }
+    }
+    if(flag)
     {
         TreeNode *tmp = node->child;
         while (tmp != nullptr)
