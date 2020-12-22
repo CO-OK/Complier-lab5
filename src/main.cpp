@@ -1,5 +1,6 @@
 #include "common.h"
 #include <fstream>
+#include <string>
 
 extern TreeNode *root;
 extern FILE *yyin;
@@ -25,6 +26,8 @@ int main(int argc, char *argv[])
     str_list=new list<string*>;
     currentNode=new layerNode;
     currentNode->prev=NULL;
+    currentNode->root=currentNode;
+    currentNode->total_count=0;
     layer_root=currentNode;
     layer_root->nodeCount=0;
     layer_root->layerDesc[0]=0;
@@ -42,7 +45,11 @@ int main(int argc, char *argv[])
         printSymbolTable(layer_root);
         check_section(layer_root);
         root->gen_label(root);
+        root->gen_code(root);
+        *root->child->code+=("    subl    $"+to_string(root->layer_node->root->total_count+4)+", %esp\n");
         root->print_label(root, str_list);
+        string end=("    addl    $"+to_string(root->layer_node->root->total_count+4+4)+", %esp\n    movl    $0, %eax\n    ret");
+        cout<<end;
     }
     return 0;
 }

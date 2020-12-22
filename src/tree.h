@@ -18,11 +18,13 @@ struct layerNode
 {
     layerNode* prev;
     layerNode* list[layerNum];
+    layerNode* root;//指向根节点
     int layerDesc[layerDescNum];
     int nodeCount;
     int accessTime;
     int is_func;
     SymbolTableSection * section;
+    int total_count;//对于只考虑全局作用域而言，这个值只在根节点有用，记录了栈顶
 };
 void check_section(layerNode* node);//检查所有符号表的重定义以及定义前引用
 struct changeField
@@ -174,7 +176,7 @@ public:
     void genNodeId();
     void gen_label(TreeNode*);
     void print_label(TreeNode*root,list<string*>*str_list);
-
+    void gen_code(TreeNode*);
 
 public:
     OperatorType optype;  // 如果是表达式
@@ -189,6 +191,7 @@ public:
     Label label;
     string str_val;
     string var_name;
+    string* code;//代码
     layerNode* layer_node;
     changeField change_field;
     funcInfo* func_info;

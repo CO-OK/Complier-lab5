@@ -106,6 +106,7 @@ IDENTIFIER [[:alpha:]_][[:alpha:][:digit:]_]*
     TreeNode* node = new TreeNode(lineno, NODE_CONST);
     node->type = TYPE_STRING;
     node->str_val = yytext;
+    node->int_val=0;
     node->layer_node=currentNode;
     yylval = node;
     return CHAR;
@@ -123,6 +124,7 @@ IDENTIFIER [[:alpha:]_][[:alpha:][:digit:]_]*
     }
     //node->str_val = yytext;
     node->layer_node=currentNode;
+    node->int_val=0;
     yylval = node;
     return BOOL;
 }
@@ -288,6 +290,7 @@ IDENTIFIER [[:alpha:]_][[:alpha:][:digit:]_]*
 {L_Braces} {
     //yylval = currentNode;
     currentNode=makeNode(currentNode);
+    currentNode->root=layer_root;
     return L_Braces;
 }
 

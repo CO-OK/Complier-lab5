@@ -158,3 +158,23 @@ void check_symbol_table(SymbolTableSection* section)
         }
     }
 }
+
+Item*get_symbol_item(string name,layerNode*node)//找到name对应的item
+{
+
+    for(list<Item*>::iterator i=node->section->section_table.begin();i!=node->section->section_table.end();i++)
+    {
+        if((*i)->name==name&&(*i)->symbol_property==PROPERTY_DEF)
+        {
+            return (*i);
+        }
+    }
+    Item*tmp=nullptr;
+    //寻找子层
+    for(int i=0;i<node->nodeCount;i++)
+    {
+        if((tmp=get_symbol_item(name,node->list[i]))!=nullptr)
+            return tmp;
+    }
+    return tmp;
+}

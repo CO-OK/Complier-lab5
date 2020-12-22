@@ -1,4 +1,5 @@
 #include "tree.h"
+#include "SymbolTable.h"
 #include "type.h"
 #include <string>
 void printLayer(layerNode*node);
@@ -45,6 +46,7 @@ TreeNode::TreeNode(int lineno, NodeType type) {
     this->label.next_label=nullptr;
     this->label.false_label=nullptr;
     this->label.true_label=nullptr;
+    this->code=nullptr;
 }
 
 void TreeNode::genNodeId() {
@@ -523,6 +525,7 @@ layerNode* makeNode(layerNode* node)
     temp->prev=node;
     temp->accessTime=0;
     temp->is_func=0;
+    temp->total_count=0;
     //process layerDesc
     int flag=0;
     for(int i=0;i<layerDescNum;i++)
@@ -934,12 +937,12 @@ void TreeNode:: gen_label(TreeNode*node)//生成label
         if(node->label.begin_label==nullptr)
         {
             node->label.begin_label=new string("label_main_begin");
-            *node->label.begin_label=*node->label.begin_label+to_string(node->nodeID);
+            *node->label.begin_label=*node->label.begin_label+to_string(node->nodeID)+":";
         }
         if(node->label.next_label==nullptr)
         {
             node->label.next_label=new string("label_main_next");
-            *node->label.next_label=*node->label.next_label+to_string(node->nodeID);
+            *node->label.next_label=*node->label.next_label+to_string(node->nodeID)+":";
         }
         node->child->sibling->label.begin_label=node->label.next_label;//main函数入口的话应该是孩子的开始是爹的next
     }
@@ -949,12 +952,12 @@ void TreeNode:: gen_label(TreeNode*node)//生成label
         if(node->label.begin_label==nullptr)
         {
             node->label.begin_label=new string("label_if_begin");
-            *node->label.begin_label=*node->label.begin_label+to_string(node->nodeID);
+            *node->label.begin_label=*node->label.begin_label+to_string(node->nodeID)+":";
         }
         if(node->label.next_label==nullptr)
         {
             node->label.next_label=new string("label_if_next");
-            *node->label.next_label=*node->label.next_label+to_string(node->nodeID);
+            *node->label.next_label=*node->label.next_label+to_string(node->nodeID)+":";
         }
         if(this->child_num()==2)//没有else
         {
@@ -992,12 +995,12 @@ void TreeNode:: gen_label(TreeNode*node)//生成label
         if(node->label.begin_label==nullptr)
         {
             node->label.begin_label=new string("decl_begin");
-            *node->label.begin_label=*node->label.begin_label+to_string(node->nodeID);
+            *node->label.begin_label=*node->label.begin_label+to_string(node->nodeID)+":";
         }
         if(node->label.next_label==nullptr)
         {
             node->label.next_label=new string("decl_next");
-            *node->label.next_label=*node->label.next_label+to_string(node->nodeID);
+            *node->label.next_label=*node->label.next_label+to_string(node->nodeID)+":";
         }
         //兄弟节点的begin即为node的next
         if(node->sibling!=nullptr)
@@ -1009,12 +1012,12 @@ void TreeNode:: gen_label(TreeNode*node)//生成label
         if(node->label.begin_label==nullptr)
         {
             node->label.begin_label=new string("decl_list_begin");
-            *node->label.begin_label=*node->label.begin_label+to_string(node->nodeID);
+            *node->label.begin_label=*node->label.begin_label+to_string(node->nodeID)+":";
         }
         if(node->label.next_label==nullptr)
         {
             node->label.next_label=new string("decl_list_next");
-            *node->label.next_label=*node->label.next_label+to_string(node->nodeID);
+            *node->label.next_label=*node->label.next_label+to_string(node->nodeID)+":";
         }
         //兄弟节点的begin即为node的next
         if(node->sibling!=nullptr)
@@ -1026,12 +1029,12 @@ void TreeNode:: gen_label(TreeNode*node)//生成label
         if(node->label.begin_label==nullptr)
         {
             node->label.begin_label=new string("assign_stmt_begin");
-            *node->label.begin_label=*node->label.begin_label+to_string(node->nodeID);
+            *node->label.begin_label=*node->label.begin_label+to_string(node->nodeID)+":";
         }
         if(node->label.next_label==nullptr)
         {
             node->label.next_label=new string("assign_stmt_next");
-            *node->label.next_label=*node->label.next_label+to_string(node->nodeID);
+            *node->label.next_label=*node->label.next_label+to_string(node->nodeID)+":";
         }
         //兄弟节点的begin即为node的next
         if(node->sibling!=nullptr)
@@ -1043,12 +1046,12 @@ void TreeNode:: gen_label(TreeNode*node)//生成label
         if(node->label.begin_label==nullptr)
         {
             node->label.begin_label=new string("assign_expr_begin");
-            *node->label.begin_label=*node->label.begin_label+to_string(node->nodeID);
+            *node->label.begin_label=*node->label.begin_label+to_string(node->nodeID)+":";
         }
         if(node->label.next_label==nullptr)
         {
             node->label.next_label=new string("assign_expr_next");
-            *node->label.next_label=*node->label.next_label+to_string(node->nodeID);
+            *node->label.next_label=*node->label.next_label+to_string(node->nodeID)+":";
         }
         //兄弟节点的begin即为node的next
         if(node->sibling!=nullptr)
@@ -1064,12 +1067,12 @@ void TreeNode:: gen_label(TreeNode*node)//生成label
             if(node->label.begin_label==nullptr)
             {
                 node->label.begin_label=new string("while_begin");
-                *node->label.begin_label=*node->label.begin_label+to_string(node->nodeID);
+                *node->label.begin_label=*node->label.begin_label+to_string(node->nodeID)+":";
             }
             if(node->label.next_label==nullptr)
             {
                 node->label.next_label=new string("while_next");
-                *node->label.next_label=*node->label.next_label+to_string(node->nodeID);
+                *node->label.next_label=*node->label.next_label+to_string(node->nodeID)+":";
             }
             //兄弟节点的begin即为node的next
             if(node->sibling!=nullptr)
@@ -1077,7 +1080,7 @@ void TreeNode:: gen_label(TreeNode*node)//生成label
             //循环体的下一条语句————循环的开始(继续循环)
             loop_body->label.next_label=node->label.begin_label;
             //循环体的开始标号即为循环条件的真值的标号
-            loop_body->label.begin_label=condition->label.true_label=new string("while_body_begin"+to_string(loop_body->nodeID));
+            loop_body->label.begin_label=condition->label.true_label=new string("while_body_begin"+to_string(loop_body->nodeID)+":");
             //循环条件的假值标号即为循环的下一条语句标号
             condition->label.false_label=node->label.next_label;
         }
@@ -1090,12 +1093,12 @@ void TreeNode:: gen_label(TreeNode*node)//生成label
             if(node->label.begin_label==nullptr)
             {
                 node->label.begin_label=new string("for_e_e_e_begin");
-                *node->label.begin_label=*node->label.begin_label+to_string(node->nodeID);
+                *node->label.begin_label=*node->label.begin_label+to_string(node->nodeID)+":";
             }
             if(node->label.next_label==nullptr)
             {
                 node->label.next_label=new string("for_e_e_e_next");
-                *node->label.next_label=*node->label.next_label+to_string(node->nodeID);
+                *node->label.next_label=*node->label.next_label+to_string(node->nodeID)+":";
             }
             //兄弟节点的begin即为node的next
             if(node->sibling!=nullptr)
@@ -1103,9 +1106,9 @@ void TreeNode:: gen_label(TreeNode*node)//生成label
             //for循环第一个位置的begin即为for节点的begin
             prev->label.begin_label=node->label.begin_label;
             //for循环第一个位置的next应该是一个新的next
-            prev->label.next_label=new string("for_first_pos_next"+to_string(prev->nodeID));
+            prev->label.next_label=new string("for_first_pos_next"+to_string(prev->nodeID)+":");
             //循环体的下一条语句应该是for最后一个位置的begin
-            loop_body->label.next_label=after->label.begin_label=new string("for_loop_body_next"+to_string(loop_body->lineno));
+            loop_body->label.next_label=after->label.begin_label=new string("for_loop_body_next"+to_string(loop_body->lineno)+":");
             //循环体的开始语句应该是prev的next
             loop_body->label.begin_label=prev->label.next_label;
             //for循环最后一个位置的next应该是循环体的开始语句
@@ -1123,12 +1126,12 @@ void TreeNode:: gen_label(TreeNode*node)//生成label
             if(node->label.begin_label==nullptr)
             {
                 node->label.begin_label=new string("for_e_e__begin");
-                *node->label.begin_label=*node->label.begin_label+to_string(node->nodeID);
+                *node->label.begin_label=*node->label.begin_label+to_string(node->nodeID)+":";
             }
             if(node->label.next_label==nullptr)
             {
                 node->label.next_label=new string("for_e_e__next");
-                *node->label.next_label=*node->label.next_label+to_string(node->nodeID);
+                *node->label.next_label=*node->label.next_label+to_string(node->nodeID)+":";
             }
             //兄弟节点的begin即为node的next
             if(node->sibling!=nullptr)
@@ -1136,7 +1139,7 @@ void TreeNode:: gen_label(TreeNode*node)//生成label
             //for循环第一个位置的begin即为for节点的begin
             prev->label.begin_label=node->label.begin_label;
             //for循环第一个位置的next应该是一个新的next
-            prev->label.next_label=new string("for_first_pos_next"+to_string(prev->nodeID));
+            prev->label.next_label=new string("for_first_pos_next"+to_string(prev->nodeID)+":");
             //循环体的开始应该是第一个位置的next
             loop_body->label.begin_label=prev->label.next_label;
             //循环体的next应该是第一个位置的next
@@ -1154,12 +1157,12 @@ void TreeNode:: gen_label(TreeNode*node)//生成label
             if(node->label.begin_label==nullptr)
             {
                 node->label.begin_label=new string("for_e__e_begin");
-                *node->label.begin_label=*node->label.begin_label+to_string(node->nodeID);
+                *node->label.begin_label=*node->label.begin_label+to_string(node->nodeID)+":";
             }
             if(node->label.next_label==nullptr)
             {
                 node->label.next_label=new string("for_e__e_next");
-                *node->label.next_label=*node->label.next_label+to_string(node->nodeID);
+                *node->label.next_label=*node->label.next_label+to_string(node->nodeID)+":";
             }
             //兄弟节点的begin即为node的next
             if(node->sibling!=nullptr)
@@ -1167,11 +1170,11 @@ void TreeNode:: gen_label(TreeNode*node)//生成label
             //for循环第一个位置的begin即为for节点的begin
             prev->label.begin_label=node->label.begin_label;
             //for循环第一个位置的next应该是一个新的next
-            prev->label.next_label=new string("for_first_pos_next"+to_string(prev->nodeID));
+            prev->label.next_label=new string("for_first_pos_next"+to_string(prev->nodeID)+":");
             //循环体的开始应该是第一个位置的next
             loop_body->label.begin_label=prev->label.next_label;
             //循环体的next应该是after的开始
-            loop_body->label.next_label=after->label.begin_label=new string("for_loop_body_next"+to_string(loop_body->lineno));
+            loop_body->label.next_label=after->label.begin_label=new string("for_loop_body_next"+to_string(loop_body->lineno)+":");
             //after的next应该是loop_body的begin
             after->label.next_label=loop_body->label.begin_label;
         }
@@ -1182,12 +1185,12 @@ void TreeNode:: gen_label(TreeNode*node)//生成label
             if(node->label.begin_label==nullptr)
             {
                 node->label.begin_label=new string("for_e___begin");
-                *node->label.begin_label=*node->label.begin_label+to_string(node->nodeID);
+                *node->label.begin_label=*node->label.begin_label+to_string(node->nodeID)+":";
             }
             if(node->label.next_label==nullptr)
             {
                 node->label.next_label=new string("for_e___next");
-                *node->label.next_label=*node->label.next_label+to_string(node->nodeID);
+                *node->label.next_label=*node->label.next_label+to_string(node->nodeID)+":";
             }
             //兄弟节点的begin即为node的next
             if(node->sibling!=nullptr)
@@ -1195,7 +1198,7 @@ void TreeNode:: gen_label(TreeNode*node)//生成label
             //prev的begin即为for节点的begin
             prev->label.begin_label=node->label.begin_label;
             //prev的next是一个新的next
-            prev->label.next_label=new string("for_first_pos_next"+to_string(prev->nodeID));
+            prev->label.next_label=new string("for_first_pos_next"+to_string(prev->nodeID)+":");
             //loop_body的begin是prev的next
             loop_body->label.begin_label=prev->label.next_label;
             //loop_body的next是prev的next
@@ -1209,12 +1212,12 @@ void TreeNode:: gen_label(TreeNode*node)//生成label
             if(node->label.begin_label==nullptr)
             {
                 node->label.begin_label=new string("for__e_e_begin");
-                *node->label.begin_label=*node->label.begin_label+to_string(node->nodeID);
+                *node->label.begin_label=*node->label.begin_label+to_string(node->nodeID)+":";
             }
             if(node->label.next_label==nullptr)
             {
                 node->label.next_label=new string("for__e_e_next");
-                *node->label.next_label=*node->label.next_label+to_string(node->nodeID);
+                *node->label.next_label=*node->label.next_label+to_string(node->nodeID)+":";
             }
             //兄弟节点的begin即为node的next
             if(node->sibling!=nullptr)
@@ -1222,7 +1225,7 @@ void TreeNode:: gen_label(TreeNode*node)//生成label
             //loop_body的begin是for的begin
             loop_body->label.begin_label=node->label.begin_label;
             //loop_body的next是after的begin
-            loop_body->label.next_label=after->label.begin_label=new string("for_loop_body_next"+to_string(loop_body->lineno));
+            loop_body->label.next_label=after->label.begin_label=new string("for_loop_body_next"+to_string(loop_body->lineno)+":");
             //after的next是loop_body的begin
             after->label.next_label=loop_body->label.begin_label;
             //condition的true是循环体的开始
@@ -1237,12 +1240,12 @@ void TreeNode:: gen_label(TreeNode*node)//生成label
             if(node->label.begin_label==nullptr)
             {
                 node->label.begin_label=new string("for__e__begin");
-                *node->label.begin_label=*node->label.begin_label+to_string(node->nodeID);
+                *node->label.begin_label=*node->label.begin_label+to_string(node->nodeID)+":";
             }
             if(node->label.next_label==nullptr)
             {
                 node->label.next_label=new string("for__e__next");
-                *node->label.next_label=*node->label.next_label+to_string(node->nodeID);
+                *node->label.next_label=*node->label.next_label+to_string(node->nodeID)+":";
             }
             //兄弟节点的begin即为node的next
             if(node->sibling!=nullptr)
@@ -1263,12 +1266,12 @@ void TreeNode:: gen_label(TreeNode*node)//生成label
             if(node->label.begin_label==nullptr)
             {
                 node->label.begin_label=new string("for___e_begin");
-                *node->label.begin_label=*node->label.begin_label+to_string(node->nodeID);
+                *node->label.begin_label=*node->label.begin_label+to_string(node->nodeID)+":";
             }
             if(node->label.next_label==nullptr)
             {
                 node->label.next_label=new string("for___e_next");
-                *node->label.next_label=*node->label.next_label+to_string(node->nodeID);
+                *node->label.next_label=*node->label.next_label+to_string(node->nodeID)+":";
             }
             //兄弟节点的begin即为node的next
             if(node->sibling!=nullptr)
@@ -1276,7 +1279,7 @@ void TreeNode:: gen_label(TreeNode*node)//生成label
             //loop_body的begin即为node的begin
             loop_body->label.begin_label=node->label.begin_label;
             //loop_body的next即为after的begin
-            loop_body->label.next_label=after->label.begin_label=new string("for_loop_body_next"+to_string(loop_body->lineno));
+            loop_body->label.next_label=after->label.begin_label=new string("for_loop_body_next"+to_string(loop_body->lineno)+":");
             //after的next即为for的begin
             after->label.next_label=node->label.begin_label;
         }
@@ -1286,12 +1289,12 @@ void TreeNode:: gen_label(TreeNode*node)//生成label
             if(node->label.begin_label==nullptr)
             {
                 node->label.begin_label=new string("for____begin");
-                *node->label.begin_label=*node->label.begin_label+to_string(node->nodeID);
+                *node->label.begin_label=*node->label.begin_label+to_string(node->nodeID)+":";
             }
             if(node->label.next_label==nullptr)
             {
                 node->label.next_label=new string("for____next");
-                *node->label.next_label=*node->label.next_label+to_string(node->nodeID);
+                *node->label.next_label=*node->label.next_label+to_string(node->nodeID)+":";
             }
             //兄弟节点的begin即为node的next
             if(node->sibling!=nullptr)
@@ -1312,14 +1315,14 @@ void TreeNode:: gen_label(TreeNode*node)//生成label
             TreeNode*seconde_op=node->get_child(2);
             if(node->label.true_label==nullptr)
             {
-                node->label.true_label=new string("expr_or_true_label"+to_string(node->nodeID));
+                node->label.true_label=new string("expr_or_true_label"+to_string(node->nodeID)+":");
             }
             if(node->label.false_label==nullptr)
             {
-                node->label.false_label=new string("expr_or_false_label"+to_string(node->nodeID));
+                node->label.false_label=new string("expr_or_false_label"+to_string(node->nodeID)+":");
             }
             first_op->label.true_label=node->label.true_label;
-            first_op->label.false_label=new string("E1_false_label"+to_string(first_op->nodeID));
+            first_op->label.false_label=new string("E1_false_label"+to_string(first_op->nodeID)+":");
             seconde_op->label.true_label=node->label.true_label;
             seconde_op->label.false_label=node->label.false_label;
         }
@@ -1330,13 +1333,13 @@ void TreeNode:: gen_label(TreeNode*node)//生成label
             TreeNode*seconde_op=node->get_child(2);
             if(node->label.true_label==nullptr)
             {
-                node->label.true_label=new string("expr_and_true_label"+to_string(node->nodeID));
+                node->label.true_label=new string("expr_and_true_label"+to_string(node->nodeID)+":");
             }
             if(node->label.false_label==nullptr)
             {
-                node->label.false_label=new string("expr_and_false_label"+to_string(node->nodeID));
+                node->label.false_label=new string("expr_and_false_label"+to_string(node->nodeID)+":");
             }
-            first_op->label.true_label=new string("E1_true_label"+to_string(first_op->nodeID));
+            first_op->label.true_label=new string("E1_true_label"+to_string(first_op->nodeID)+":");
             first_op->label.false_label=node->label.false_label;
             seconde_op->label.true_label=node->label.true_label;
             seconde_op->label.false_label=node->label.false_label;
@@ -1347,11 +1350,11 @@ void TreeNode:: gen_label(TreeNode*node)//生成label
             TreeNode*E1=node->get_child(1);
             if(node->label.true_label==nullptr)
             {
-                node->label.true_label=new string("expr_and_true_label"+to_string(node->nodeID));
+                node->label.true_label=new string("expr_and_true_label"+to_string(node->nodeID)+":");
             }
             if(node->label.false_label==nullptr)
             {
-                node->label.false_label=new string("expr_and_false_label"+to_string(node->nodeID));
+                node->label.false_label=new string("expr_and_false_label"+to_string(node->nodeID)+":");
             }
             E1->label.true_label=node->label.false_label;
             E1->label.false_label=node->label.true_label;
@@ -1390,6 +1393,8 @@ void TreeNode:: print_label(TreeNode*root,list<string*>*str_list)
         str_list->push_back(root->label.begin_label);
     }
     TreeNode*tmp=root->child;
+    if(root->code!=nullptr)
+        cout<<*root->code;
     while(tmp!=nullptr)
     {
         print_label(tmp,str_list);
@@ -1402,3 +1407,66 @@ void TreeNode:: print_label(TreeNode*root,list<string*>*str_list)
     }
 }
 
+void  TreeNode:: gen_code(TreeNode*node)
+{
+    switch (node->nodeType)
+    {
+    case NODE_PROG:{//prog主要是存汇编的头
+        node->code=new string("    .bss\n    .align 4\n    .section    .rodata\n");
+        break;
+    }
+    case NODE_MAIN:{//main存main函数的开头
+        node->code=new string("    .text\n    .global main\n    .type main, @function\n");
+        *node->code+=("main:\n    pushl %ebp\n    movl %esp, %ebp\n");
+        //*node->code+=("    subl    $"+to_string(node->layer_node->root->total_count+4)+", %esp\n");
+        break;
+    }
+    case NODE_DECL_STMT:{
+        if(node->child_num()==3)//带初值的赋值语句
+        {
+            TreeNode*child0=node->get_child(0);
+            TreeNode*var=node->get_child(1);
+            TreeNode*value=node->get_child(2);
+            //如果是interger则在栈中分配空间
+            switch(child0->type->type)
+            {
+                case VALUE_INT:{
+                    //遍历整个符号表，找到该变量所在的定义位置
+                    Item* symbol_item=get_symbol_item(var->var_name, node->layer_node->root);
+                    if(symbol_item==nullptr)
+                    {
+                        cout<<"wrong when try to get a symbol\n";
+                        break;
+                    }
+                    //首先标明这个变量在栈中的位置
+                    symbol_item->stack_count=node->layer_node->root->total_count+4;
+                    //栈中的临时栈顶
+                    node->layer_node->root->total_count+=4;
+                    node->code=new string("    movl    $"+to_string(value->int_val)+", -"+to_string(symbol_item->stack_count)+"(%ebp)\n");
+                    break;
+                }
+                default:{
+                    break;
+                }
+            }  
+        }
+        else//不带初值
+        {
+
+        }
+        break;
+    }
+    default:{
+        //cout<<"gen code shouldn't be here\n";
+        break;
+    }
+    }
+
+
+    TreeNode*tmp=node->child;
+    while(tmp!=nullptr)
+    {
+        tmp->gen_code(tmp);
+        tmp=tmp->sibling;
+    }
+}

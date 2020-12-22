@@ -26,6 +26,7 @@ public:
     SymbolProperty symbol_property;
     TreeNode* tree_node;
     TreeNode* def_pos;//如果是一个引用变量，则指向定义的那个地方
+    int stack_count;//在栈中的相对位置
 };
 
 struct SymbolTableSection{
@@ -46,5 +47,5 @@ void printSymbolTable(layerNode*node);
 void setSymbolType(SymbolTableSection* section,TreeNode* tree_node,SymbolType type);
 string SymbolProperty2String(SymbolProperty type);
 string SymbolType2String(SymbolType type);
-
+Item*get_symbol_item(string name,layerNode*node);
 int assignRefSymbolType(layerNode*node,Item*item);

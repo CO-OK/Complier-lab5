@@ -550,6 +550,7 @@ additive_Exp
     node->type=$1->type;
     //检查$1 $2是否具有相同类型，目前假设只有整形可以算数运算
     node->check_type();
+    node->int_val=$1->int_val + $3->int_val;
     $$ = node;
 }
 | additive_Exp LOP_SUB mult_Exp{
@@ -564,6 +565,7 @@ additive_Exp
     node->type=$1->type;
     //检查$1 $2是否具有相同类型，目前假设只有整形可以算数运算
     node->check_type();
+    node->int_val=$1->int_val - $3->int_val;
     $$ = node;
 }
 ;
@@ -585,6 +587,7 @@ mult_Exp
     node->type=$1->type;
     //检查$1 $2是否具有相同类型，目前假设只有整形可以算数运算
     node->check_type();
+    node->int_val=$1->int_val * $3->int_val;
     $$ = node;
 }
 | mult_Exp LOP_DIV cast_Exp{
@@ -599,6 +602,7 @@ mult_Exp
     node->type=$1->type;
     //检查$1 $2是否具有相同类型，目前假设只有整形可以算数运算
     node->check_type();
+    node->int_val=$1->int_val / $3->int_val;
     $$ = node;
 }
 | mult_Exp LOP_MOD cast_Exp{
@@ -613,6 +617,7 @@ mult_Exp
     node->type=$1->type;
     //检查$1 $2是否具有相同类型，目前假设只有整形可以算数运算
     node->check_type();
+    node->int_val=$1->int_val % $3->int_val;
     $$ = node;
 }
 ;
@@ -640,6 +645,8 @@ unary_Exp
     node->type=$2->type;//类型检查
     //进一步检查unary_Operator是否适用于cast_Exp
     node->check_type();
+    if($1->optype==OP_SUB)
+        node->int_val=-1*$2->int_val;
     $$=node;
 }
 ;
@@ -670,6 +677,7 @@ postfix_Exp
     node->type=$1->type;//类型检查
     //进一步检查此类型是否适合于此操作符
     node->check_type();
+    node->int_val++;
     $$=node;
 }
 | postfix_Exp DOUBLE_SUB{
@@ -682,6 +690,7 @@ postfix_Exp
     //进一步检查此类型是否适合于此操作符
     /*code*/
     node->check_type();
+    node->int_val--;
     $$=node;
 }
 ;
