@@ -1,6 +1,5 @@
 int main() {
-    int a=8-8*6;
-    int c=9;
+    string d="666666";
 }
 
 

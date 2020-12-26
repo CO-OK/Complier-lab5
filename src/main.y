@@ -374,7 +374,7 @@ logical_or_Exp
     $$=$1;
 }
 | logical_or_Exp LOP_DOUBLE_OR logical_and_Exp{
-    TreeNode* node = new TreeNode(lineno,NODE_EXPR );
+    TreeNode* node = new TreeNode(lineno,NODE_EXPR );//label done
     //node->stype = STMT_DECL;
     node->exprtype=NODE_LOGICAL_OR_EXP;
     node->addChild($1);
@@ -393,7 +393,7 @@ logical_and_Exp
     $$=$1;
 }
 | logical_and_Exp LOP_DOUBLE_AND equality_Exp{
-    TreeNode* node = new TreeNode(lineno,NODE_EXPR );
+    TreeNode* node = new TreeNode(lineno,NODE_EXPR );//label done
     //node->stype = STMT_DECL;
     node->exprtype=NODE_LOGICAL_AND_EXP;
     node->addChild($1);
@@ -637,7 +637,7 @@ unary_Exp
     $$=$1;//增加这一层是为了方便以后扩充
 }
 | unary_Operator cast_Exp{
-    TreeNode* node=new TreeNode(lineno,NODE_EXPR);
+    TreeNode* node=new TreeNode(lineno,NODE_EXPR);//label done
     node->exprtype=NODE_UNARY_EXP;
     node->addChild($1);
     node->addChild($2);

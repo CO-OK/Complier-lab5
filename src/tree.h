@@ -14,6 +14,7 @@ struct layerNode;
 struct changeField;
 struct TreeNode;
 struct funcInfo;
+struct ThreeAdCodeItem;
 struct layerNode
 {
     layerNode* prev;
@@ -25,6 +26,7 @@ struct layerNode
     int is_func;
     SymbolTableSection * section;
     int total_count;//对于只考虑全局作用域而言，这个值只在根节点有用，记录了栈顶
+    int last_size;//在内存中分配的上一个变量的大小
 };
 void check_section(layerNode* node);//检查所有符号表的重定义以及定义前引用
 struct changeField
@@ -176,7 +178,9 @@ public:
     void genNodeId();
     void gen_label(TreeNode*);
     void print_label(TreeNode*root,list<string*>*str_list);
-    void gen_code(TreeNode*);
+    void allocate_stack_space(TreeNode*);//分配栈空间
+    void gen_ASM_code(TreeNode*);//产生汇编代码
+    int has_ID();
 
 public:
     OperatorType optype;  // 如果是表达式
@@ -196,6 +200,10 @@ public:
     changeField change_field;
     funcInfo* func_info;
     int is_def;//是否是定义的变量
+    Item* item;//如果这个节点在内存中有位置，则这个指针指向它所分配的符号
+    ThreeAdCodeItem* ThreeAD;
+    void print_code();
+    
 public:
     static string nodeType2String (NodeType type);
     static string opType2String (OperatorType type);
@@ -212,6 +220,16 @@ public:
     TreeNode(int lineno, NodeType type);
 };
 int find_str(list<string*>*str_list,string*str);
+string opType2_String (OperatorType type);
+//三地址码
+struct ThreeAdCodeItem{
+    OperatorType op;
+    TreeNode* arg1;
+    TreeNode* arg2;
+    TreeNode* result;
+};
 
-
+string gen_expr_asm(TreeNode* node);
+string get_location_or_value(TreeNode* node);
+string get_code(TreeNode*);
 #endif

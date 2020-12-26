@@ -178,3 +178,10 @@ Item*get_symbol_item(string name,layerNode*node)//找到name对应的item
     }
     return tmp;
 }
+
+string get_stack_count(Item* item)
+{
+    if(item==nullptr)
+        return "null";
+    return to_string(item->stack_count);
+}

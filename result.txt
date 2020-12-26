@@ -1,30 +1,21 @@
-id:17
+id:7
 nodeID: 0    lineno: 0    NodeType: NODE_PROG    stype: null    child: 1     layer:0    
-nodeID: 1    lineno: 0    NodeType: NODE_MAIN    stype: null    child: 2 3 4     layer:0    
+nodeID: 1    lineno: 0    NodeType: NODE_MAIN    stype: null    child: 2 3     layer:0    
 nodeID: 2    lineno: 1    NodeType: NODE_TYPE    stype: null    TYPE_SPEC=int    child:     layer:0    
-nodeID: 3    lineno: 2    NodeType: NODE_DECL_STMT    stype: STMT_DECL    child: 5 6 7     layer:0-0    
-nodeID: 4    lineno: 3    NodeType: NODE_DECL_STMT    stype: STMT_DECL    child: 8 9 10     layer:0-0    
-nodeID: 5    lineno: 2    NodeType: NODE_TYPE    stype: null    TYPE_SPEC=int    child:     layer:0-0    
-nodeID: 6    lineno: 2    NodeType: NODE_VAR    stype: null    var_name=a    child:     layer:0-0    
-nodeID: 7    lineno: 2    NodeType: NODE_EXPR    stype: null    expr_type=NODE_additive_Exp    child: 11 12 13     layer:0-0    
-nodeID: 8    lineno: 3    NodeType: NODE_TYPE    stype: null    TYPE_SPEC=int    child:     layer:0-0    
-nodeID: 9    lineno: 3    NodeType: NODE_VAR    stype: null    var_name=c    child:     layer:0-0    
-nodeID: 10    lineno: 3    NodeType: NODE_CONST    stype: null    node->type=int value=9 child:     layer:0-0    
-nodeID: 11    lineno: 2    NodeType: NODE_CONST    stype: null    node->type=int value=8 child:     layer:0-0    
-nodeID: 12    lineno: 2    NodeType: NODE_OPERATOR    stype: null    operator_type_= OP_SUB     child:     layer:0-0    
-nodeID: 13    lineno: 2    NodeType: NODE_EXPR    stype: null    expr_type=NODE_MULT_EXP    child: 14 15 16     layer:0-0    
-nodeID: 14    lineno: 2    NodeType: NODE_CONST    stype: null    node->type=int value=8 child:     layer:0-0    
-nodeID: 15    lineno: 2    NodeType: NODE_OPERATOR    stype: null    operator_type_= OP_MULT     child:     layer:0-0    
-nodeID: 16    lineno: 2    NodeType: NODE_CONST    stype: null    node->type=int value=6 child:     layer:0-0    
+nodeID: 3    lineno: 2    NodeType: NODE_DECL_STMT    stype: STMT_DECL    child: 4 5 6     layer:0-0    
+nodeID: 4    lineno: 2    NodeType: NODE_TYPE    stype: null    TYPE_SPEC=string    child:     layer:0-0    
+nodeID: 5    lineno: 2    NodeType: NODE_VAR    stype: null    var_name=d    child:     layer:0-0    
+nodeID: 6    lineno: 2    NodeType: NODE_CONST    stype: null    node->type=string value="666666" child:     layer:0-0    
 layer:0    
 
 layer:0-0    
-symbol:  a    ref_or_def:  PROPERTY_DEF     symbol_type:  SYMBOL_VAR    
-symbol:  c    ref_or_def:  PROPERTY_DEF     symbol_type:  SYMBOL_VAR    
+symbol:  d    ref_or_def:  PROPERTY_DEF     symbol_type:  SYMBOL_VAR    
 
     .bss
     .align 4
     .section    .rodata
+STR0:
+    .string "666666"
 label_main_begin1:
 
     .text
@@ -33,15 +24,11 @@ label_main_begin1:
 main:
     pushl %ebp
     movl %esp, %ebp
-    subl    $12, %esp
+    subl    $4, %esp
 label_main_next1:
 
-    movl    $-40, -4(%ebp)
 decl_next3:
 
-    movl    $9, -8(%ebp)
-decl_next4:
-
-    addl    $16, %esp
+    addl    $8, %esp
     movl    $0, %eax
     ret
