@@ -232,4 +232,5 @@ struct ThreeAdCodeItem{
 string gen_expr_asm(TreeNode* node);
 string get_location_or_value(TreeNode* node);
 string get_code(TreeNode*);
+void get_all_arg(TreeNode* id_list,list<TreeNode*>*arg_list);
 #endif

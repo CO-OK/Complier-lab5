@@ -810,8 +810,8 @@ declaration
 Id_List
 : Id_List COMMA additive_Exp{
     TreeNode* node = new TreeNode(lineno, NODE_ID_LIST);
-    node->addChild($1);
     node->addChild($3);
+    node->addChild($1);
     node->layer_node=currentNode;
     $$ = node; 
 }
