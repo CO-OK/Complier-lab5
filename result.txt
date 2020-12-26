@@ -1,47 +1,25 @@
-func call before def at line 4
-id:29
+id:14
 nodeID: 0    lineno: 0    NodeType: NODE_PROG    stype: null    child: 1     layer:0    
-nodeID: 1    lineno: 0    NodeType: NODE_MAIN    stype: null    child: 2 3 4 5 6     layer:0    
+nodeID: 1    lineno: 0    NodeType: NODE_MAIN    stype: null    child: 2 3 4     layer:0    
 nodeID: 2    lineno: 1    NodeType: NODE_TYPE    stype: null    TYPE_SPEC=int    child:     layer:0    
-nodeID: 3    lineno: 2    NodeType: NODE_DECL_STMT    stype: STMT_DECL    child: 7 8 9     layer:0-0    
-nodeID: 4    lineno: 3    NodeType: NODE_DECL_STMT    stype: STMT_DECL    child: 10 11 12     layer:0-0    
-nodeID: 5    lineno: 4    NodeType: NODE_FUNCTION_CALL    stype: null    func_name=printf     func_args_at_node:14      child: 13 14     layer:0-0    
-nodeID: 6    lineno: 4    NodeType: NODE_STMT    stype: STMT_SKIP    child:     layer:0-0    
-nodeID: 7    lineno: 2    NodeType: NODE_TYPE    stype: null    TYPE_SPEC=int    child:     layer:0-0    
-nodeID: 8    lineno: 2    NodeType: NODE_VAR    stype: null    var_name=a    child:     layer:0-0    
-nodeID: 9    lineno: 2    NodeType: NODE_CONST    stype: null    node->type=int value=9 child:     layer:0-0    
-nodeID: 10    lineno: 3    NodeType: NODE_TYPE    stype: null    TYPE_SPEC=int    child:     layer:0-0    
-nodeID: 11    lineno: 3    NodeType: NODE_VAR    stype: null    var_name=b    child:     layer:0-0    
-nodeID: 12    lineno: 3    NodeType: NODE_EXPR    stype: null    expr_type=NODE_additive_Exp    child: 15 16 17     layer:0-0    
-nodeID: 13    lineno: 4    NodeType: NODE_VAR    stype: null    var_name=printf    child:     layer:0-0    
-nodeID: 14    lineno: 4    NodeType: NODE_ID_LIST    stype: null    child: 18 19     layer:0-0    
-nodeID: 15    lineno: 3    NodeType: NODE_EXPR    stype: null    expr_type=NODE_MULT_EXP    child: 20 21 22     layer:0-0    
-nodeID: 16    lineno: 3    NodeType: NODE_OPERATOR    stype: null    operator_type_= OP_ADD     child:     layer:0-0    
-nodeID: 17    lineno: 3    NodeType: NODE_CONST    stype: null    node->type=int value=6 child:     layer:0-0    
-nodeID: 18    lineno: 4    NodeType: NODE_EXPR    stype: null    expr_type=NODE_additive_Exp    child: 23 24 25     layer:0-0    
-nodeID: 19    lineno: 4    NodeType: NODE_CONST    stype: null    node->type=string value="hello world%d\n" child:     layer:0-0    
-nodeID: 20    lineno: 3    NodeType: NODE_VAR    stype: null    var_name=a    child:     layer:0-0    
-nodeID: 21    lineno: 3    NodeType: NODE_OPERATOR    stype: null    operator_type_= OP_DIV     child:     layer:0-0    
-nodeID: 22    lineno: 3    NodeType: NODE_CONST    stype: null    node->type=int value=7 child:     layer:0-0    
-nodeID: 23    lineno: 4    NodeType: NODE_CONST    stype: null    node->type=int value=1 child:     layer:0-0    
-nodeID: 24    lineno: 4    NodeType: NODE_OPERATOR    stype: null    operator_type_= OP_ADD     child:     layer:0-0    
-nodeID: 25    lineno: 4    NodeType: NODE_EXPR    stype: null    expr_type=NODE_MULT_EXP    child: 26 27 28     layer:0-0    
-nodeID: 26    lineno: 4    NodeType: NODE_CONST    stype: null    node->type=int value=5 child:     layer:0-0    
-nodeID: 27    lineno: 4    NodeType: NODE_OPERATOR    stype: null    operator_type_= OP_MULT     child:     layer:0-0    
-nodeID: 28    lineno: 4    NodeType: NODE_CONST    stype: null    node->type=int value=8 child:     layer:0-0    
+nodeID: 3    lineno: 2    NodeType: NODE_EXPR    stype: null    expr_type=NODE_RELATION_LESS_EXP    child: 5 6 7     layer:0-0    
+nodeID: 4    lineno: 3    NodeType: NODE_EXPR    stype: null    expr_type=NODE_RELATION_GREATER_EQ_EXP    child: 8 9 10     layer:0-0    
+nodeID: 5    lineno: 2    NodeType: NODE_CONST    stype: null    node->type=int value=1 child:     layer:0-0    
+nodeID: 6    lineno: 2    NodeType: NODE_OPERATOR    stype: null    operator_type_= OP_LESS     child:     layer:0-0    
+nodeID: 7    lineno: 2    NodeType: NODE_EXPR    stype: null    expr_type=NODE_additive_Exp    child: 11 12 13     layer:0-0    
+nodeID: 8    lineno: 3    NodeType: NODE_CONST    stype: null    node->type=int value=2 child:     layer:0-0    
+nodeID: 9    lineno: 3    NodeType: NODE_OPERATOR    stype: null    operator_type_= OP_GREATER_EQ     child:     layer:0-0    
+nodeID: 10    lineno: 3    NodeType: NODE_CONST    stype: null    node->type=int value=9 child:     layer:0-0    
+nodeID: 11    lineno: 2    NodeType: NODE_CONST    stype: null    node->type=int value=2 child:     layer:0-0    
+nodeID: 12    lineno: 2    NodeType: NODE_OPERATOR    stype: null    operator_type_= OP_ADD     child:     layer:0-0    
+nodeID: 13    lineno: 2    NodeType: NODE_CONST    stype: null    node->type=int value=6 child:     layer:0-0    
 layer:0    
 
 layer:0-0    
-symbol:  a    ref_or_def:  PROPERTY_DEF     symbol_type:  SYMBOL_VAR    
-symbol:  b    ref_or_def:  PROPERTY_DEF     symbol_type:  SYMBOL_VAR    
-symbol:  a    ref_or_def:  PROPERTY_REFE     symbol_type:  SYMBOL_VAR    
-symbol:  printf    ref_or_def:  PROPERTY_REFE     symbol_type:  SYMBOL_FUNC    
 
     .bss
     .align 4
     .section    .rodata
-STR0:
-    .string "hello world%d\n"
 label_main_begin1:
 
     .text
@@ -50,37 +28,29 @@ label_main_begin1:
 main:
     pushl %ebp
     movl %esp, %ebp
-    subl    $28, %esp
+    subl    $10, %esp
 label_main_next1:
 
-    movl    $9,-4(%ebp)
-decl_next3:
-
-    xorl    %eax, %eax
-    movl    -4(%ebp), %eax
-    xorl    %ebx, %ebx
-    movl    $7, %ebx
-    xorl    %edx, %edx
-    divl    %ebx
-    movl    %eax, -16(%ebp)
-    xorl    %eax, %eax
-    movl    -16(%ebp), %eax
-    addl    $6, %eax
-    movl    %eax, -12(%ebp)
-    xorl    %ebx, %ebx
-    movl    -12(%ebp), %ebx
-    movl    %ebx, -8(%ebp)
-decl_next4:
-
-    movl    $40, -24(%ebp)
+    movl    $8, -5(%ebp)
     xorl    %eax, %eax
     movl    $1, %eax
-    addl    -24(%ebp), %eax
-    movl    %eax, -20(%ebp)
-    pushl    -20(%ebp)
-    pushl    $STR0
-    call    printf
-    addl    $8 ,%esp
-    addl    $32, %esp
+    xorl    %ecx, %ecx
+    movl    -5(%ebp), %ecx
+    cmpl    %eax, %ecx
+    jb    NODE_RELATION_LESS_EXP_true5
+    movb    $0, -4(%ebp)
+NODE_RELATION_LESS_EXP_true5:
+    movb    $1, -4(%ebp)
+    movl    $8, -5(%ebp)
+    xorl    %eax, %eax
+    movl    $2, %eax
+    xorl    %ecx, %ecx
+    movl    $9, %ecx
+    cmpl    %eax, %ecx
+    jae    NODE_RELATION_GREATER_EQ_true8
+    movb    $0, -9(%ebp)
+NODE_RELATION_GREATER_EQ_true8:
+    movb    $1, -9(%ebp)
+    addl    $14, %esp
     movl    $0, %eax
     ret

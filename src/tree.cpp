@@ -1603,6 +1603,102 @@ void  TreeNode:: allocate_stack_space(TreeNode*node)//分配栈空间
                 node->item=item;
                 break;
             }
+            case NODE_RELATION_LESS_EXP:{
+                Item* item=new Item;
+                item->symbol_type=SYMBOL_TEMP;
+                item->tree_node=node;
+                item->def_pos=node;//先假定这是一个定义而非引用，指向自己，后面在检查时如果有指向自己且是一个引用的则报错
+                item->index=temp_count;
+                temp_count++;
+                //加入符号表
+                node->layer_node->section->section_table.push_back(item);
+                //在栈中分配空间目前只支持int
+                item->stack_count=node->layer_node->root->total_count;
+                node->layer_node->root->total_count+=1;
+                node->layer_node->root->last_size=1;
+                node->item=item;
+                break;
+            }
+            case NODE_RELATION_GREATER_EXP:{
+                Item* item=new Item;
+                item->symbol_type=SYMBOL_TEMP;
+                item->tree_node=node;
+                item->def_pos=node;//先假定这是一个定义而非引用，指向自己，后面在检查时如果有指向自己且是一个引用的则报错
+                item->index=temp_count;
+                temp_count++;
+                //加入符号表
+                node->layer_node->section->section_table.push_back(item);
+                //在栈中分配空间目前只支持int
+                item->stack_count=node->layer_node->root->total_count;
+                node->layer_node->root->total_count+=1;
+                node->layer_node->root->last_size=1;
+                node->item=item;
+                break;
+            }
+            case NODE_RELATION_LESS_EQ_EXP:{
+                Item* item=new Item;
+                item->symbol_type=SYMBOL_TEMP;
+                item->tree_node=node;
+                item->def_pos=node;//先假定这是一个定义而非引用，指向自己，后面在检查时如果有指向自己且是一个引用的则报错
+                item->index=temp_count;
+                temp_count++;
+                //加入符号表
+                node->layer_node->section->section_table.push_back(item);
+                //在栈中分配空间目前只支持int
+                item->stack_count=node->layer_node->root->total_count;
+                node->layer_node->root->total_count+=1;
+                node->layer_node->root->last_size=1;
+                node->item=item;
+                break;
+            }
+            case NODE_RELATION_GREATER_EQ_EXP:{
+                Item* item=new Item;
+                item->symbol_type=SYMBOL_TEMP;
+                item->tree_node=node;
+                item->def_pos=node;//先假定这是一个定义而非引用，指向自己，后面在检查时如果有指向自己且是一个引用的则报错
+                item->index=temp_count;
+                temp_count++;
+                //加入符号表
+                node->layer_node->section->section_table.push_back(item);
+                //在栈中分配空间目前只支持int
+                item->stack_count=node->layer_node->root->total_count;
+                node->layer_node->root->total_count+=1;
+                node->layer_node->root->last_size=1;
+                node->item=item;
+                break;
+            }
+            case NODE_EQUALITY_EXP:{
+                Item* item=new Item;
+                item->symbol_type=SYMBOL_TEMP;
+                item->tree_node=node;
+                item->def_pos=node;//先假定这是一个定义而非引用，指向自己，后面在检查时如果有指向自己且是一个引用的则报错
+                item->index=temp_count;
+                temp_count++;
+                //加入符号表
+                node->layer_node->section->section_table.push_back(item);
+                //在栈中分配空间目前只支持int
+                item->stack_count=node->layer_node->root->total_count;
+                node->layer_node->root->total_count+=1;
+                node->layer_node->root->last_size=1;
+                node->item=item;
+                break;
+            }
+            case NODE_NOT_EQUALITY_EXP:{
+                Item* item=new Item;
+                item->symbol_type=SYMBOL_TEMP;
+                item->tree_node=node;
+                item->def_pos=node;//先假定这是一个定义而非引用，指向自己，后面在检查时如果有指向自己且是一个引用的则报错
+                item->index=temp_count;
+                temp_count++;
+                //加入符号表
+                node->layer_node->section->section_table.push_back(item);
+                //在栈中分配空间目前只支持int
+                item->stack_count=node->layer_node->root->total_count;
+                node->layer_node->root->total_count+=1;
+                node->layer_node->root->last_size=1;
+                node->item=item;
+                break;
+            }
         }
         break;
     }
@@ -1934,6 +2030,8 @@ string gen_expr_asm(TreeNode*node)//目前产生算数表达式的汇编码
         switch(node->exprtype)
         {
             case NODE_additive_Exp:{//加和减
+                if(node->code!=nullptr)
+                    break;
                 TreeNode*first=node->get_child(0);
                 TreeNode*op=node->get_child(1);
                 TreeNode*second=node->get_child(2);
@@ -1971,9 +2069,12 @@ string gen_expr_asm(TreeNode*node)//目前产生算数表达式的汇编码
                 break;
             }
             case NODE_MULT_EXP:{//乘和除
+                if(node->code!=nullptr)
+                    break;
                 TreeNode*first=node->get_child(0);
                 TreeNode*op=node->get_child(1);
                 TreeNode*second=node->get_child(2);
+                
                 node->code=new string("");
                 if(first->nodeType==NODE_CONST&&second->nodeType==NODE_CONST)
                 {
@@ -2030,6 +2131,109 @@ string gen_expr_asm(TreeNode*node)//目前产生算数表达式的汇编码
                 return *node->code;
                 break;
             }
+            case NODE_RELATION_LESS_EXP:{// <
+                //对于真假值的表达式，这个表达式的值只有1或0
+                if(node->code!=nullptr)
+                    break;
+                TreeNode*first=node->get_child(0);
+                TreeNode*second=node->get_child(2);
+                node->code=new string("");
+                *node->code+=gen_expr_asm(first);
+                *node->code+=gen_expr_asm(second);
+                *node->code+="    xorl    %eax, %eax\n    movl    "+get_location_or_value(first)+", %eax\n";
+                *node->code+="    xorl    %ecx, %ecx\n    movl    "+get_location_or_value(second)+", %ecx\n";
+                *node->code+="    cmpl    %eax, %ecx\n";
+                *node->code+="    jb    NODE_RELATION_LESS_EXP_true"+to_string(first->nodeID)+"\n";
+                *node->code+="    movb    $0, "+get_location_or_value(node)+"\n";
+                *node->code+="NODE_RELATION_LESS_EXP_true"+to_string(first->nodeID)+":\n";
+                *node->code+="    movb    $1, "+get_location_or_value(node)+"\n";
+                break;
+            }
+            case NODE_RELATION_GREATER_EXP:{
+                if(node->code!=nullptr)
+                    break;
+                TreeNode*first=node->get_child(0);
+                TreeNode*second=node->get_child(2);
+                node->code=new string("");
+                *node->code+=gen_expr_asm(first);
+                *node->code+=gen_expr_asm(second);
+                *node->code+="    xorl    %eax, %eax\n    movl    "+get_location_or_value(first)+", %eax\n";
+                *node->code+="    xorl    %ecx, %ecx\n    movl    "+get_location_or_value(second)+", %ecx\n";
+                *node->code+="    cmpl    %eax, %ecx\n";
+                *node->code+="    ja    NODE_RELATION_GREATER_EXP_true"+to_string(first->nodeID)+"\n";
+                *node->code+="    movb    $0, "+get_location_or_value(node)+"\n";
+                *node->code+="NODE_RELATION_GREATER_EXP_true"+to_string(first->nodeID)+":\n";
+                *node->code+="    movb    $1, "+get_location_or_value(node)+"\n";
+                break;
+            }
+            case NODE_RELATION_LESS_EQ_EXP:{
+                if(node->code!=nullptr)
+                    break;
+                TreeNode*first=node->get_child(0);
+                TreeNode*second=node->get_child(2);
+                node->code=new string("");
+                *node->code+=gen_expr_asm(first);
+                *node->code+=gen_expr_asm(second);
+                *node->code+="    xorl    %eax, %eax\n    movl    "+get_location_or_value(first)+", %eax\n";
+                *node->code+="    xorl    %ecx, %ecx\n    movl    "+get_location_or_value(second)+", %ecx\n";
+                *node->code+="    cmpl    %eax, %ecx\n";
+                *node->code+="    jbe    NODE_RELATION_LESS_EQ_true"+to_string(first->nodeID)+"\n";
+                *node->code+="    movb    $0, "+get_location_or_value(node)+"\n";
+                *node->code+="NODE_RELATION_LESS_EQ_true"+to_string(first->nodeID)+":\n";
+                *node->code+="    movb    $1, "+get_location_or_value(node)+"\n";
+                break;
+            }
+            case NODE_RELATION_GREATER_EQ_EXP:{
+                if(node->code!=nullptr)
+                    break;
+                TreeNode*first=node->get_child(0);
+                TreeNode*second=node->get_child(2);
+                node->code=new string("");
+                *node->code+=gen_expr_asm(first);
+                *node->code+=gen_expr_asm(second);
+                *node->code+="    xorl    %eax, %eax\n    movl    "+get_location_or_value(first)+", %eax\n";
+                *node->code+="    xorl    %ecx, %ecx\n    movl    "+get_location_or_value(second)+", %ecx\n";
+                *node->code+="    cmpl    %eax, %ecx\n";
+                *node->code+="    jae    NODE_RELATION_GREATER_EQ_true"+to_string(first->nodeID)+"\n";
+                *node->code+="    movb    $0, "+get_location_or_value(node)+"\n";
+                *node->code+="NODE_RELATION_GREATER_EQ_true"+to_string(first->nodeID)+":\n";
+                *node->code+="    movb    $1, "+get_location_or_value(node)+"\n";
+                break;
+            }
+            case NODE_EQUALITY_EXP:{
+                if(node->code!=nullptr)
+                    break;
+                TreeNode*first=node->get_child(0);
+                TreeNode*second=node->get_child(2);
+                node->code=new string("");
+                *node->code+=gen_expr_asm(first);
+                *node->code+=gen_expr_asm(second);
+                *node->code+="    xorl    %eax, %eax\n    movl    "+get_location_or_value(first)+", %eax\n";
+                *node->code+="    xorl    %ecx, %ecx\n    movl    "+get_location_or_value(second)+", %ecx\n";
+                *node->code+="    cmpl    %eax, %ecx\n";
+                *node->code+="    je    NODE_EQUALITY_EXP_true"+to_string(first->nodeID)+"\n";
+                *node->code+="    movb    $0, "+get_location_or_value(node)+"\n";
+                *node->code+="NODE_EQUALITY_EXP_true"+to_string(first->nodeID)+":\n";
+                *node->code+="    movb    $1, "+get_location_or_value(node)+"\n";
+                break;
+            }
+            case NODE_NOT_EQUALITY_EXP:{
+                if(node->code!=nullptr)
+                    break;
+                TreeNode*first=node->get_child(0);
+                TreeNode*second=node->get_child(2);
+                node->code=new string("");
+                *node->code+=gen_expr_asm(first);
+                *node->code+=gen_expr_asm(second);
+                *node->code+="    xorl    %eax, %eax\n    movl    "+get_location_or_value(first)+", %eax\n";
+                *node->code+="    xorl    %ecx, %ecx\n    movl    "+get_location_or_value(second)+", %ecx\n";
+                *node->code+="    cmpl    %eax, %ecx\n";
+                *node->code+="    jne    NODE_NOT_EQUALITY_EXP_true"+to_string(first->nodeID)+"\n";
+                *node->code+="    movb    $0, "+get_location_or_value(node)+"\n";
+                *node->code+="NODE_NOT_EQUALITY_EXP_true"+to_string(first->nodeID)+":\n";
+                *node->code+="    movb    $1, "+get_location_or_value(node)+"\n";
+                break;
+            }
         }
     }
     //递归
@@ -2079,6 +2283,11 @@ void TreeNode:: print_code()
             break;
         }
         case NODE_FUNCTION_CALL:{
+            cout<<*this->code;
+            break;
+        }
+        case NODE_EXPR:{
+            
             cout<<*this->code;
             break;
         }
