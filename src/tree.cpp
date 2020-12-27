@@ -3,6 +3,7 @@
 #include "type.h"
 #include <string>
 extern int temp_count;
+extern TreeNode *root;
 extern int str_count;
 extern Item* global_str_list[1000];
 extern list<ThreeAdCodeItem*> *code_list;
@@ -1748,6 +1749,68 @@ void  TreeNode:: allocate_stack_space(TreeNode*node)//分配栈空间
                 node->item=item;
                 break;
             }
+            case NODE_UNARY_EXP:{
+                TreeNode*op=node->get_child(0);
+                if(op->optype==OP_UNARY_NOT)
+                {
+                    Item* item=new Item;
+                    item->symbol_type=SYMBOL_TEMP;
+                    item->tree_node=node;
+                    item->def_pos=node;//先假定这是一个定义而非引用，指向自己，后面在检查时如果有指向自己且是一个引用的则报错
+                    item->index=temp_count;
+                    temp_count++;
+                    //加入符号表
+                    node->layer_node->section->section_table.push_back(item);
+                    //在栈中分配空间目前只支持int
+                    item->stack_count=node->layer_node->root->total_count;
+                    node->layer_node->root->total_count+=1;
+                    node->layer_node->root->last_size=1;
+                    node->item=item;
+                    break;
+                }
+                else if(op->optype==OP_SUB)
+                {
+                    Item* item=new Item;
+                    item->symbol_type=SYMBOL_TEMP;
+                    item->tree_node=node;
+                    item->def_pos=node;//先假定这是一个定义而非引用，指向自己，后面在检查时如果有指向自己且是一个引用的则报错
+                    item->index=temp_count;
+                    temp_count++;
+                    //加入符号表
+                    node->layer_node->section->section_table.push_back(item);
+                    //在栈中分配空间目前只支持int
+                    item->stack_count=node->layer_node->root->total_count;
+                    node->layer_node->root->total_count+=4;
+                    node->layer_node->root->last_size=4;
+                    node->item=item;
+                    break;
+                }
+                else if(op->optype==OP_UNARY_REFERENCE)
+                {
+                    TreeNode*var=node->get_child(1);
+                    Item* symbol_item=get_symbol_item(var->var_name, node->layer_node->root);
+                    if(symbol_item==nullptr)
+                    {
+                        cout<<"wrong when try to get a symbol in OP_UNARY_REFERENCE\n";
+                        break;
+                    }
+                    Item* item=new Item;
+                    item->symbol_type=SYMBOL_TEMP;
+                    item->tree_node=node;
+                    item->def_pos=node;//先假定这是一个定义而非引用，指向自己，后面在检查时如果有指向自己且是一个引用的则报错
+                    item->index=temp_count;
+                    temp_count++;
+                    //加入符号表
+                    node->layer_node->section->section_table.push_back(item);
+                    //在栈中分配空间目前只支持int
+                    item->stack_count=node->layer_node->root->total_count;
+                    node->layer_node->root->total_count+=4;
+                    node->layer_node->root->last_size=4;
+                    node->item=item;
+                    break;
+
+                }
+            }
         }
         break;
     }
@@ -1762,8 +1825,6 @@ void  TreeNode:: allocate_stack_space(TreeNode*node)//分配栈空间
     }
 
     }
-
-
     TreeNode*tmp=node->child;
     while(tmp!=nullptr)
     {
@@ -1777,6 +1838,33 @@ string TreeNode:: gen_ASM_code(TreeNode*node)//产生全部汇编码
 {
     switch(node->nodeType)
     {
+        case NODE_PROG:{
+            TreeNode*tmp=node->child;
+            while(tmp!=nullptr)
+            {
+                tmp->gen_ASM_code(tmp);
+                tmp=tmp->sibling;
+            }
+            break;
+        }
+        case NODE_MAIN:{
+            TreeNode*tmp=node->child;//在整个程序的层面上
+            while(tmp!=nullptr)
+            {
+                tmp->gen_ASM_code(tmp);
+                tmp=tmp->sibling;
+            }
+            break;
+        }
+        case NODE_BLOCK_FLAG:{
+            TreeNode*tmp=node->child;
+            while(tmp!=nullptr)
+            {
+                tmp->gen_ASM_code(tmp);
+                tmp=tmp->sibling;
+            }
+            break;
+        }
         case NODE_DECL_STMT:{//变量声明
             if(node->code!=nullptr)
                 break;
@@ -1833,91 +1921,113 @@ string TreeNode:: gen_ASM_code(TreeNode*node)//产生全部汇编码
             else{/*不带初值的汇编码在分配栈空间的时候已经产生*/}
             break;
         }
-        case NODE_ASSIGN_EXPR:{//赋值语句= += -=
+        case NODE_ASSIGN_EXPR:{//赋值语句= += -= ++ --
             if(node->code!=nullptr)
                 break;
-            TreeNode*var=node->get_child(0);
-            TreeNode*op=node->get_child(1);
-            TreeNode*value=node->get_child(2);
             node->code=new string("");
-            switch(op->optype)
+            if(node->child_num()==3)
             {
-                case OP_ASSIGN_EQ:{// =
-                    /*
-                    movl value eax
-                    movl eax var
-                    */
-                   if(var->type->type==TYPE_INT->type)
-                   {
-                        *node->code+=get_code(value);
-                        *node->code+="    xorl    %eax, %eax\n";
-                        *node->code+="    movl    "+get_location_or_value(value)+", %eax\n";
-                        *node->code+="    movl    %eax, "+get_location_or_value(var)+"\n";
-                   }
-                   else if(var->type->type==TYPE_CHAR->type)
-                   {
-                        *node->code+=get_code(value);
-                        *node->code+="    xorl    %eax, %eax\n";
-                        *node->code+="    movb    "+get_location_or_value(value)+", %al\n";
-                        *node->code+="    movb    %al, "+get_location_or_value(var)+"\n";
-                   }
+                TreeNode*var=node->get_child(0);
+                TreeNode*op=node->get_child(1);
+                TreeNode*value=node->get_child(2);
+                
+                switch(op->optype)
+                {
+                    case OP_ASSIGN_EQ:{// =
+                        /*
+                        movl value eax
+                        movl eax var
+                        */
+                    if(var->type->type==TYPE_INT->type)
+                    {
+                            *node->code+=get_code(value);
+                            *node->code+="    xorl    %eax, %eax\n";
+                            *node->code+="    movl    "+get_location_or_value(value)+", %eax\n";
+                            *node->code+="    movl    %eax, "+get_location_or_value(var)+"\n";
+                    }
+                    else if(var->type->type==TYPE_CHAR->type)
+                    {
+                            *node->code+=get_code(value);
+                            *node->code+="    xorl    %eax, %eax\n";
+                            *node->code+="    movb    "+get_location_or_value(value)+", %al\n";
+                            *node->code+="    movb    %al, "+get_location_or_value(var)+"\n";
+                    }
+                        break;
+                    }
+                    case OP_ADD_EQ:{// +=
+                        /*
+                        movl var eax
+                        movl value ebx
+                        addl eax ebx
+                        movl eax var
+                        */
+                    if(var->type->type==TYPE_INT->type)
+                    {
+                            *node->code+=get_code(value);
+                            *node->code+="    xorl    %eax, %eax\n    xorl    %ebx, %ebx\n";
+                            *node->code+="    movl    "+get_location_or_value(var)+", %eax\n";
+                            *node->code+="    movl    "+get_location_or_value(value)+", %ebx\n";
+                            *node->code+="    addl    %eax, %ebx\n";
+                            *node->code+="    movl    %ebx, "+get_location_or_value(var)+"\n";
+                    }
+                    else if(var->type->type==TYPE_CHAR->type)
+                    {
+                            *node->code+=get_code(value);
+                            *node->code+="    xorl    %eax, %eax\n    xorl    %ebx, %ebx\n";
+                            *node->code+="    movb    "+get_location_or_value(var)+", %al\n";
+                            *node->code+="    movb    "+get_location_or_value(value)+", %bl\n";
+                            *node->code+="    addb    %al, %bl\n";
+                            *node->code+="    movb    %bl, "+get_location_or_value(var)+"\n";
+                    }
+                        break;
+                    }
+                    case OP_SUB_EQ:{// -=
+                        /*
+                        movl var eax
+                        movl value ebx
+                        subl eax ebx
+                        movl eax var
+                        */
+                    if(var->type->type==TYPE_INT->type)
+                    {
+                            *node->code+=get_code(value);
+                            *node->code+="    xorl    %eax, %eax\n    xorl    %ebx, %ebx\n";
+                            *node->code+="    movl    "+get_location_or_value(var)+", %eax\n";
+                            *node->code+="    movl    "+get_location_or_value(value)+", %ebx\n";
+                            *node->code+="    subl    %ebx, %eax\n";
+                            *node->code+="    movl    %eax, "+get_location_or_value(var)+"\n";
+                    }
+                    else if(var->type->type==TYPE_CHAR->type)
+                    {
+                            *node->code+=get_code(value);
+                            *node->code+="    xorl    %eax, %eax\n    xorl    %ebx, %ebx\n";
+                            *node->code+="    movb    "+get_location_or_value(var)+", %al\n";
+                            *node->code+="    movb    "+get_location_or_value(value)+", %bl\n";
+                            *node->code+="    subb    %bl, %al\n";
+                            *node->code+="    movb    %al, "+get_location_or_value(var)+"\n";
+                    }
                     break;
-                }
-                case OP_ADD_EQ:{// +=
-                    /*
-                    movl var eax
-                    movl value ebx
-                    addl eax ebx
-                    movl eax var
-                    */
-                   if(var->type->type==TYPE_INT->type)
-                   {
-                        *node->code+=get_code(value);
-                        *node->code+="    xorl    %eax, %eax\n    xorl    %ebx, %ebx\n";
-                        *node->code+="    movl    "+get_location_or_value(var)+", %eax\n";
-                        *node->code+="    movl    "+get_location_or_value(value)+", %ebx\n";
-                        *node->code+="    addl    %eax, %ebx\n";
-                        *node->code+="    movl    %eax, "+get_location_or_value(var)+"\n";
-                   }
-                   else if(var->type->type==TYPE_CHAR->type)
-                   {
-                        *node->code+=get_code(value);
-                        *node->code+="    xorl    %eax, %eax\n    xorl    %ebx, %ebx\n";
-                        *node->code+="    movb    "+get_location_or_value(var)+", %al\n";
-                        *node->code+="    movb    "+get_location_or_value(value)+", %bl\n";
-                        *node->code+="    addb    %al, %bl\n";
-                        *node->code+="    movb    %al, "+get_location_or_value(var)+"\n";
-                   }
-                    break;
-                }
-                case OP_SUB_EQ:{// -=
-                    /*
-                    movl var eax
-                    movl value ebx
-                    subl eax ebx
-                    movl eax var
-                    */
-                   if(var->type->type==TYPE_INT->type)
-                   {
-                        *node->code+=get_code(value);
-                        *node->code+="    xorl    %eax, %eax\n    xorl    %ebx, %ebx\n";
-                        *node->code+="    movl    "+get_location_or_value(var)+", %eax\n";
-                        *node->code+="    movl    "+get_location_or_value(value)+", %ebx\n";
-                        *node->code+="    subl    %eax, %ebx\n";
-                        *node->code+="    movl    %eax, "+get_location_or_value(var)+"\n";
-                   }
-                   else if(var->type->type==TYPE_CHAR->type)
-                   {
-                        *node->code+=get_code(value);
-                        *node->code+="    xorl    %eax, %eax\n    xorl    %ebx, %ebx\n";
-                        *node->code+="    movb    "+get_location_or_value(var)+", %al\n";
-                        *node->code+="    movb    "+get_location_or_value(value)+", %bl\n";
-                        *node->code+="    subb    %al, %bl\n";
-                        *node->code+="    movb    %al, "+get_location_or_value(var)+"\n";
-                   }
-                   break;
+                    }
                 }
             }
+            else if(node->child_num()==2)
+            {
+                TreeNode*var=node->get_child(0);
+                TreeNode*op=node->get_child(1);
+                if(op->optype==OP_DOUBLE_ADD)
+                {
+                    *node->code+="    xorl    %eax, %eax\n    movl    "+get_location_or_value(var)+", %eax\n";
+                    *node->code+="    addl    $1, %eax\n";
+                    *node->code+="    movl    %eax, "+get_location_or_value(var)+"\n";
+                }
+                else if(op->optype==OP_DOUBLE_SUB)
+                {
+                    *node->code+="    xorl    %eax, %eax\n    movl    "+get_location_or_value(var)+", %eax\n";
+                    *node->code+="    subl    $1, %eax\n";
+                    *node->code+="    movl    %eax, "+get_location_or_value(var)+"\n";
+                }
+            }
+            
             break;
         }
         case NODE_FUNCTION_CALL:{//函数调用
@@ -1944,8 +2054,8 @@ string TreeNode:: gen_ASM_code(TreeNode*node)//产生全部汇编码
                     }
                     if(((*i)->nodeType==NODE_CONST||(*i)->nodeType==NODE_VAR)&&(*i)->type->type==TYPE_CHAR->type)
                     {
-                        *node->code+="    pushb    "+get_location_or_value(*i)+"\n";
-                        temp_stack_count+=1;
+                        *node->code+="    pushl    "+get_location_or_value(*i)+"\n";
+                        temp_stack_count+=4;
                     }
                     if((*i)->nodeType==NODE_CONST&&(*i)->type->type==TYPE_STRING->type)
                     {
@@ -1964,10 +2074,11 @@ string TreeNode:: gen_ASM_code(TreeNode*node)//产生全部汇编码
                     }
                     if((*i)->nodeType==NODE_EXPR)
                     {
-                        if((*i)->exprtype==NODE_additive_Exp||(*i)->exprtype==NODE_MULT_EXP)
+                        if((*i)->exprtype==NODE_additive_Exp||(*i)->exprtype==NODE_MULT_EXP||(*i)->exprtype==NODE_UNARY_EXP)
                         {
                             *node->code+=get_code(*i);//先产生子表达式的代码
-                            *node->code+="    pushl    "+get_location_or_value(*i)+"\n";
+                            *node->code+="    xorl    %eax, %eax\n    movl    "+get_location_or_value(*i)+", %eax\n";
+                            *node->code+="    pushl    %eax\n";
                             temp_stack_count+=4;
                         }
                     }
@@ -1980,56 +2091,149 @@ string TreeNode:: gen_ASM_code(TreeNode*node)//产生全部汇编码
         case NODE_SELECTION_STMT:{
             if(node->code!=nullptr)
                 break;
-            if(node->child_num()==2)//没有else
+            TreeNode*condition=node->get_child(0);
+            node->code=new string("");
+            *node->code+=*condition->code;
+            *node->code+="    xorl    %eax, %eax\n    movb    "+get_location_or_value(condition)+" , %al\n";
+            *node->code+="    xorl    %ecx, %ecx\n    movb    $0, %cl\n";
+            *node->code+="    cmpb    %al, %cl\n";
+            *node->code+="    je    NODE_SELECTION_STMT_false"+to_string(node->nodeID)+"\n";
+            if(node->child_num()==2)
+            {
+                node->gen_ASM_code(node->get_child(1));
+            }
+            else
+            {
+                node->gen_ASM_code(node->get_child(1));
+                node->gen_ASM_code(node->get_child(2));
+            }
+            break;
+        }
+        case NDOE_ITERATION_STMT:{
+            if(node->code!=nullptr)
+                break;
+            node->code=new string("");
+            if(node->iterationtype==ITERATION_WHILE)
             {
                 TreeNode*condition=node->get_child(0);
                 TreeNode*body=node->get_child(1);
-                node->code=new string("");
+                *node->code+="ITERATION_WHILE_LOOP"+to_string(node->nodeID)+":\n";
                 *node->code+=*condition->code;
-                *node->code+="    xorl    %eax, %eax\n    movb    "+get_location_or_value(condition)+" , %al\n";
+                *node->code+="    xorl    %eax, %eax\n    movb    "+get_location_or_value(condition)+", %al\n";
                 *node->code+="    xorl    %ecx, %ecx\n    movb    $0, %cl\n";
                 *node->code+="    cmpb    %al, %cl\n";
-                *node->code+="    je    NODE_SELECTION_STMT_false"+to_string(condition->nodeID)+"\n";
-                //*node->code+=gen_ASM_code(body);
-                //*node->code+="NODE_SELECTION_STMT_false"+to_string(condition->nodeID)+":\n";
-                break;
+                *node->code+="    je    ITERATION_WHILE_LOOP_NEXT"+to_string(node->nodeID)+"\n";
+                //下面应该是循环体，在打印代码时拼接
+                node->gen_ASM_code(body);
             }
-            else if(node->child_num()==3)
+            else if(node->iterationtype==ITERATION_FOR_EEE)
+            {
+                TreeNode*condition=node->get_child(1);
+                TreeNode*after=node->get_child(2);
+                TreeNode*body=node->get_child(3);
+                //先产生最开始的语句
+                TreeNode*first=node->get_child(0);
+                node->gen_ASM_code(first);
+                //把最开始的语句加入这个节点的代码中，之后在完成整个汇编时不再加入即可
+                *node->code+=*first->code;
+                *node->code+="ITERATION_FOR_EEE_LOOP"+to_string(node->nodeID)+":\n";
+                *node->code+=*condition->code;
+                *node->code+="    xorl    %eax, %eax\n    movb    "+get_location_or_value(condition)+", %al\n";
+                *node->code+="    xorl    %ecx, %ecx\n    movb    $0, %cl\n";
+                *node->code+="    cmpb    %al, %cl\n";
+                *node->code+="    je    ITERATION_FOR_EEE_LOOP_NEXT"+to_string(node->nodeID)+"\n";
+                //产生循环体和after的语句，最后生成时加上
+                node->gen_ASM_code(body);
+                node->gen_ASM_code(after);
+            }
+            else if(node->iterationtype==ITERATION_FOR_EE_)
+            {
+                TreeNode*condition=node->get_child(1);
+                TreeNode*first=node->get_child(0);
+                TreeNode*body=node->get_child(2);
+                //先产生最开始的语句
+                node->gen_ASM_code(first);
+                //把最开始的语句加入这个节点的代码中，之后在完成整个汇编时不再加入即可
+                *node->code+=*first->code;
+                *node->code+="ITERATION_FOR_EE__LOOP"+to_string(node->nodeID)+":\n";
+                *node->code+=*condition->code;
+                *node->code+="    xorl    %eax, %eax\n    movb    "+get_location_or_value(condition)+", %al\n";
+                *node->code+="    xorl    %ecx, %ecx\n    movb    $0, %cl\n";
+                *node->code+="    cmpb    %al, %cl\n";
+                *node->code+="    je    ITERATION_FOR_EE__LOOP_NEXT"+to_string(node->nodeID)+"\n";
+                //产生循环体的语句
+                node->gen_ASM_code(body);
+            }
+            else if(node->iterationtype==ITERATION_FOR_E_E)
+            {
+                TreeNode*first=node->get_child(0);
+                TreeNode*after=node->get_child(1);
+                TreeNode*body=node->get_child(2);
+                //先产生最开始的语句
+                node->gen_ASM_code(first);
+                //把最开始的语句加入这个节点的代码中，之后在完成整个汇编时不再加入即可
+                *node->code+=*first->code;
+                *node->code+="ITERATION_FOR_E_E_LOOP"+to_string(node->nodeID)+":\n";
+                //没有condition直接产生循环体和after
+                node->gen_ASM_code(body);
+                node->gen_ASM_code(after);
+            }
+            else if(node->iterationtype==ITERATION_FOR_E__)
+            {
+                TreeNode*first=node->get_child(0);
+                TreeNode*body=node->get_child(1);
+                //先产生最开始的语句
+                node->gen_ASM_code(first);
+                //把最开始的语句加入这个节点的代码中，之后在完成整个汇编时不再加入即可
+                *node->code+=*first->code;
+                *node->code+="ITERATION_FOR_E__LOOP"+to_string(node->nodeID)+":\n";
+                //没有condition直接产生body
+                node->gen_ASM_code(body);
+            }
+            else if(node->iterationtype==ITERATION_FOR__EE)
             {
                 TreeNode*condition=node->get_child(0);
-                TreeNode*true_body=node->get_child(1);
-                TreeNode*false_body=node->get_child(2);
-                node->code=new string("");
+                TreeNode*after=node->get_child(1);
+                TreeNode*body=node->get_child(2);
+                *node->code+="ITERATION_FOR__EE_LOOP"+to_string(node->nodeID)+":\n";
                 *node->code+=*condition->code;
-                *node->code+="    xorl    %eax, %eax\n    movb    "+get_location_or_value(condition)+" , %al\n";
+                *node->code+="    xorl    %eax, %eax\n    movb    "+get_location_or_value(condition)+", %al\n";
                 *node->code+="    xorl    %ecx, %ecx\n    movb    $0, %cl\n";
                 *node->code+="    cmpb    %al, %cl\n";
-                *node->code+="    je    NODE_SELECTION_STMT_false"+to_string(condition->nodeID)+"\n";
-                break;
+                *node->code+="    je    ITERATION_FOR__EE_LOOP_NEXT"+to_string(node->nodeID)+"\n";
+                node->gen_ASM_code(body);
+                node->gen_ASM_code(after);
             }
+            else if(node->iterationtype==ITERATION_FOR__E_)
+            {
+                TreeNode*condition=node->get_child(0);
+                TreeNode*body=node->get_child(1);
+                *node->code+="ITERATION_FOR__E__LOOP"+to_string(node->nodeID)+":\n";
+                *node->code+=*condition->code;
+                *node->code+="    xorl    %eax, %eax\n    movb    "+get_location_or_value(condition)+", %al\n";
+                *node->code+="    xorl    %ecx, %ecx\n    movb    $0, %cl\n";
+                *node->code+="    cmpb    %al, %cl\n";
+                *node->code+="    je    ITERATION_FOR__E__LOOP_NEXT"+to_string(node->nodeID)+"\n";
+                node->gen_ASM_code(body);
+            }
+            else if(node->iterationtype==ITERATION_FOR___E)
+            {
+                TreeNode*after=node->get_child(0);
+                TreeNode*body=node->get_child(1);
+                *node->code+="ITERATION_FOR___E_LOOP"+to_string(node->nodeID)+":\n";
+                node->gen_ASM_code(after);
+                node->gen_ASM_code(body);
+            }
+            else if(node->iterationtype==ITERATION_FOR____)
+            {
+                TreeNode*body=node->get_child(0);
+                *node->code+="ITERATION_FOR_____LOOP"+to_string(node->nodeID)+":\n";
+                node->gen_ASM_code(body);
+            }
+            break;
+
         }
     }
-    //递归
-    TreeNode*tmp=node->child;//在整个程序的层面上
-    while(tmp!=nullptr)
-    {
-        tmp->gen_ASM_code(tmp);
-        tmp=tmp->sibling;
-    }
-    /*if(node->code!=nullptr&&node->nodeType!=NODE_BLOCK_FLAG)
-        return *node->code;
-    else if(node->code==nullptr&&node->nodeType==NODE_BLOCK_FLAG)
-    {
-        node->code=new string("");
-        TreeNode*tmp=node->child;
-        while(tmp!=nullptr)
-        {
-            if(tmp->code!=nullptr)
-                *node->code+=*tmp->code;
-            tmp=tmp->sibling;
-        }
-        return *node->code;
-    }*/
     return "";
 }
 
@@ -2393,6 +2597,38 @@ string gen_expr_asm(TreeNode*node)//目前产生算数表达式的汇编码
                 *node->code+="NODE_LOGICAL_AND_EXP_false_next"+to_string(first->nodeID)+":\n";
                 break;
             }
+            case NODE_UNARY_EXP:{
+                if(node->code!=nullptr)
+                    break;
+                TreeNode*op=node->get_child(0);
+                TreeNode*first=node->get_child(1);
+                node->code=new string("");
+                *node->code+=gen_expr_asm(first);
+                if(op->optype==OP_UNARY_NOT)
+                {
+                    *node->code+="    xorl    %eax, %eax\n    movb    "+get_location_or_value(first)+" ,%al\n";
+                    *node->code+="    xorl    %ecx, %ecx\n    movb    $0, %cl\n";
+                    *node->code+="    cmpb    %al, %cl\n";
+                    *node->code+="    je    NODE_UNARY_EXP_NOT"+to_string(node->nodeID)+"\n";
+                    *node->code+="    movb    $0, "+get_location_or_value(node)+"\n";
+                    *node->code+="    jmp    NODE_UNARY_EXP_NOT_NEXT"+to_string(node->nodeID)+"\n";
+                    *node->code+="NODE_UNARY_EXP_NOT"+to_string(node->nodeID)+":\n";
+                    *node->code+="    movb    $1, "+get_location_or_value(node)+"\n";
+                    *node->code+="NODE_UNARY_EXP_NOT_NEXT"+to_string(node->nodeID)+":\n";
+                }
+                else if(op->optype==OP_SUB)
+                {
+
+                    *node->code+="    xorl    %eax, %eax\n    movl    "+get_location_or_value(first)+" ,%eax\n";
+                    *node->code+="    negl    %eax\n";
+                    *node->code+="    movl    %eax, "+get_location_or_value(node)+"\n";
+                }
+                else if(op->optype==OP_UNARY_REFERENCE)
+                {
+                    *node->code+="    xorl    %eax, %eax\n    leal    "+get_location_or_value(first)+" ,%eax\n";
+                    *node->code+="    movl    %eax, "+get_location_or_value(node)+"\n";
+                }
+            }
         }
     }
     //递归
@@ -2429,17 +2665,19 @@ void TreeNode:: print_code()
     {
         if(this->code!=nullptr)
             cout<<*this->code;
-        TreeNode*tmp=this->child;
-        while(tmp!=nullptr)
-        {
-            tmp->print_code();
-            tmp=tmp->sibling;
-        }
+        TreeNode*tmp=this->get_child(this->child_num()-1);
+        tmp->print_code();
     }
     else if(this->nodeType==NODE_MAIN)
     {
         if(this->code!=nullptr)
             cout<<*this->code;
+        TreeNode*temp=root->child;
+        while(temp!=this)
+        {
+            temp->print_code();
+            temp=temp->sibling;
+        }
         TreeNode*tmp=this->child;
         while(tmp!=nullptr)
         {
@@ -2486,23 +2724,111 @@ void TreeNode:: print_code()
         {
             if(this->code!=nullptr)
                 cout<<*this->code;
-            TreeNode*condition=this->get_child(0);
+     
             TreeNode*tmp=this->get_child(1);
             tmp->print_code();
-            cout<<"NODE_SELECTION_STMT_false"+to_string(condition->nodeID)+":\n";
-            *this->code+="NODE_SELECTION_STMT_false"+to_string(condition->nodeID)+":\n";
+            cout<<"NODE_SELECTION_STMT_false"+to_string(this->nodeID)+":\n";
+            *this->code+="NODE_SELECTION_STMT_false"+to_string(this->nodeID)+":\n";
         }
         else if(this->child_num()==3)
         {
             if(this->code!=nullptr)
                 cout<<*this->code;
-            TreeNode*condition=this->get_child(0);
+          
             TreeNode*true_body=this->get_child(1);
             TreeNode*false_body=this->get_child(2);
             true_body->print_code();
-            cout<<"NODE_SELECTION_STMT_false"+to_string(condition->nodeID)+":\n";
-            *this->code+="NODE_SELECTION_STMT_false"+to_string(condition->nodeID)+":\n";
+            cout<<"NODE_SELECTION_STMT_false"+to_string(this->nodeID)+":\n";
+            *this->code+="NODE_SELECTION_STMT_false"+to_string(this->nodeID)+":\n";
             false_body->print_code();
+        }
+    }
+    else if(this->nodeType==NDOE_ITERATION_STMT)
+    {
+        if(this->iterationtype==ITERATION_WHILE)
+        {
+            if(this->code!=nullptr)
+                cout<<*this->code;
+            TreeNode*body=this->get_child(1);
+            body->print_code();
+            cout<<"    jmp    ITERATION_WHILE_LOOP"+to_string(this->nodeID)+"\n";
+            cout<<"ITERATION_WHILE_LOOP_NEXT"+to_string(this->nodeID)+":\n";
+        }
+        else if(this->iterationtype==ITERATION_FOR_EEE)
+        {
+            if(this->code!=nullptr)
+                cout<<*this->code;
+            TreeNode*body=this->get_child(3);
+            TreeNode*after=this->get_child(2);
+            body->print_code();
+            after->print_code();
+            cout<<"    jmp    ITERATION_FOR_EEE_LOOP"+to_string(this->nodeID)+"\n";
+            cout<<"ITERATION_FOR_EEE_LOOP_NEXT"+to_string(this->nodeID)+":\n";
+        }
+        else if(this->iterationtype==ITERATION_FOR_EE_)
+        {
+            if(this->code!=nullptr)
+                cout<<*this->code;
+            TreeNode*body=this->get_child(2);
+            body->print_code();
+            cout<<"    jmp    ITERATION_FOR_EE__LOOP"+to_string(this->nodeID)+"\n";
+            cout<<"ITERATION_FOR_EE__LOOP_NEXT"+to_string(this->nodeID)+":\n";
+        }
+        else if(this->iterationtype==ITERATION_FOR_E_E)
+        {
+            if(this->code!=nullptr)
+                cout<<*this->code;
+            TreeNode*body=this->get_child(2);
+            TreeNode*after=this->get_child(1);
+            body->print_code();
+            after->print_code();
+            cout<<"    jmp    ITERATION_FOR_E_E_LOOP"+to_string(this->nodeID)+"\n";
+        }
+        else if(this->iterationtype==ITERATION_FOR_E__)
+        {
+            if(this->code!=nullptr)
+                cout<<*this->code;
+            TreeNode*body=this->get_child(1);
+            body->print_code();
+            cout<<"    jmp    ITERATION_FOR_E__LOOP"+to_string(this->nodeID)+"\n";
+        }
+        else if(this->iterationtype==ITERATION_FOR__EE)
+        {
+            if(this->code!=nullptr)
+                cout<<*this->code;
+            TreeNode*body=this->get_child(2);
+            TreeNode*after=this->get_child(1);
+            body->print_code();
+            after->print_code();
+            cout<<"    jmp    ITERATION_FOR__EE_LOOP"+to_string(this->nodeID)+"\n";
+            cout<<"ITERATION_FOR__EE_LOOP_NEXT"+to_string(this->nodeID)+":\n";
+        }
+        else if(this->iterationtype==ITERATION_FOR__E_)
+        {
+            if(this->code!=nullptr)
+                cout<<*this->code;
+            TreeNode*body=this->get_child(1);
+            body->print_code();
+            cout<<"    jmp    ITERATION_FOR__E__LOOP"+to_string(this->nodeID)+"\n";
+            cout<<"ITERATION_FOR__E__LOOP_NEXT"+to_string(this->nodeID)+":\n";
+        }
+        else if(this->iterationtype==ITERATION_FOR___E)
+        {
+            if(this->code!=nullptr)
+                cout<<*this->code;
+            TreeNode*after=this->get_child(0);
+            TreeNode*body=this->get_child(1);
+            body->print_code();
+            after->print_code();
+            cout<<"    jmp    ITERATION_FOR___E_LOOP"+to_string(this->nodeID)+"\n";
+        }
+        else if(this->iterationtype==ITERATION_FOR____)
+        {
+            if(this->code!=nullptr)
+                cout<<*this->code;
+            TreeNode*body=this->get_child(0);
+            body->print_code();
+            cout<<"    jmp    ITERATION_FOR_____LOOP"+to_string(this->nodeID)+"\n";
         }
     }
     else if(this->nodeType==NODE_BLOCK_FLAG)
@@ -2533,6 +2859,10 @@ void get_all_arg(TreeNode* id_list,list<TreeNode*>*arg_list)
                 break;
             }
             case NODE_MULT_EXP:{
+                arg_list->push_back(id_list);
+                break;
+            }
+            case NODE_UNARY_EXP:{
                 arg_list->push_back(id_list);
                 break;
             }

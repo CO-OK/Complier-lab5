@@ -73,7 +73,13 @@ int main(int argc, char *argv[])
             (*root->code)+=("    .string "+global_str_list[i]->tree_node->str_val+"\n");
         }
         /**/
-        *root->child->code+=("    subl    $"+to_string(root->layer_node->root->total_count)+", %esp\n");
+        //找到main节点
+        TreeNode*temp=root->child;
+        while(temp!=nullptr&&temp->nodeType!=NODE_MAIN)
+        {
+            temp=temp->sibling;
+        }
+        *temp->code+=("    subl    $"+to_string(root->layer_node->root->total_count)+", %esp\n");
         root->print_code();
         string end=("    addl    $"+to_string(root->layer_node->root->total_count+4)+", %esp\n    movl    $0, %eax\n    ret\n");
         cout<<end;

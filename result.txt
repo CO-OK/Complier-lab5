@@ -1,164 +1,62 @@
-func call before def at line 8
-func call before def at line 14
-id:48
-nodeID: 0    lineno: 0    NodeType: NODE_PROG    stype: null    child: 1     layer:0    
-nodeID: 1    lineno: 0    NodeType: NODE_MAIN    stype: null    child: 2 3 4 5     layer:0    
-nodeID: 2    lineno: 1    NodeType: NODE_TYPE    stype: null    TYPE_SPEC=int    child:     layer:0    
-nodeID: 3    lineno: 2    NodeType: NODE_DECL_STMT    stype: STMT_DECL    child: 6 7 8     layer:0-0    
-nodeID: 4    lineno: 3    NodeType: NODE_DECL_STMT    stype: STMT_DECL    child: 9 10 11     layer:0-0    
-nodeID: 5    lineno: 16    NodeType: NODE_SELECTION_STMT    stype: STMT_SELETION    child: 12 13 14     layer:0-0    
-nodeID: 6    lineno: 2    NodeType: NODE_TYPE    stype: null    TYPE_SPEC=int    child:     layer:0-0    
-nodeID: 7    lineno: 2    NodeType: NODE_VAR    stype: null    var_name=a    child:     layer:0-0    
-nodeID: 8    lineno: 2    NodeType: NODE_CONST    stype: null    node->type=int value=9 child:     layer:0-0    
-nodeID: 9    lineno: 3    NodeType: NODE_TYPE    stype: null    TYPE_SPEC=int    child:     layer:0-0    
-nodeID: 10    lineno: 3    NodeType: NODE_VAR    stype: null    var_name=c    child:     layer:0-0    
-nodeID: 11    lineno: 3    NodeType: NODE_CONST    stype: null    node->type=int value=8 child:     layer:0-0    
-nodeID: 12    lineno: 4    NodeType: NODE_EXPR    stype: null    expr_type=NODE_LOGICAL_AND_EXP    child: 15 16 17     layer:0-0    
-nodeID: 13    lineno: 6    NodeType: NODE_BLOCK_FLAG    stype: null    child: 18 19 20 21     layer:0-0-0    
-nodeID: 14    lineno: 16    NodeType: NODE_BLOCK_FLAG    stype: null    child: 22     layer:0-0-1    
-nodeID: 15    lineno: 4    NodeType: NODE_EXPR    stype: null    expr_type=NODE_NOT_EQUALITY_EXP    child: 23 24 25     layer:0-0    
-nodeID: 16    lineno: 4    NodeType: NODE_OPERATOR    stype: null    operator_type_= OP_DOUBLE_AND     child:     layer:0-0    
-nodeID: 17    lineno: 4    NodeType: NODE_EXPR    stype: null    expr_type=NODE_RELATION_GREATER_EXP    child: 26 27 28     layer:0-0    
-nodeID: 18    lineno: 6    NodeType: NODE_DECL_STMT    stype: STMT_DECL    child: 29 30 31     layer:0-0-0    
-nodeID: 19    lineno: 7    NodeType: NODE_DECL_STMT    stype: STMT_DECL    child: 32 33 34     layer:0-0-0    
-nodeID: 20    lineno: 8    NodeType: NODE_FUNCTION_CALL    stype: null    func_name=printf     func_args_at_node:36      child: 35 36     layer:0-0-0    
-nodeID: 21    lineno: 8    NodeType: NODE_STMT    stype: STMT_SKIP    child:     layer:0-0-0    
-nodeID: 22    lineno: 16    NodeType: NODE_SELECTION_STMT    stype: STMT_SELETION    child: 37 38     layer:0-0-1    
-nodeID: 23    lineno: 4    NodeType: NODE_VAR    stype: null    var_name=c    child:     layer:0-0    
-nodeID: 24    lineno: 4    NodeType: NODE_OPERATOR    stype: null    operator_type_= OP_NOT_EQ     child:     layer:0-0    
-nodeID: 25    lineno: 4    NodeType: NODE_CONST    stype: null    node->type=int value=8 child:     layer:0-0    
-nodeID: 26    lineno: 4    NodeType: NODE_VAR    stype: null    var_name=a    child:     layer:0-0    
-nodeID: 27    lineno: 4    NodeType: NODE_OPERATOR    stype: null    operator_type_= OP_GREATER     child:     layer:0-0    
-nodeID: 28    lineno: 4    NodeType: NODE_CONST    stype: null    node->type=int value=1 child:     layer:0-0    
-nodeID: 29    lineno: 6    NodeType: NODE_TYPE    stype: null    TYPE_SPEC=int    child:     layer:0-0-0    
-nodeID: 30    lineno: 6    NodeType: NODE_VAR    stype: null    var_name=b    child:     layer:0-0-0    
-nodeID: 31    lineno: 6    NodeType: NODE_CONST    stype: null    node->type=int value=3 child:     layer:0-0-0    
-nodeID: 32    lineno: 7    NodeType: NODE_TYPE    stype: null    TYPE_SPEC=int    child:     layer:0-0-0    
-nodeID: 33    lineno: 7    NodeType: NODE_VAR    stype: null    var_name=d    child:     layer:0-0-0    
-nodeID: 34    lineno: 7    NodeType: NODE_CONST    stype: null    node->type=int value=5 child:     layer:0-0-0    
-nodeID: 35    lineno: 8    NodeType: NODE_VAR    stype: null    var_name=printf    child:     layer:0-0-0    
-nodeID: 36    lineno: 8    NodeType: NODE_ID_LIST    stype: null    child: 39 40     layer:0-0-0    
-nodeID: 37    lineno: 12    NodeType: NODE_EXPR    stype: null    expr_type=NODE_RELATION_LESS_EXP    child: 41 42 43     layer:0-0-1    
-nodeID: 38    lineno: 14    NodeType: NODE_BLOCK_FLAG    stype: null    child: 44 45     layer:0-0-1-0    
-nodeID: 39    lineno: 8    NodeType: NODE_VAR    stype: null    var_name=b    child:     layer:0-0-0    
-nodeID: 40    lineno: 8    NodeType: NODE_CONST    stype: null    node->type=string value="hello world%d\n" child:     layer:0-0-0    
-nodeID: 41    lineno: 12    NodeType: NODE_VAR    stype: null    var_name=a    child:     layer:0-0-1    
-nodeID: 42    lineno: 12    NodeType: NODE_OPERATOR    stype: null    operator_type_= OP_LESS     child:     layer:0-0-1    
-nodeID: 43    lineno: 12    NodeType: NODE_CONST    stype: null    node->type=int value=9 child:     layer:0-0-1    
-nodeID: 44    lineno: 14    NodeType: NODE_FUNCTION_CALL    stype: null    func_name=printf     func_args_at_node:47      child: 46 47     layer:0-0-1-0    
-nodeID: 45    lineno: 14    NodeType: NODE_STMT    stype: STMT_SKIP    child:     layer:0-0-1-0    
-nodeID: 46    lineno: 14    NodeType: NODE_VAR    stype: null    var_name=printf    child:     layer:0-0-1-0    
-nodeID: 47    lineno: 14    NodeType: NODE_CONST    stype: null    node->type=string value="fuck\n" child:     layer:0-0-1-0    
+func call before def at line 5
+id:20
+nodeID: 0    lineno: 0    NodeType: NODE_PROG    stype: null    child: 1 2     layer:0    
+nodeID: 1    lineno: 1    NodeType: NODE_DECL_STMT    stype: STMT_DECL    child: 3 4 5     layer:0    
+nodeID: 2    lineno: 0    NodeType: NODE_MAIN    stype: null    child: 6 7 8 9 10     layer:0    
+nodeID: 3    lineno: 1    NodeType: NODE_TYPE    stype: null    TYPE_SPEC=int    child:     layer:0    
+nodeID: 4    lineno: 1    NodeType: NODE_VAR    stype: null    var_name=a    child:     layer:0    
+nodeID: 5    lineno: 1    NodeType: NODE_CONST    stype: null    node->type=int value=9 child:     layer:0    
+nodeID: 6    lineno: 2    NodeType: NODE_TYPE    stype: null    TYPE_SPEC=int    child:     layer:0    
+nodeID: 7    lineno: 3    NodeType: NODE_ASSIGN_EXPR    stype: null    child: 11 12 13     layer:0-0    
+nodeID: 8    lineno: 4    NodeType: NODE_ASSIGN_EXPR    stype: null    child: 14 15     layer:0-0    
+nodeID: 9    lineno: 5    NodeType: NODE_FUNCTION_CALL    stype: null    func_name=printf     func_args_at_node:17      child: 16 17     layer:0-0    
+nodeID: 10    lineno: 5    NodeType: NODE_STMT    stype: STMT_SKIP    child:     layer:0-0    
+nodeID: 11    lineno: 3    NodeType: NODE_VAR    stype: null    var_name=a    child:     layer:0-0    
+nodeID: 12    lineno: 3    NodeType: NODE_OPERATOR    stype: null    operator_type_= OP_ADD_EQ     child:     layer:0-0    
+nodeID: 13    lineno: 3    NodeType: NODE_CONST    stype: null    node->type=int value=1 child:     layer:0-0    
+nodeID: 14    lineno: 4    NodeType: NODE_VAR    stype: null    var_name=a    child:     layer:0-0    
+nodeID: 15    lineno: 4    NodeType: NODE_OPERATOR    stype: null    operator_type_= OP_DOUBLE_SUB     child:     layer:0-0    
+nodeID: 16    lineno: 5    NodeType: NODE_VAR    stype: null    var_name=printf    child:     layer:0-0    
+nodeID: 17    lineno: 5    NodeType: NODE_ID_LIST    stype: null    child: 18 19     layer:0-0    
+nodeID: 18    lineno: 5    NodeType: NODE_VAR    stype: null    var_name=a    child:     layer:0-0    
+nodeID: 19    lineno: 5    NodeType: NODE_CONST    stype: null    node->type=string value="hhhhhhh%d\n" child:     layer:0-0    
 layer:0    
+symbol:  a    ref_or_def:  PROPERTY_DEF     symbol_type:  SYMBOL_VAR    
 
 layer:0-0    
-symbol:  a    ref_or_def:  PROPERTY_DEF     symbol_type:  SYMBOL_VAR    
-symbol:  c    ref_or_def:  PROPERTY_DEF     symbol_type:  SYMBOL_VAR    
-symbol:  c    ref_or_def:  PROPERTY_REFE     symbol_type:  SYMBOL_VAR    
 symbol:  a    ref_or_def:  PROPERTY_REFE     symbol_type:  SYMBOL_VAR    
-
-layer:0-0-0    
-symbol:  b    ref_or_def:  PROPERTY_DEF     symbol_type:  SYMBOL_VAR    
-symbol:  d    ref_or_def:  PROPERTY_DEF     symbol_type:  SYMBOL_VAR    
-symbol:  printf    ref_or_def:  PROPERTY_REFE     symbol_type:  SYMBOL_FUNC    
-symbol:  b    ref_or_def:  PROPERTY_REFE     symbol_type:  SYMBOL_VAR    
-
-layer:0-0-1    
 symbol:  a    ref_or_def:  PROPERTY_REFE     symbol_type:  SYMBOL_VAR    
-
-layer:0-0-1-0    
 symbol:  printf    ref_or_def:  PROPERTY_REFE     symbol_type:  SYMBOL_FUNC    
+symbol:  a    ref_or_def:  PROPERTY_REFE     symbol_type:  SYMBOL_VAR    
 
 -----------------------------------------------------------------------------
     .bss
     .align 4
     .section    .rodata
 STR0:
-    .string "hello world%d\n"
-STR1:
-    .string "fuck\n"
+    .string "hhhhhhh%d\n"
     .text
     .global main
     .type main, @function
 main:
     pushl %ebp
     movl %esp, %ebp
-    subl    $24, %esp
+    subl    $8, %esp
     movl    $9,-4(%ebp)
-    movl    $8,-8(%ebp)
     xorl    %eax, %eax
-    movl    -8(%ebp), %eax
-    xorl    %ecx, %ecx
-    movl    $8, %ecx
-    cmpl    %eax, %ecx
-    jne    NODE_NOT_EQUALITY_EXP_true23
-    movb    $0, -13(%ebp)
-    jmp    NODE_NOT_EQUALITY_EXP_true_next23
-NODE_NOT_EQUALITY_EXP_true23:
-    movb    $1, -13(%ebp)
-NODE_NOT_EQUALITY_EXP_true_next23:
+    xorl    %ebx, %ebx
+    movl    -4(%ebp), %eax
+    movl    $1, %ebx
+    addl    %eax, %ebx
+    movl    %ebx, -4(%ebp)
     xorl    %eax, %eax
     movl    -4(%ebp), %eax
-    xorl    %ecx, %ecx
-    movl    $1, %ecx
-    cmpl    %ecx, %eax
-    jg    NODE_RELATION_GREATER_EXP_true26
-    movb    $0, -14(%ebp)
-    jmp    NODE_RELATION_GREATER_EXP_true_next26
-NODE_RELATION_GREATER_EXP_true26:
-    movb    $1, -14(%ebp)
-NODE_RELATION_GREATER_EXP_true_next26:
-    xorl    %eax, %eax
-    movb    -13(%ebp), %al
-    xorl    %ecx, %ecx
-    movb    $0, %cl
-    cmpb    %al, %cl
-    je    NODE_LOGICAL_AND_EXP_false15
-    xorl    %eax, %eax
-    movb    -14(%ebp), %al
-    xorl    %ecx, %ecx
-    movb    $0, %cl
-    cmpb    %al, %cl
-    je    NODE_LOGICAL_AND_EXP_false15
-    movb    $1, -12(%ebp)
-    jmp    NODE_LOGICAL_AND_EXP_false_next15
-NODE_LOGICAL_AND_EXP_false15:
-    movb    $0, -12(%ebp)
-NODE_LOGICAL_AND_EXP_false_next15:
-    xorl    %eax, %eax
-    movb    -12(%ebp) , %al
-    xorl    %ecx, %ecx
-    movb    $0, %cl
-    cmpb    %al, %cl
-    je    NODE_SELECTION_STMT_false12
-    movl    $3,-15(%ebp)
-    movl    $5,-19(%ebp)
-    pushl    -15(%ebp)
+    subl    $1, %eax
+    movl    %eax, -4(%ebp)
+    pushl    -4(%ebp)
     pushl    $STR0
     call    printf
     addl    $8 ,%esp
-NODE_SELECTION_STMT_false12:
-    xorl    %eax, %eax
-    movl    -4(%ebp), %eax
-    xorl    %ecx, %ecx
-    movl    $9, %ecx
-    cmpl    %ecx, %eax
-    jl    NODE_RELATION_LESS_EXP_true41
-    movb    $0, -23(%ebp)
-    jmp    NODE_RELATION_LESS_EXP_true_next41
-NODE_RELATION_LESS_EXP_true41:
-    movb    $1, -23(%ebp)
-NODE_RELATION_LESS_EXP_true_next41:
-    xorl    %eax, %eax
-    movb    -23(%ebp) , %al
-    xorl    %ecx, %ecx
-    movb    $0, %cl
-    cmpb    %al, %cl
-    je    NODE_SELECTION_STMT_false37
-    pushl    $STR1
-    call    printf
-    addl    $4 ,%esp
-NODE_SELECTION_STMT_false37:
-    addl    $28, %esp
+    addl    $12, %esp
     movl    $0, %eax
     ret

@@ -338,7 +338,8 @@ iteration_Stmt
     //类型检查
     node->check_type();
     $$ = node;
-} FOR L_Small_Braces  SEMICOLON  SEMICOLON  R_Small_Braces statement{
+}
+| FOR L_Small_Braces  SEMICOLON  SEMICOLON  R_Small_Braces statement{
     TreeNode* node = new TreeNode(lineno, NDOE_ITERATION_STMT);
     node->iterationtype = ITERATION_FOR____;
     node->addChild($6);
@@ -528,6 +529,31 @@ assignment_Exp
     node->check_type();
     $$ = node;
 }
+| postfix_Exp DOUBLE_ADD{
+    TreeNode* node = new TreeNode(lineno,NODE_ASSIGN_EXPR);
+    node->exprtype=NODE_ASSIGN_EXP;
+    node->addChild($1);
+    node->addChild($2);
+    node->layer_node=currentNode;
+    node->type=$1->type;//类型检查
+    //进一步检查此类型是否适合于此操作符
+    node->check_type();
+    node->int_val++;
+    $$=node;
+}
+| postfix_Exp DOUBLE_SUB{
+    TreeNode* node = new TreeNode(lineno,NODE_ASSIGN_EXPR);
+    node->exprtype=NODE_ASSIGN_EXP;
+    node->addChild($1);
+    node->addChild($2);
+    node->layer_node=currentNode;
+    node->type=$1->type;//类型检查
+    //进一步检查此类型是否适合于此操作符
+    /*code*/
+    node->check_type();
+    node->int_val--;
+    $$=node;
+}
 /*| additive_Exp{//会产生两项归约/归约冲突
     $$=$1;
 }*/
@@ -661,6 +687,9 @@ unary_Operator
 | LOP_NOT{
     $$=$1;
 }
+| LOP_ADD{
+    $$=$1;
+}
 ;
 
 
@@ -668,31 +697,7 @@ postfix_Exp
 : primary_Exp{
     $$=$1;
 }
-| postfix_Exp DOUBLE_ADD{
-    TreeNode* node = new TreeNode(lineno,NODE_EXPR);
-    node->exprtype=NODE_POSTFIX_EXP;
-    node->addChild($1);
-    node->addChild($2);
-    node->layer_node=currentNode;
-    node->type=$1->type;//类型检查
-    //进一步检查此类型是否适合于此操作符
-    node->check_type();
-    node->int_val++;
-    $$=node;
-}
-| postfix_Exp DOUBLE_SUB{
-    TreeNode* node = new TreeNode(lineno,NODE_EXPR);
-    node->exprtype=NODE_POSTFIX_EXP;
-    node->addChild($1);
-    node->addChild($2);
-    node->layer_node=currentNode;
-    node->type=$1->type;//类型检查
-    //进一步检查此类型是否适合于此操作符
-    /*code*/
-    node->check_type();
-    node->int_val--;
-    $$=node;
-}
+
 ;
 
 
