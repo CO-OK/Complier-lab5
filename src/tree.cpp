@@ -1418,7 +1418,7 @@ int find_str(list<string*>*str_list,string*str)
 }
 void TreeNode:: print_label(TreeNode*root,list<string*>*str_list)
 {
-    if(root==nullptr)
+    /*if(root==nullptr)
         return;
     if(root->label.begin_label!=nullptr&&!find_str(str_list,root->label.begin_label))
     {
@@ -1437,6 +1437,23 @@ void TreeNode:: print_label(TreeNode*root,list<string*>*str_list)
     {
         cout<<*root->label.next_label<<endl<<endl;
         str_list->push_back(root->label.next_label);
+    }*/
+    if(root->nodeType==NODE_PROG)
+    {
+        root->print_code();
+        root->print_label(root->child,str_list);
+    }
+        
+    else if(root->nodeType==NODE_MAIN)
+    {
+        root->print_code();
+        TreeNode*tmp=root->child;
+        while(tmp!=nullptr)
+        {
+            if(tmp->code!=nullptr)
+                tmp->print_code();
+            tmp=tmp->sibling;
+        }
     }
 }
 
@@ -1699,6 +1716,38 @@ void  TreeNode:: allocate_stack_space(TreeNode*node)//分配栈空间
                 node->item=item;
                 break;
             }
+            case NODE_LOGICAL_OR_EXP:{
+                Item* item=new Item;
+                item->symbol_type=SYMBOL_TEMP;
+                item->tree_node=node;
+                item->def_pos=node;//先假定这是一个定义而非引用，指向自己，后面在检查时如果有指向自己且是一个引用的则报错
+                item->index=temp_count;
+                temp_count++;
+                //加入符号表
+                node->layer_node->section->section_table.push_back(item);
+                //在栈中分配空间目前只支持int
+                item->stack_count=node->layer_node->root->total_count;
+                node->layer_node->root->total_count+=1;
+                node->layer_node->root->last_size=1;
+                node->item=item;
+                break;
+            }
+            case NODE_LOGICAL_AND_EXP:{
+                Item* item=new Item;
+                item->symbol_type=SYMBOL_TEMP;
+                item->tree_node=node;
+                item->def_pos=node;//先假定这是一个定义而非引用，指向自己，后面在检查时如果有指向自己且是一个引用的则报错
+                item->index=temp_count;
+                temp_count++;
+                //加入符号表
+                node->layer_node->section->section_table.push_back(item);
+                //在栈中分配空间目前只支持int
+                item->stack_count=node->layer_node->root->total_count;
+                node->layer_node->root->total_count+=1;
+                node->layer_node->root->last_size=1;
+                node->item=item;
+                break;
+            }
         }
         break;
     }
@@ -1724,11 +1773,13 @@ void  TreeNode:: allocate_stack_space(TreeNode*node)//分配栈空间
 }
 
 
-void TreeNode:: gen_ASM_code(TreeNode*node)//产生全部汇编码
+string TreeNode:: gen_ASM_code(TreeNode*node)//产生全部汇编码
 {
     switch(node->nodeType)
     {
         case NODE_DECL_STMT:{//变量声明
+            if(node->code!=nullptr)
+                break;
             if(node->child_num()==3){
                 if(node->get_child(0)->type->type==TYPE_INT->type)//int
                 {
@@ -1783,6 +1834,8 @@ void TreeNode:: gen_ASM_code(TreeNode*node)//产生全部汇编码
             break;
         }
         case NODE_ASSIGN_EXPR:{//赋值语句= += -=
+            if(node->code!=nullptr)
+                break;
             TreeNode*var=node->get_child(0);
             TreeNode*op=node->get_child(1);
             TreeNode*value=node->get_child(2);
@@ -1868,6 +1921,8 @@ void TreeNode:: gen_ASM_code(TreeNode*node)//产生全部汇编码
             break;
         }
         case NODE_FUNCTION_CALL:{//函数调用
+            /*if(node->code!=nullptr)
+                break;*/
             node->code=new string("");
             if(node->child_num()==2)//带参数
             {
@@ -1922,6 +1977,37 @@ void TreeNode:: gen_ASM_code(TreeNode*node)//产生全部汇编码
             }
             break;
         }
+        case NODE_SELECTION_STMT:{
+            if(node->code!=nullptr)
+                break;
+            if(node->child_num()==2)//没有else
+            {
+                TreeNode*condition=node->get_child(0);
+                TreeNode*body=node->get_child(1);
+                node->code=new string("");
+                *node->code+=*condition->code;
+                *node->code+="    xorl    %eax, %eax\n    movb    "+get_location_or_value(condition)+" , %al\n";
+                *node->code+="    xorl    %ecx, %ecx\n    movb    $0, %cl\n";
+                *node->code+="    cmpb    %al, %cl\n";
+                *node->code+="    je    NODE_SELECTION_STMT_false"+to_string(condition->nodeID)+"\n";
+                //*node->code+=gen_ASM_code(body);
+                //*node->code+="NODE_SELECTION_STMT_false"+to_string(condition->nodeID)+":\n";
+                break;
+            }
+            else if(node->child_num()==3)
+            {
+                TreeNode*condition=node->get_child(0);
+                TreeNode*true_body=node->get_child(1);
+                TreeNode*false_body=node->get_child(2);
+                node->code=new string("");
+                *node->code+=*condition->code;
+                *node->code+="    xorl    %eax, %eax\n    movb    "+get_location_or_value(condition)+" , %al\n";
+                *node->code+="    xorl    %ecx, %ecx\n    movb    $0, %cl\n";
+                *node->code+="    cmpb    %al, %cl\n";
+                *node->code+="    je    NODE_SELECTION_STMT_false"+to_string(condition->nodeID)+"\n";
+                break;
+            }
+        }
     }
     //递归
     TreeNode*tmp=node->child;//在整个程序的层面上
@@ -1930,6 +2016,21 @@ void TreeNode:: gen_ASM_code(TreeNode*node)//产生全部汇编码
         tmp->gen_ASM_code(tmp);
         tmp=tmp->sibling;
     }
+    /*if(node->code!=nullptr&&node->nodeType!=NODE_BLOCK_FLAG)
+        return *node->code;
+    else if(node->code==nullptr&&node->nodeType==NODE_BLOCK_FLAG)
+    {
+        node->code=new string("");
+        TreeNode*tmp=node->child;
+        while(tmp!=nullptr)
+        {
+            if(tmp->code!=nullptr)
+                *node->code+=*tmp->code;
+            tmp=tmp->sibling;
+        }
+        return *node->code;
+    }*/
+    return "";
 }
 
 
@@ -2142,11 +2243,13 @@ string gen_expr_asm(TreeNode*node)//目前产生算数表达式的汇编码
                 *node->code+=gen_expr_asm(second);
                 *node->code+="    xorl    %eax, %eax\n    movl    "+get_location_or_value(first)+", %eax\n";
                 *node->code+="    xorl    %ecx, %ecx\n    movl    "+get_location_or_value(second)+", %ecx\n";
-                *node->code+="    cmpl    %eax, %ecx\n";
-                *node->code+="    jb    NODE_RELATION_LESS_EXP_true"+to_string(first->nodeID)+"\n";
+                *node->code+="    cmpl    %ecx, %eax\n";
+                *node->code+="    jl    NODE_RELATION_LESS_EXP_true"+to_string(first->nodeID)+"\n";
                 *node->code+="    movb    $0, "+get_location_or_value(node)+"\n";
+                *node->code+="    jmp    NODE_RELATION_LESS_EXP_true_next"+to_string(first->nodeID)+"\n";
                 *node->code+="NODE_RELATION_LESS_EXP_true"+to_string(first->nodeID)+":\n";
                 *node->code+="    movb    $1, "+get_location_or_value(node)+"\n";
+                *node->code+="NODE_RELATION_LESS_EXP_true_next"+to_string(first->nodeID)+":\n";
                 break;
             }
             case NODE_RELATION_GREATER_EXP:{
@@ -2159,11 +2262,13 @@ string gen_expr_asm(TreeNode*node)//目前产生算数表达式的汇编码
                 *node->code+=gen_expr_asm(second);
                 *node->code+="    xorl    %eax, %eax\n    movl    "+get_location_or_value(first)+", %eax\n";
                 *node->code+="    xorl    %ecx, %ecx\n    movl    "+get_location_or_value(second)+", %ecx\n";
-                *node->code+="    cmpl    %eax, %ecx\n";
-                *node->code+="    ja    NODE_RELATION_GREATER_EXP_true"+to_string(first->nodeID)+"\n";
+                *node->code+="    cmpl    %ecx, %eax\n";
+                *node->code+="    jg    NODE_RELATION_GREATER_EXP_true"+to_string(first->nodeID)+"\n";
                 *node->code+="    movb    $0, "+get_location_or_value(node)+"\n";
+                *node->code+="    jmp    NODE_RELATION_GREATER_EXP_true_next"+to_string(first->nodeID)+"\n";
                 *node->code+="NODE_RELATION_GREATER_EXP_true"+to_string(first->nodeID)+":\n";
                 *node->code+="    movb    $1, "+get_location_or_value(node)+"\n";
+                *node->code+="NODE_RELATION_GREATER_EXP_true_next"+to_string(first->nodeID)+":\n";
                 break;
             }
             case NODE_RELATION_LESS_EQ_EXP:{
@@ -2176,11 +2281,13 @@ string gen_expr_asm(TreeNode*node)//目前产生算数表达式的汇编码
                 *node->code+=gen_expr_asm(second);
                 *node->code+="    xorl    %eax, %eax\n    movl    "+get_location_or_value(first)+", %eax\n";
                 *node->code+="    xorl    %ecx, %ecx\n    movl    "+get_location_or_value(second)+", %ecx\n";
-                *node->code+="    cmpl    %eax, %ecx\n";
-                *node->code+="    jbe    NODE_RELATION_LESS_EQ_true"+to_string(first->nodeID)+"\n";
+                *node->code+="    cmpl    %ecx, %eax\n";
+                *node->code+="    jle    NODE_RELATION_LESS_EQ_true"+to_string(first->nodeID)+"\n";
                 *node->code+="    movb    $0, "+get_location_or_value(node)+"\n";
+                *node->code+="    jmp    NODE_RELATION_LESS_EQ_true_next"+to_string(first->nodeID)+"\n";
                 *node->code+="NODE_RELATION_LESS_EQ_true"+to_string(first->nodeID)+":\n";
                 *node->code+="    movb    $1, "+get_location_or_value(node)+"\n";
+                *node->code+="NODE_RELATION_LESS_EQ_true_next"+to_string(first->nodeID)+":\n";
                 break;
             }
             case NODE_RELATION_GREATER_EQ_EXP:{
@@ -2193,11 +2300,13 @@ string gen_expr_asm(TreeNode*node)//目前产生算数表达式的汇编码
                 *node->code+=gen_expr_asm(second);
                 *node->code+="    xorl    %eax, %eax\n    movl    "+get_location_or_value(first)+", %eax\n";
                 *node->code+="    xorl    %ecx, %ecx\n    movl    "+get_location_or_value(second)+", %ecx\n";
-                *node->code+="    cmpl    %eax, %ecx\n";
-                *node->code+="    jae    NODE_RELATION_GREATER_EQ_true"+to_string(first->nodeID)+"\n";
+                *node->code+="    cmpl    %ecx, %eax\n";
+                *node->code+="    jge    NODE_RELATION_GREATER_EQ_true"+to_string(first->nodeID)+"\n";
                 *node->code+="    movb    $0, "+get_location_or_value(node)+"\n";
+                *node->code+="    jmp    NODE_RELATION_GREATER_EQ_true_next"+to_string(first->nodeID)+"\n";
                 *node->code+="NODE_RELATION_GREATER_EQ_true"+to_string(first->nodeID)+":\n";
                 *node->code+="    movb    $1, "+get_location_or_value(node)+"\n";
+                *node->code+="NODE_RELATION_GREATER_EQ_true_next"+to_string(first->nodeID)+":\n";
                 break;
             }
             case NODE_EQUALITY_EXP:{
@@ -2213,8 +2322,10 @@ string gen_expr_asm(TreeNode*node)//目前产生算数表达式的汇编码
                 *node->code+="    cmpl    %eax, %ecx\n";
                 *node->code+="    je    NODE_EQUALITY_EXP_true"+to_string(first->nodeID)+"\n";
                 *node->code+="    movb    $0, "+get_location_or_value(node)+"\n";
+                *node->code+="    jmp    NODE_EQUALITY_EXP_true_next"+to_string(first->nodeID)+"\n";
                 *node->code+="NODE_EQUALITY_EXP_true"+to_string(first->nodeID)+":\n";
                 *node->code+="    movb    $1, "+get_location_or_value(node)+"\n";
+                *node->code+="NODE_EQUALITY_EXP_true_next"+to_string(first->nodeID)+":\n";
                 break;
             }
             case NODE_NOT_EQUALITY_EXP:{
@@ -2230,8 +2341,56 @@ string gen_expr_asm(TreeNode*node)//目前产生算数表达式的汇编码
                 *node->code+="    cmpl    %eax, %ecx\n";
                 *node->code+="    jne    NODE_NOT_EQUALITY_EXP_true"+to_string(first->nodeID)+"\n";
                 *node->code+="    movb    $0, "+get_location_or_value(node)+"\n";
+                *node->code+="    jmp    NODE_NOT_EQUALITY_EXP_true_next"+to_string(first->nodeID)+"\n";
                 *node->code+="NODE_NOT_EQUALITY_EXP_true"+to_string(first->nodeID)+":\n";
                 *node->code+="    movb    $1, "+get_location_or_value(node)+"\n";
+                *node->code+="NODE_NOT_EQUALITY_EXP_true_next"+to_string(first->nodeID)+":\n";
+                break;
+            }
+            case NODE_LOGICAL_OR_EXP:{
+                if(node->code!=nullptr)
+                    break;
+                TreeNode*first=node->get_child(0);
+                TreeNode*second=node->get_child(2);
+                node->code=new string("");
+                *node->code+=gen_expr_asm(first);
+                *node->code+=gen_expr_asm(second);
+                *node->code+="    xorl    %eax, %eax\n    movb    "+get_location_or_value(first)+", %al\n";
+                *node->code+="    xorl    %ecx, %ecx\n    movb    $1, %cl\n";
+                *node->code+="    cmpb    %cl, %al\n";
+                *node->code+="    jge    NODE_LOGICAL_OR_EXP_true"+to_string(first->nodeID)+"\n";//为真直接跳出
+                *node->code+="    xorl    %eax, %eax\n    movb    "+get_location_or_value(second)+", %al\n";
+                *node->code+="    xorl    %ecx, %ecx\n    movb    $1, %cl\n";
+                *node->code+="    cmpb    %cl, %al\n";
+                *node->code+="    jge    NODE_LOGICAL_OR_EXP_true"+to_string(first->nodeID)+"\n";//为真直接跳出
+                *node->code+="    movb    $0, "+get_location_or_value(node)+"\n";
+                *node->code+="    jmp    NODE_LOGICAL_OR_EXP_true_next"+to_string(first->nodeID)+"\n";
+                *node->code+="NODE_LOGICAL_OR_EXP_true"+to_string(first->nodeID)+":\n";
+                *node->code+="    movb    $1, "+get_location_or_value(node)+"\n";
+                *node->code+="NODE_LOGICAL_OR_EXP_true_next"+to_string(first->nodeID)+":\n";
+                break;
+            }
+            case NODE_LOGICAL_AND_EXP:{
+                if(node->code!=nullptr)
+                    break;
+                TreeNode*first=node->get_child(0);
+                TreeNode*second=node->get_child(2);
+                node->code=new string("");
+                *node->code+=gen_expr_asm(first);
+                *node->code+=gen_expr_asm(second);
+                *node->code+="    xorl    %eax, %eax\n    movb    "+get_location_or_value(first)+", %al\n";
+                *node->code+="    xorl    %ecx, %ecx\n    movb    $0, %cl\n";
+                *node->code+="    cmpb    %al, %cl\n";
+                *node->code+="    je    NODE_LOGICAL_AND_EXP_false"+to_string(first->nodeID)+"\n";//为假直接跳出
+                *node->code+="    xorl    %eax, %eax\n    movb    "+get_location_or_value(second)+", %al\n";
+                *node->code+="    xorl    %ecx, %ecx\n    movb    $0, %cl\n";
+                *node->code+="    cmpb    %al, %cl\n";
+                *node->code+="    je    NODE_LOGICAL_AND_EXP_false"+to_string(first->nodeID)+"\n";//为假直接跳出
+                *node->code+="    movb    $1, "+get_location_or_value(node)+"\n";
+                *node->code+="    jmp    NODE_LOGICAL_AND_EXP_false_next"+to_string(first->nodeID)+"\n";
+                *node->code+="NODE_LOGICAL_AND_EXP_false"+to_string(first->nodeID)+":\n";
+                *node->code+="    movb    $0, "+get_location_or_value(node)+"\n";
+                *node->code+="NODE_LOGICAL_AND_EXP_false_next"+to_string(first->nodeID)+":\n";
                 break;
             }
         }
@@ -2243,6 +2402,8 @@ string gen_expr_asm(TreeNode*node)//目前产生算数表达式的汇编码
         gen_expr_asm(tmp);
         tmp=tmp->sibling;
     }
+    if(node->code!=nullptr)
+        return *node->code;
     return "";
 }
 
@@ -2264,34 +2425,94 @@ string get_location_or_value(TreeNode* node)
 
 void TreeNode:: print_code()
 {
-    switch(this->nodeType)//只容许一些特定语句打印
+    if(this->nodeType==NODE_PROG)
     {
-        case NODE_DECL_STMT:{
+        if(this->code!=nullptr)
             cout<<*this->code;
-            break;
+        TreeNode*tmp=this->child;
+        while(tmp!=nullptr)
+        {
+            tmp->print_code();
+            tmp=tmp->sibling;
         }
-        case NODE_PROG:{
+    }
+    else if(this->nodeType==NODE_MAIN)
+    {
+        if(this->code!=nullptr)
             cout<<*this->code;
-            break;
+        TreeNode*tmp=this->child;
+        while(tmp!=nullptr)
+        {
+            tmp->print_code();
+            tmp=tmp->sibling;
         }
-        case NODE_MAIN:{
+    }
+    else if(this->nodeType==NODE_DECL_STMT)
+    {
+        if(this->code!=nullptr)
             cout<<*this->code;
-            break;
+        TreeNode*tmp=this->child;
+        while(tmp!=nullptr)
+        {
+            tmp->print_code();
+            tmp=tmp->sibling;
         }
-        case NODE_ASSIGN_EXPR:{
+    }
+    else if(this->nodeType==NODE_ASSIGN_EXPR)
+    {
+        if(this->code!=nullptr)
             cout<<*this->code;
-            break;
+        TreeNode*tmp=this->child;
+        while(tmp!=nullptr)
+        {
+            tmp->print_code();
+            tmp=tmp->sibling;
         }
-        case NODE_FUNCTION_CALL:{
+    }
+    else if(this->nodeType==NODE_FUNCTION_CALL)
+    {
+        if(this->code!=nullptr)
             cout<<*this->code;
-            break;
+        TreeNode*tmp=this->child;
+        while(tmp!=nullptr)
+        {
+            tmp->print_code();
+            tmp=tmp->sibling;
         }
-        case NODE_EXPR:{
-            
-            cout<<*this->code;
-            break;
+    }
+    else if(this->nodeType==NODE_SELECTION_STMT)
+    {
+        if(this->child_num()==2)
+        {
+            if(this->code!=nullptr)
+                cout<<*this->code;
+            TreeNode*condition=this->get_child(0);
+            TreeNode*tmp=this->get_child(1);
+            tmp->print_code();
+            cout<<"NODE_SELECTION_STMT_false"+to_string(condition->nodeID)+":\n";
+            *this->code+="NODE_SELECTION_STMT_false"+to_string(condition->nodeID)+":\n";
         }
-
+        else if(this->child_num()==3)
+        {
+            if(this->code!=nullptr)
+                cout<<*this->code;
+            TreeNode*condition=this->get_child(0);
+            TreeNode*true_body=this->get_child(1);
+            TreeNode*false_body=this->get_child(2);
+            true_body->print_code();
+            cout<<"NODE_SELECTION_STMT_false"+to_string(condition->nodeID)+":\n";
+            *this->code+="NODE_SELECTION_STMT_false"+to_string(condition->nodeID)+":\n";
+            false_body->print_code();
+        }
+    }
+    else if(this->nodeType==NODE_BLOCK_FLAG)
+    {
+        TreeNode*tmp=this->child;
+        while(tmp!=nullptr)
+        {
+            tmp->print_code();
+            tmp=tmp->sibling;
+        }
     }
 }
 string get_code(TreeNode*node)

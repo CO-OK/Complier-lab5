@@ -179,7 +179,7 @@ public:
     void gen_label(TreeNode*);
     void print_label(TreeNode*root,list<string*>*str_list);
     void allocate_stack_space(TreeNode*);//分配栈空间
-    void gen_ASM_code(TreeNode*);//产生汇编代码
+    string gen_ASM_code(TreeNode*);//产生汇编代码
     int has_ID();
 
 public:

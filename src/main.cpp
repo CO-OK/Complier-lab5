@@ -55,10 +55,17 @@ int main(int argc, char *argv[])
         root->printAST();
         printSymbolTable(layer_root);
         check_section(layer_root);
+        
         root->gen_label(root);
+        
         root->allocate_stack_space(root);//分配栈空间
+        
+        cout<<"-----------------------------------------------------------------------------"<<endl;
         gen_expr_asm(root);//生成表达式的汇编
+       //cout<<"-----------------------------------------------------------------------------"<<endl;
+   
         root->gen_ASM_code(root);//生成所有汇编
+         
         //产生全局字符串
         for(int i=0;global_str_list[i]!=nullptr;i++)
         {
@@ -67,7 +74,7 @@ int main(int argc, char *argv[])
         }
         /**/
         *root->child->code+=("    subl    $"+to_string(root->layer_node->root->total_count)+", %esp\n");
-        root->print_label(root, str_list);
+        root->print_code();
         string end=("    addl    $"+to_string(root->layer_node->root->total_count+4)+", %esp\n    movl    $0, %eax\n    ret\n");
         cout<<end;
     }
