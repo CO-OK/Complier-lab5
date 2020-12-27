@@ -52,17 +52,17 @@ int main(int argc, char *argv[])
     if(root != NULL) {
         root->genNodeId();
         correctSymbol(layer_root);
-        root->printAST();
-        printSymbolTable(layer_root);
+        //root->printAST();
+        //printSymbolTable(layer_root);
         check_section(layer_root);
         
         root->gen_label(root);
         
         root->allocate_stack_space(root);//分配栈空间
         
-        cout<<"-----------------------------------------------------------------------------"<<endl;
+  
         gen_expr_asm(root);//生成表达式的汇编
-       //cout<<"-----------------------------------------------------------------------------"<<endl;
+        //cout<<"-----------------------------------------------------------------------------"<<endl;
    
         root->gen_ASM_code(root);//生成所有汇编
          
@@ -81,25 +81,8 @@ int main(int argc, char *argv[])
         }
         *temp->code+=("    subl    $"+to_string(root->layer_node->root->total_count)+", %esp\n");
         root->print_code();
-        string end=("    addl    $"+to_string(root->layer_node->root->total_count+4)+", %esp\n    movl    $0, %eax\n    ret\n");
-        cout<<end;
-    }
-    for(list<ThreeAdCodeItem*>::iterator i=code_list->begin();i!=code_list->end();i++)
-    {
-        cout<<opType2_String((*i)->op)<<" ";
-        if((*i)->arg1!=nullptr)
-            cout<<(*i)->arg1->nodeID<<","<<get_stack_count((*i)->arg1->item)<<" ";
-        else
-            cout<<"null ";
-        if((*i)->arg2!=nullptr)
-            cout<<(*i)->arg2->nodeID<<","<<get_stack_count((*i)->arg2->item)<<" ";
-        else
-            cout<<"null ";
-        if((*i)->result!=nullptr)
-            cout<<(*i)->result->nodeID<<","<<get_stack_count((*i)->result->item)<<" ";
-        else
-            cout<<"null ";
-        cout<<endl;
+        //string end=("    addl    $"+to_string(root->layer_node->root->total_count+4)+", %esp\n    movl    $0, %eax\n    ret\n");
+        //cout<<end;
     }
     return 0;
 }

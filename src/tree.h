@@ -76,7 +76,7 @@ enum NodeType
     NODE_DECL_STMT_LIST,//定义列表 done
     NODE_ID_LIST,//函数参数列表
     NODE_FUNCTION_CALL,//函数调用
-
+    NODE_ASSIGN_EXPR_MULT,//多重赋值
 };
 
 
@@ -233,4 +233,6 @@ string gen_expr_asm(TreeNode* node);
 string get_location_or_value(TreeNode* node);
 string get_code(TreeNode*);
 void get_all_arg(TreeNode* id_list,list<TreeNode*>*arg_list);
+void get_decl_list_arg(TreeNode* id_list,list<TreeNode*>*arg_list);
+void get_mult_assign_arg(TreeNode* id_list,list<TreeNode*>*arg_list);
 #endif

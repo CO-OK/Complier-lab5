@@ -113,10 +113,10 @@ function_Call
     setSymbolType(currentNode->section,$1,SYMBOL_FUNC);
     $1->type=TYPE_FUNC;
     node->func_info->func_def_loc=findFuncDef($1->var_name,func_def_list);//将函数调用节点的指向定义的指针指向该函数的定义节点
-    if(node->func_info->func_def_loc==nullptr)//定义前引用
+    /*if(node->func_info->func_def_loc==nullptr)//定义前引用
     {
         printf("func call before def at line %d\n",$1->lineno);
-    }
+    }*/
     $$=node;
 }
 | Id L_Small_Braces R_Small_Braces {
@@ -128,10 +128,10 @@ function_Call
     setSymbolType(currentNode->section,$1,SYMBOL_FUNC);
     $1->type=TYPE_FUNC;
     node->func_info->func_def_loc=findFuncDef($1->var_name,func_def_list);//将函数调用节点的指向定义的指针指向该函数的定义节点
-    if(node->func_info->func_def_loc==nullptr)//定义前引用
+    /*if(node->func_info->func_def_loc==nullptr)//定义前引用
     {
         printf("func call before def at line %d\n",$1->lineno);
-    }
+    }*/
     $$=node;
 }
 ;
@@ -516,7 +516,7 @@ assignment_Stmt
 ;
 
 assignment_Exp
-: unary_Exp assignment_Operator additive_Exp{//有可能需要函数如 a=func()
+: unary_Exp assignment_Operator additive_Exp{
     TreeNode* node = new TreeNode(lineno, NODE_ASSIGN_EXPR);
     //node->stype = STMT_ASSIGN;
     node->exprtype=NODE_ASSIGN_EXP;
@@ -529,6 +529,18 @@ assignment_Exp
     node->check_type();
     $$ = node;
 }
+| unary_Exp assignment_Operator assignment_Exp{
+    TreeNode* node = new TreeNode(lineno, NODE_ASSIGN_EXPR_MULT);
+    node->exprtype=NODE_ASSIGN_EXP;
+    node->addChild($1);
+    node->addChild($2);
+    node->addChild($3);
+    node->layer_node=currentNode;
+    //类型检查
+    node->type=TYPE_VOID;
+    //node->check_type();
+    $$ = node;
+}
 | postfix_Exp DOUBLE_ADD{
     TreeNode* node = new TreeNode(lineno,NODE_ASSIGN_EXPR);
     node->exprtype=NODE_ASSIGN_EXP;
@@ -538,7 +550,7 @@ assignment_Exp
     node->type=$1->type;//类型检查
     //进一步检查此类型是否适合于此操作符
     node->check_type();
-    node->int_val++;
+    //node->int_val++;
     $$=node;
 }
 | postfix_Exp DOUBLE_SUB{
@@ -551,7 +563,7 @@ assignment_Exp
     //进一步检查此类型是否适合于此操作符
     /*code*/
     node->check_type();
-    node->int_val--;
+    //node->int_val--;
     $$=node;
 }
 /*| additive_Exp{//会产生两项归约/归约冲突
@@ -576,7 +588,7 @@ additive_Exp
     node->type=$1->type;
     //检查$1 $2是否具有相同类型，目前假设只有整形可以算数运算
     node->check_type();
-    node->int_val=$1->int_val + $3->int_val;
+    //node->int_val=$1->int_val + $3->int_val;
     $$ = node;
 }
 | additive_Exp LOP_SUB mult_Exp{
@@ -591,7 +603,7 @@ additive_Exp
     node->type=$1->type;
     //检查$1 $2是否具有相同类型，目前假设只有整形可以算数运算
     node->check_type();
-    node->int_val=$1->int_val - $3->int_val;
+    //node->int_val=$1->int_val - $3->int_val;
     $$ = node;
 }
 ;
@@ -613,7 +625,7 @@ mult_Exp
     node->type=$1->type;
     //检查$1 $2是否具有相同类型，目前假设只有整形可以算数运算
     node->check_type();
-    node->int_val=$1->int_val * $3->int_val;
+    //node->int_val=$1->int_val * $3->int_val;
     $$ = node;
 }
 | mult_Exp LOP_DIV cast_Exp{
@@ -628,7 +640,7 @@ mult_Exp
     node->type=$1->type;
     //检查$1 $2是否具有相同类型，目前假设只有整形可以算数运算
     node->check_type();
-    node->int_val=$1->int_val / $3->int_val;
+    //node->int_val=$1->int_val / $3->int_val;
     $$ = node;
 }
 | mult_Exp LOP_MOD cast_Exp{
@@ -643,7 +655,7 @@ mult_Exp
     node->type=$1->type;
     //检查$1 $2是否具有相同类型，目前假设只有整形可以算数运算
     node->check_type();
-    node->int_val=$1->int_val % $3->int_val;
+    //node->int_val=$1->int_val % $3->int_val;
     $$ = node;
 }
 ;
@@ -671,8 +683,7 @@ unary_Exp
     node->type=$2->type;//类型检查
     //进一步检查unary_Operator是否适用于cast_Exp
     node->check_type();
-    if($1->optype==OP_SUB)
-        node->int_val=-1*$2->int_val;
+    
     $$=node;
 }
 ;

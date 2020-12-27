@@ -1,62 +1,44 @@
-func call before def at line 5
-id:20
-nodeID: 0    lineno: 0    NodeType: NODE_PROG    stype: null    child: 1 2     layer:0    
-nodeID: 1    lineno: 1    NodeType: NODE_DECL_STMT    stype: STMT_DECL    child: 3 4 5     layer:0    
-nodeID: 2    lineno: 0    NodeType: NODE_MAIN    stype: null    child: 6 7 8 9 10     layer:0    
-nodeID: 3    lineno: 1    NodeType: NODE_TYPE    stype: null    TYPE_SPEC=int    child:     layer:0    
-nodeID: 4    lineno: 1    NodeType: NODE_VAR    stype: null    var_name=a    child:     layer:0    
-nodeID: 5    lineno: 1    NodeType: NODE_CONST    stype: null    node->type=int value=9 child:     layer:0    
-nodeID: 6    lineno: 2    NodeType: NODE_TYPE    stype: null    TYPE_SPEC=int    child:     layer:0    
-nodeID: 7    lineno: 3    NodeType: NODE_ASSIGN_EXPR    stype: null    child: 11 12 13     layer:0-0    
-nodeID: 8    lineno: 4    NodeType: NODE_ASSIGN_EXPR    stype: null    child: 14 15     layer:0-0    
-nodeID: 9    lineno: 5    NodeType: NODE_FUNCTION_CALL    stype: null    func_name=printf     func_args_at_node:17      child: 16 17     layer:0-0    
-nodeID: 10    lineno: 5    NodeType: NODE_STMT    stype: STMT_SKIP    child:     layer:0-0    
-nodeID: 11    lineno: 3    NodeType: NODE_VAR    stype: null    var_name=a    child:     layer:0-0    
-nodeID: 12    lineno: 3    NodeType: NODE_OPERATOR    stype: null    operator_type_= OP_ADD_EQ     child:     layer:0-0    
-nodeID: 13    lineno: 3    NodeType: NODE_CONST    stype: null    node->type=int value=1 child:     layer:0-0    
-nodeID: 14    lineno: 4    NodeType: NODE_VAR    stype: null    var_name=a    child:     layer:0-0    
-nodeID: 15    lineno: 4    NodeType: NODE_OPERATOR    stype: null    operator_type_= OP_DOUBLE_SUB     child:     layer:0-0    
-nodeID: 16    lineno: 5    NodeType: NODE_VAR    stype: null    var_name=printf    child:     layer:0-0    
-nodeID: 17    lineno: 5    NodeType: NODE_ID_LIST    stype: null    child: 18 19     layer:0-0    
-nodeID: 18    lineno: 5    NodeType: NODE_VAR    stype: null    var_name=a    child:     layer:0-0    
-nodeID: 19    lineno: 5    NodeType: NODE_CONST    stype: null    node->type=string value="hhhhhhh%d\n" child:     layer:0-0    
-layer:0    
-symbol:  a    ref_or_def:  PROPERTY_DEF     symbol_type:  SYMBOL_VAR    
-
-layer:0-0    
-symbol:  a    ref_or_def:  PROPERTY_REFE     symbol_type:  SYMBOL_VAR    
-symbol:  a    ref_or_def:  PROPERTY_REFE     symbol_type:  SYMBOL_VAR    
-symbol:  printf    ref_or_def:  PROPERTY_REFE     symbol_type:  SYMBOL_FUNC    
-symbol:  a    ref_or_def:  PROPERTY_REFE     symbol_type:  SYMBOL_VAR    
-
------------------------------------------------------------------------------
     .bss
     .align 4
     .section    .rodata
 STR0:
-    .string "hhhhhhh%d\n"
+    .string "%d\n"
+STR1:
+    .string "%d\n"
+STR2:
+    .string "%d\n"
     .text
     .global main
     .type main, @function
 main:
     pushl %ebp
     movl %esp, %ebp
-    subl    $8, %esp
-    movl    $9,-4(%ebp)
+    subl    $16, %esp
+    movl    $0, -4(%ebp)
+    movl    $0, -8(%ebp)
+    movl    $0, -12(%ebp)
     xorl    %eax, %eax
-    xorl    %ebx, %ebx
-    movl    -4(%ebp), %eax
-    movl    $1, %ebx
-    addl    %eax, %ebx
-    movl    %ebx, -4(%ebp)
+    movl    $9, %eax
+    movl    %eax, -12(%ebp)
     xorl    %eax, %eax
-    movl    -4(%ebp), %eax
-    subl    $1, %eax
+    movl    $9, %eax
+    movl    %eax, -8(%ebp)
+    xorl    %eax, %eax
+    movl    $9, %eax
     movl    %eax, -4(%ebp)
     pushl    -4(%ebp)
     pushl    $STR0
     call    printf
     addl    $8 ,%esp
-    addl    $12, %esp
+    pushl    -8(%ebp)
+    pushl    $STR1
+    call    printf
+    addl    $8 ,%esp
+    pushl    -12(%ebp)
+    pushl    $STR2
+    call    printf
+    addl    $8 ,%esp
+    addl    $20, %esp
+    xorl    %eax, %eax
     movl    $0, %eax
     ret

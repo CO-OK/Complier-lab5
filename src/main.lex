@@ -36,7 +36,7 @@ LOP_GREATER_EQ ">="
 
 DOUBLE_ADD "++"
 DOUBLE_SUB "--"
-CHAR \'.?\'
+CHAR (\'.?\'|\'\\t\'|\'\\n\'|\'\\r\')
 STRING \".*\"
 BOOL ("true"|"false")
 
@@ -95,8 +95,35 @@ IDENTIFIER [[:alpha:]_][[:alpha:][:digit:]_]*
 {CHAR} {
     TreeNode* node = new TreeNode(lineno, NODE_CONST);
     node->type = TYPE_CHAR;
-    node->int_val = yytext[1];
-    node->ch_val = yytext[1];
+    if(yytext[1]!=92)
+    {
+        node->int_val = yytext[1];
+        node->ch_val = yytext[1];
+    }
+    else
+    {
+        switch(yytext[2])
+        {
+            
+            case 'r':{
+                
+                node->int_val =13;
+                node->ch_val = 13;
+                break;
+            }
+            case 't':{
+                node->int_val =11;
+                node->ch_val = 11;
+                break;
+            }
+            case 'n':{
+                node->int_val =10;
+                node->ch_val = 10;
+                break;
+            }
+        }
+    }
+
     node->layer_node=currentNode;
     yylval = node;
     return CHAR;
