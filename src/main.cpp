@@ -1,7 +1,7 @@
 #include "common.h"
 #include <fstream>
 #include <string>
-
+extern int check_flag;
 extern TreeNode *root;
 extern FILE *yyin;
 extern int yyparse();
@@ -16,6 +16,7 @@ string gen_expr_asm(TreeNode*node);
 using namespace std;
 int main(int argc, char *argv[])
 {
+    check_flag=0;
     str_count=0;
     for(int i=0;i<1000;i++)
         global_str_list[i]=nullptr;
@@ -49,20 +50,29 @@ int main(int argc, char *argv[])
         layer_root->layerDesc[i]=-1;
     }
     yyparse();
+    if(check_flag==1)
+        exit(1);
+    correctSymbol(layer_root);
+    if(check_section(layer_root)==1)
+    {
+        check_flag=1;
+    }
+    if(check_flag==1)
+        exit(1);
     if(root != NULL) {
         root->genNodeId();
-        correctSymbol(layer_root);
+        
         //root->printAST();
         //printSymbolTable(layer_root);
-        check_section(layer_root);
         
-        root->gen_label(root);
+        //cout<<"-----------------------------------------------------------------------------"<<endl;
+        //root->gen_label(root);
         
         root->allocate_stack_space(root);//分配栈空间
         
   
         gen_expr_asm(root);//生成表达式的汇编
-        //cout<<"-----------------------------------------------------------------------------"<<endl;
+        
    
         root->gen_ASM_code(root);//生成所有汇编
          

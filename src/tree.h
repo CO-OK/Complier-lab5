@@ -28,7 +28,7 @@ struct layerNode
     int total_count;//对于只考虑全局作用域而言，这个值只在根节点有用，记录了栈顶
     int last_size;//在内存中分配的上一个变量的大小
 };
-void check_section(layerNode* node);//检查所有符号表的重定义以及定义前引用
+int check_section(layerNode* node);//检查所有符号表的重定义以及定义前引用
 struct changeField
 {
     int needChange;

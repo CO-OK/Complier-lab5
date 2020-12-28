@@ -132,7 +132,7 @@ int assignRefSymbolType(layerNode*node,Item*item)
     return assignRefSymbolType(node->prev,item);
 }
 
-void check_symbol_table(SymbolTableSection* section)
+int check_symbol_table(SymbolTableSection* section)
 {
     //普通符号是否存在定义前引用
     for(list<Item*>::iterator i=section->section_table.begin();i!=section->section_table.end();i++)
@@ -141,7 +141,20 @@ void check_symbol_table(SymbolTableSection* section)
         {
             if((*i)->def_pos==(*i)->tree_node&&(*i)->symbol_property==PROPERTY_REFE)
             {
-                printf("var ref before def at line %d\n",(*i)->tree_node->lineno);
+                int flag=0;
+                for(auto j=(*i)->tree_node->layer_node->root->section->section_table.begin();j!=(*i)->tree_node->layer_node->root->section->section_table.end();j++)
+                {
+                    if((*j)->tree_node->var_name==(*i)->tree_node->var_name&&(*j)->symbol_property==PROPERTY_DEF)
+                    {
+                        flag=1;
+                        break;
+                    }
+                }  
+                if(!flag)
+                {
+                    printf("var ref before def at line %d\n",(*i)->tree_node->lineno);
+                    return 1;
+                }  
             }
         }
         //符号重定义
@@ -151,12 +164,15 @@ void check_symbol_table(SymbolTableSection* section)
             {
                 if((*j)->symbol_property==PROPERTY_DEF&&(*j)->name==(*i)->name&&*j!=*i)
                 {
+
                     printf("Symbol Redefining at line %d, symbol is ",(*j)->tree_node->lineno);
                     cout<<(*j)->name<<endl;
+                    return 1;
                 }
             }
         }
     }
+    return 0;
 }
 
 Item*get_symbol_item(string name,layerNode*node)//找到name对应的item

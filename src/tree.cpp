@@ -938,13 +938,16 @@ int TreeNode:: child_num()
     }
     return count;
 }
-void check_section(layerNode* node)
+int check_section(layerNode* node)
 {
-    check_symbol_table(node->section);
+    int tmp=0;
+    tmp=check_symbol_table(node->section);
     for(int i=0;i<node->nodeCount;i++)
     {
-        check_section(node->list[i]);
+        if(check_section(node->list[i])==1)
+            tmp=1;
     }
+    return tmp;
 }
 
 int TreeNode:: has_ID()

@@ -8,6 +8,7 @@
     list<TreeNode*> func_def_list;//一个存储了所有函数定义的列表，这样在遇到函数调用时能够不用遍历语法树而找到函数定义节点
     list<string*> *str_list;
     extern int lineno;
+    int check_flag;
     int yylex();
     int yyerror( char const * );
 %}
@@ -223,7 +224,10 @@ selection_Stmt
     node->addChild($5);
     node->layer_node=currentNode;
     //类型检查
-    node->check_type();
+    if(node->check_type()==0)
+    {
+        check_flag=1;
+    }
     $$ = node;
 }
 | IF L_Small_Braces Exp R_Small_Braces statement ELSE statement{
@@ -234,7 +238,10 @@ selection_Stmt
     node->addChild($7);
     node->layer_node=currentNode;
     //类型检查
-    node->check_type();
+    if(node->check_type()==0)
+    {
+        check_flag=1;
+    }
     $$ = node;
 }
 ;
@@ -247,7 +254,10 @@ iteration_Stmt
     node->addChild($5);
     node->layer_node=currentNode;
     //类型检查
-    node->check_type();
+    if(node->check_type()==0)
+    {
+        check_flag=1;
+    }
     $$ = node;
 }
 | FOR L_Small_Braces Exp SEMICOLON Exp SEMICOLON Exp R_Small_Braces statement{
@@ -261,7 +271,10 @@ iteration_Stmt
     node->change_field.accessTime=currentNode->accessTime-1;
     node->change_field.needChange=1;
     //类型检查
-    node->check_type();
+    if(node->check_type()==0)
+    {
+        check_flag=1;
+    }
     $$ = node;
 }
 | FOR L_Small_Braces Exp SEMICOLON Exp SEMICOLON  R_Small_Braces statement{
@@ -274,7 +287,10 @@ iteration_Stmt
     node->change_field.accessTime=currentNode->accessTime-1;
     node->change_field.needChange=1;
     //类型检查
-    node->check_type();
+    if(node->check_type()==0)
+    {
+        check_flag=1;
+    }
     $$ = node;
 }
 | FOR L_Small_Braces Exp SEMICOLON  SEMICOLON Exp R_Small_Braces statement{
@@ -287,7 +303,10 @@ iteration_Stmt
     node->change_field.accessTime=currentNode->accessTime-1;
     node->change_field.needChange=1;
     //类型检查
-    node->check_type();
+    if(node->check_type()==0)
+    {
+        check_flag=1;
+    }
     $$ = node;
 }
 | FOR L_Small_Braces Exp SEMICOLON  SEMICOLON  R_Small_Braces statement{
@@ -299,7 +318,10 @@ iteration_Stmt
     node->change_field.accessTime=currentNode->accessTime-1;
     node->change_field.needChange=1;
     //类型检查
-    node->check_type();
+    if(node->check_type()==0)
+    {
+        check_flag=1;
+    }
     $$ = node;
 }
 | FOR L_Small_Braces  SEMICOLON Exp SEMICOLON Exp R_Small_Braces statement{
@@ -312,7 +334,10 @@ iteration_Stmt
     node->change_field.accessTime=currentNode->accessTime-1;
     node->change_field.needChange=1;
     //类型检查
-    node->check_type();
+    if(node->check_type()==0)
+    {
+        check_flag=1;
+    }
     $$ = node;
 }
 | FOR L_Small_Braces  SEMICOLON Exp SEMICOLON  R_Small_Braces statement{
@@ -324,7 +349,10 @@ iteration_Stmt
     node->change_field.accessTime=currentNode->accessTime-1;
     node->change_field.needChange=1;
     //类型检查
-    node->check_type();
+    if(node->check_type()==0)
+    {
+        check_flag=1;
+    }
     $$ = node;
 }
 | FOR L_Small_Braces  SEMICOLON  SEMICOLON Exp R_Small_Braces statement{
@@ -336,7 +364,10 @@ iteration_Stmt
     node->change_field.accessTime=currentNode->accessTime-1;
     node->change_field.needChange=1;
     //类型检查
-    node->check_type();
+    if(node->check_type()==0)
+    {
+        check_flag=1;
+    }
     $$ = node;
 }
 | FOR L_Small_Braces  SEMICOLON  SEMICOLON  R_Small_Braces statement{
@@ -384,7 +415,10 @@ logical_or_Exp
     node->layer_node=currentNode;
     //类型检查
     node->type=TYPE_BOOL;
-    node->check_type();
+    if(node->check_type()==0)
+    {
+        check_flag=1;
+    }
     $$ = node;
 }
 ;
@@ -403,7 +437,10 @@ logical_and_Exp
     node->layer_node=currentNode;
     //类型检查
     node->type=TYPE_BOOL;
-    node->check_type();
+    if(node->check_type()==0)
+    {
+        check_flag=1;
+    }
     $$ = node;
 }
 ;
@@ -422,7 +459,10 @@ equality_Exp
     node->layer_node=currentNode;
     //类型检查
     node->type=TYPE_BOOL;
-    node->check_type();
+    if(node->check_type()==0)
+    {
+        check_flag=1;
+    }
     $$ = node;
 }
 | equality_Exp LOP_NOT_EQ relational_Exp{
@@ -435,7 +475,10 @@ equality_Exp
     node->layer_node=currentNode;
     //类型检查
     node->type=TYPE_BOOL;
-    node->check_type();
+    if(node->check_type()==0)
+    {
+        check_flag=1;
+    }
     $$ = node;
 }
 ;
@@ -454,7 +497,10 @@ relational_Exp
     node->layer_node=currentNode;
     //类型检查
     node->type=TYPE_BOOL;
-    node->check_type();
+    if(node->check_type()==0)
+    {
+        check_flag=1;
+    }
     $$ = node;
 }
 | relational_Exp LOP_GREATER additive_Exp{
@@ -467,7 +513,10 @@ relational_Exp
     node->layer_node=currentNode;
     //类型检查
     node->type=TYPE_BOOL;
-    node->check_type();
+    if(node->check_type()==0)
+    {
+        check_flag=1;
+    }
     $$ = node;
 }
 | relational_Exp LOP_LESS_EQ additive_Exp{
@@ -480,7 +529,10 @@ relational_Exp
     node->layer_node=currentNode;
     //类型检查
     node->type=TYPE_BOOL;
-    node->check_type();
+    if(node->check_type()==0)
+    {
+        check_flag=1;
+    }
     $$ = node;
 }
 | relational_Exp LOP_GREATER_EQ additive_Exp{
@@ -493,7 +545,10 @@ relational_Exp
     node->layer_node=currentNode;
     //类型检查
     node->type=TYPE_BOOL;
-    node->check_type();
+    if(node->check_type()==0)
+    {
+        check_flag=1;
+    }
     $$ = node;
 }
 ;
@@ -526,7 +581,10 @@ assignment_Exp
     node->layer_node=currentNode;
     //类型检查
     node->type=TYPE_VOID;
-    node->check_type();
+    if(node->check_type()==0)
+    {
+        check_flag=1;
+    }
     $$ = node;
 }
 | unary_Exp assignment_Operator assignment_Exp{
@@ -549,7 +607,10 @@ assignment_Exp
     node->layer_node=currentNode;
     node->type=$1->type;//类型检查
     //进一步检查此类型是否适合于此操作符
-    node->check_type();
+    if(node->check_type()==0)
+    {
+        check_flag=1;
+    }
     //node->int_val++;
     $$=node;
 }
@@ -562,7 +623,10 @@ assignment_Exp
     node->type=$1->type;//类型检查
     //进一步检查此类型是否适合于此操作符
     /*code*/
-    node->check_type();
+    if(node->check_type()==0)
+    {
+        check_flag=1;
+    }
     //node->int_val--;
     $$=node;
 }
@@ -587,7 +651,10 @@ additive_Exp
     //类型检查 node节点默认以$1的type为准
     node->type=$1->type;
     //检查$1 $2是否具有相同类型，目前假设只有整形可以算数运算
-    node->check_type();
+    if(node->check_type()==0)
+    {
+        check_flag=1;
+    }
     //node->int_val=$1->int_val + $3->int_val;
     $$ = node;
 }
@@ -602,7 +669,10 @@ additive_Exp
     //类型检查 node节点默认以$1的type为准
     node->type=$1->type;
     //检查$1 $2是否具有相同类型，目前假设只有整形可以算数运算
-    node->check_type();
+    if(node->check_type()==0)
+    {
+        check_flag=1;
+    }
     //node->int_val=$1->int_val - $3->int_val;
     $$ = node;
 }
@@ -624,7 +694,10 @@ mult_Exp
     //类型检查 node节点默认以$1的type为准
     node->type=$1->type;
     //检查$1 $2是否具有相同类型，目前假设只有整形可以算数运算
-    node->check_type();
+    if(node->check_type()==0)
+    {
+        check_flag=1;
+    }
     //node->int_val=$1->int_val * $3->int_val;
     $$ = node;
 }
@@ -639,7 +712,10 @@ mult_Exp
     //类型检查 node节点默认以$1的type为准
     node->type=$1->type;
     //检查$1 $2是否具有相同类型，目前假设只有整形可以算数运算
-    node->check_type();
+    if(node->check_type()==0)
+    {
+        check_flag=1;
+    }
     //node->int_val=$1->int_val / $3->int_val;
     $$ = node;
 }
@@ -654,7 +730,10 @@ mult_Exp
     //类型检查 node节点默认以$1的type为准
     node->type=$1->type;
     //检查$1 $2是否具有相同类型，目前假设只有整形可以算数运算
-    node->check_type();
+    if(node->check_type()==0)
+    {
+        check_flag=1;
+    }
     //node->int_val=$1->int_val % $3->int_val;
     $$ = node;
 }
@@ -682,7 +761,10 @@ unary_Exp
     node->layer_node=currentNode;
     node->type=$2->type;//类型检查
     //进一步检查unary_Operator是否适用于cast_Exp
-    node->check_type();
+    if(node->check_type()==0)
+    {
+        check_flag=1;
+    }
     
     $$=node;
 }
@@ -791,7 +873,10 @@ declaration
     $2->type=$1->type;//类型检查
     node->type=$1->type;//类型检查
     //进一步检查T与additive_Exp的类型是否相同
-    node->check_type();
+    if(node->check_type()==0)
+    {
+        check_flag=1;
+    }
     $$ = node;
 }
 | declaration COMMA IDENTIFIER {

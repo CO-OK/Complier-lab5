@@ -36,7 +36,7 @@ public:
     list<Item*> section_table;
     int layerDesc[layerDescNum];
 };
-void check_symbol_table(SymbolTableSection* section);
+int check_symbol_table(SymbolTableSection* section);
 struct SymbolTable{
 public:
     list<SymbolTableSection*> symbol_table;

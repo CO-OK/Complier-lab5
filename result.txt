@@ -1,44 +1,18 @@
     .bss
     .align 4
     .section    .rodata
-STR0:
-    .string "%d\n"
-STR1:
-    .string "%d\n"
-STR2:
-    .string "%d\n"
     .text
     .global main
     .type main, @function
 main:
     pushl %ebp
     movl %esp, %ebp
-    subl    $16, %esp
-    movl    $0, -4(%ebp)
-    movl    $0, -8(%ebp)
-    movl    $0, -12(%ebp)
+    subl    $8, %esp
+    movl    $9,-4(%ebp)
     xorl    %eax, %eax
-    movl    $9, %eax
-    movl    %eax, -12(%ebp)
-    xorl    %eax, %eax
-    movl    $9, %eax
-    movl    %eax, -8(%ebp)
-    xorl    %eax, %eax
-    movl    $9, %eax
+    movl    $10, %eax
     movl    %eax, -4(%ebp)
-    pushl    -4(%ebp)
-    pushl    $STR0
-    call    printf
-    addl    $8 ,%esp
-    pushl    -8(%ebp)
-    pushl    $STR1
-    call    printf
-    addl    $8 ,%esp
-    pushl    -12(%ebp)
-    pushl    $STR2
-    call    printf
-    addl    $8 ,%esp
-    addl    $20, %esp
+    addl    $12, %esp
     xorl    %eax, %eax
     movl    $0, %eax
     ret
