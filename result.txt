@@ -7,12 +7,16 @@
 main:
     pushl %ebp
     movl %esp, %ebp
-    subl    $8, %esp
+    subl    $16, %esp
     movl    $9,-4(%ebp)
     xorl    %eax, %eax
-    movl    $10, %eax
-    movl    %eax, -4(%ebp)
-    addl    $12, %esp
+    movl    -4(%ebp), %eax
+    addl    $8, %eax
+    movl    %eax, -12(%ebp)
+    xorl    %ebx, %ebx
+    movl    -12(%ebp), %ebx
+    movl    %ebx, -8(%ebp)
+    addl    $20, %esp
     xorl    %eax, %eax
     movl    $0, %eax
     ret

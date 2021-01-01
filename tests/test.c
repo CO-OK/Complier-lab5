@@ -1,7 +1,10 @@
 
-int main(){
-    int a=9;
-    a=10;
-    
+/*
+I'm level 1 test.
+*/
+int main() {
+    int d=9;
+    int a=d+8;
     return 0;
 }
+
